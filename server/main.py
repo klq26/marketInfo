@@ -6,6 +6,7 @@ from flask import Response
 
 from requestManager import requestsManager
 from parseManager import parseManager
+from datetimeManager import datetimeManager
 
 app = Flask(__name__)
 
@@ -31,8 +32,9 @@ def getZDPInfo():
 @app.route('/api/indexs', methods=['GET'])
 def getIndexInfos():
     area = request.args.get("area")
+    start_ts = datetimeManager().getTimeStamp()
     responseText = requestsManager().getIndexInfos(area)
-    data = parseManager().parseIndexInfos(area)
+    data = parseManager().parseIndexInfos(start_ts, area, responseText)
     return Response(data, status=200, mimetype='application/json')
 
 # ////////////////////////////////////////////////////////////////////////////////////////

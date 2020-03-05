@@ -8,8 +8,11 @@ class datetimeManager:
     def __init__(self):
         super().__init__()
 
+    def getTimeStamp(self):
+        return time.time()
+
     def getDateTimeString(self):
-        ts = time.time()
+        ts = self.getTimeStamp()
         timeFormat = '%Y/%m/%d %H:%M:%S'
         timeString = time.strftime(timeFormat, time.localtime(ts))
         return timeString

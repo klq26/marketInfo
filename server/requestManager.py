@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import grequests
+# import grequests
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import ssl
@@ -18,7 +18,7 @@ class requestsManager:
     def getIndexInfos(self, area):
         # 可选区域
         areaGroup = ['china', 'asian', 'euro', 'america']
-        if area == '' or area.lower() not in ['china', 'asian', 'euro', 'america']:
+        if area == '' or area.lower() not in areaGroup:
             return {}
         else:
             if area.lower() == 'china':
@@ -37,5 +37,4 @@ class requestsManager:
                 'updateIndexInfos(', '').replace(');', '')
             return result
         else:
-            return None
-        pass
+            return ''
