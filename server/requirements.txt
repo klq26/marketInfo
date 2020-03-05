@@ -1,0 +1,8 @@
+# 简化网络请求
+import requests
+# 并发网络请求
+import grequests
+# uwsgi application 轻量级框架
+import flask
+
+pip install requests grequests flask
