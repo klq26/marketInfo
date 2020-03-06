@@ -16,6 +16,10 @@ app = Flask(__name__)
 
 @app.route('/api/moneyinfo', methods=['GET'])
 def getMoneyInfo():
+    start_ts = datetimeManager().getTimeStamp()
+    responseTexts = requestsManager().getMoneyInfo()
+    data = parseManager().parseMoneyInfo(start_ts, responseTexts)
+    return Response(data, status=200, mimetype='application/json')
     pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////
