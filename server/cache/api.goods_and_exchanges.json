@@ -1,0 +1,167 @@
+{
+    "aliyun_date": "2020/03/06 18:44:34",
+    "code": 0,
+    "data": {
+        "exchanges": [
+            {
+                "current": 6.9327,
+                "dailyChangRate": "-0.12%",
+                "dailyChangValue": -0.0084,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "USDCNH",
+                "indexName": "离岸人民币",
+                "lastClose": 6.9411,
+                "sequence": 0
+            },
+            {
+                "current": 6.9277,
+                "dailyChangRate": "-0.13%",
+                "dailyChangValue": -0.0091,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "USDCNY",
+                "indexName": "美元人民币",
+                "lastClose": 6.9368,
+                "sequence": 1
+            },
+            {
+                "current": 5.1659,
+                "dailyChangRate": "-0.18%",
+                "dailyChangValue": -0.0091,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "CADCNY",
+                "indexName": "加元人民币",
+                "lastClose": 5.175,
+                "sequence": 2
+            },
+            {
+                "current": 8.9995,
+                "dailyChangRate": "0.12%",
+                "dailyChangValue": 0.0111,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "GBPCNY",
+                "indexName": "英镑人民币",
+                "lastClose": 8.9884,
+                "sequence": 3
+            },
+            {
+                "current": 7.8365,
+                "dailyChangRate": "0.55%",
+                "dailyChangValue": 0.043,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "EURCNY",
+                "indexName": "欧元人民币",
+                "lastClose": 7.7935,
+                "sequence": 4
+            },
+            {
+                "current": 4.603,
+                "dailyChangRate": "0.45%",
+                "dailyChangValue": 0.0205,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "AUDCNY",
+                "indexName": "澳元人民币",
+                "lastClose": 4.5825,
+                "sequence": 5
+            },
+            {
+                "current": 0.8918,
+                "dailyChangRate": "-0.03%",
+                "dailyChangValue": -0.0003,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "HKDCNY",
+                "indexName": "港元人民币",
+                "lastClose": 0.8921,
+                "sequence": 6
+            },
+            {
+                "current": 0.2032,
+                "dailyChangRate": "0.49%",
+                "dailyChangValue": 0.001,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "TWDCNY",
+                "indexName": "台币人民币",
+                "lastClose": 0.2022,
+                "sequence": 7
+            },
+            {
+                "current": 0.0659,
+                "dailyChangRate": "0.92%",
+                "dailyChangValue": 0.0006,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "JPYCNY",
+                "indexName": "日元人民币",
+                "lastClose": 0.0653,
+                "sequence": 8
+            },
+            {
+                "current": 0.0058,
+                "dailyChangRate": "0.00%",
+                "dailyChangValue": 0.0,
+                "dealMoney": 0.0,
+                "indexArea": "外汇",
+                "indexCode": "KRWCNY",
+                "indexName": "韩元人民币",
+                "lastClose": 0.0058,
+                "sequence": 9
+            }
+        ],
+        "goods": [
+            {
+                "current": 13699.25,
+                "dailyChangRate": "-1.53%",
+                "dailyChangValue": -213.25,
+                "dealMoney": 0.0,
+                "indexArea": "期货",
+                "indexCode": "CHA50CFD",
+                "indexName": "富时A50",
+                "lastClose": 13912.5,
+                "sequence": 0
+            },
+            {
+                "current": 1686.74,
+                "dailyChangRate": "1.12%",
+                "dailyChangValue": 18.74,
+                "dealMoney": 0.0,
+                "indexArea": "期货",
+                "indexCode": "GC",
+                "indexName": "纽约黄金",
+                "lastClose": 1668.0,
+                "sequence": 1
+            },
+            {
+                "current": 17.446,
+                "dailyChangRate": "0.30%",
+                "dailyChangValue": 0.053,
+                "dealMoney": 0.0,
+                "indexArea": "期货",
+                "indexCode": "SI",
+                "indexName": "纽约白银",
+                "lastClose": 17.393,
+                "sequence": 2
+            },
+            {
+                "current": 43.928,
+                "dailyChangRate": "-4.30%",
+                "dailyChangValue": -1.972,
+                "dealMoney": 0.0,
+                "indexArea": "期货",
+                "indexCode": "CL",
+                "indexName": "纽约原油",
+                "lastClose": 45.9,
+                "sequence": 3
+            }
+        ]
+    },
+    "duration": 0.0831,
+    "isCache": false,
+    "msg": "success"
+}

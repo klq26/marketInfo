@@ -40,7 +40,7 @@ class parseManager:
                 parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
         # print(parsedData)
         end_ts = self.dm.getTimeStamp()
-        duration = self.dm.getDurationString(start_ts, end_ts)
+        duration = self.dm.getDuration(start_ts, end_ts)
         data = self.packDataWithCommonInfo(duration = duration, data = parsedData)
         return data
 
@@ -214,7 +214,7 @@ class parseManager:
                 parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
         # print(parsedData)
         end_ts = self.dm.getTimeStamp()
-        duration = self.dm.getDurationString(start_ts, end_ts)
+        duration = self.dm.getDuration(start_ts, end_ts)
         data = self.packDataWithCommonInfo(duration = duration, data = parsedData)
         return data
 
@@ -296,7 +296,7 @@ class parseManager:
                 # 解析美洲数据
                 parsedData = self.parseAmericaIndexs(text)
             end_ts = self.dm.getTimeStamp()
-            duration = self.dm.getDurationString(start_ts, end_ts)
+            duration = self.dm.getDuration(start_ts, end_ts)
             data = self.packDataWithCommonInfo(duration = duration, data = parsedData)
             return data
     
@@ -413,7 +413,7 @@ class parseManager:
             exchanges[i]['sequence'] = i
 
         end_ts = self.dm.getTimeStamp()
-        duration = self.dm.getDurationString(start_ts, end_ts)
+        duration = self.dm.getDuration(start_ts, end_ts)
         data = self.packDataWithCommonInfo(duration = duration, data = {'goods': goods, 'exchanges':exchanges})
         return data
     
@@ -531,7 +531,7 @@ class parseManager:
         [finalResult.append(x) for x in non_plan]
         finalResult.append(new_plans)
         end_ts = self.dm.getTimeStamp()
-        duration = self.dm.getDurationString(start_ts, end_ts)
+        duration = self.dm.getDuration(start_ts, end_ts)
         data = self.packDataWithCommonInfo(duration = duration, data = finalResult)
         return data
 
@@ -614,6 +614,6 @@ class parseManager:
         parsedData = {'weekday' : weekday, 'weekend' : weekend, 'holiday' : holiday }
         # 结束时间
         end_ts = self.dm.getTimeStamp()
-        duration = self.dm.getDurationString(start_ts, end_ts)
+        duration = self.dm.getDuration(start_ts, end_ts)
         data = self.packDataWithCommonInfo(duration = duration, data = parsedData)
         return data

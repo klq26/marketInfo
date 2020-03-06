@@ -1,0 +1,251 @@
+{
+    "aliyun_date": "2020/03/06 18:43:36",
+    "code": 0,
+    "data": [
+        {
+            "current": 365.48,
+            "dailyChangRate": "-0.08%",
+            "dailyChangValue": -0.3,
+            "dealMoney": 14054554624.0,
+            "indexArea": "中国",
+            "indexCode": "000832",
+            "indexName": "中证转债",
+            "lastClose": 365.78,
+            "sequence": 0
+        },
+        {
+            "current": 3034.51,
+            "dailyChangRate": "-1.21%",
+            "dailyChangValue": -37.17,
+            "dealMoney": 377388544000.0,
+            "indexArea": "中国",
+            "indexCode": "000001",
+            "indexName": "上证指数",
+            "lastClose": 3071.68,
+            "sequence": 1
+        },
+        {
+            "current": 11582.82,
+            "dailyChangRate": "-1.10%",
+            "dailyChangValue": -128.55,
+            "dealMoney": 580104347648.0,
+            "indexArea": "中国",
+            "indexCode": "399001",
+            "indexName": "深证成指",
+            "lastClose": 11711.37,
+            "sequence": 2
+        },
+        {
+            "current": 2192.94,
+            "dailyChangRate": "-0.75%",
+            "dailyChangValue": -16.65,
+            "dealMoney": 179819413504.0,
+            "indexArea": "中国",
+            "indexCode": "399006",
+            "indexName": "创业板指",
+            "lastClose": 2209.59,
+            "sequence": 3
+        },
+        {
+            "current": 2658.8,
+            "dailyChangRate": "-1.16%",
+            "dailyChangValue": -31.25,
+            "dealMoney": 16579590656.0,
+            "indexArea": "中国",
+            "indexCode": "000015",
+            "indexName": "红利指数",
+            "lastClose": 2690.05,
+            "sequence": 4
+        },
+        {
+            "current": 4411.64,
+            "dailyChangRate": "-1.19%",
+            "dailyChangValue": -52.97,
+            "dealMoney": 36744488192.0,
+            "indexArea": "中国",
+            "indexCode": "000922",
+            "indexName": "中证红利",
+            "lastClose": 4464.61,
+            "sequence": 5
+        },
+        {
+            "current": 2964.83,
+            "dailyChangRate": "-1.76%",
+            "dailyChangValue": -53.24,
+            "dealMoney": 69696069632.0,
+            "indexArea": "中国",
+            "indexCode": "000016",
+            "indexName": "上证50",
+            "lastClose": 3018.07,
+            "sequence": 6
+        },
+        {
+            "current": 4138.51,
+            "dailyChangRate": "-1.62%",
+            "dailyChangValue": -68.22,
+            "dealMoney": 253168631808.0,
+            "indexArea": "中国",
+            "indexCode": "000300",
+            "indexName": "沪深300",
+            "lastClose": 4206.73,
+            "sequence": 7
+        },
+        {
+            "current": 5763.86,
+            "dailyChangRate": "-0.64%",
+            "dailyChangValue": -37.26,
+            "dealMoney": 177496498176.0,
+            "indexArea": "中国",
+            "indexCode": "399905",
+            "indexName": "中证500",
+            "lastClose": 5801.12,
+            "sequence": 8
+        },
+        {
+            "current": 6296.74,
+            "dailyChangRate": "-0.30%",
+            "dailyChangValue": -19.09,
+            "dealMoney": 254972182528.0,
+            "indexArea": "中国",
+            "indexCode": "000852",
+            "indexName": "中证1000",
+            "lastClose": 6315.83,
+            "sequence": 9
+        },
+        {
+            "current": 5604.27,
+            "dailyChangRate": "-0.91%",
+            "dailyChangValue": -51.32,
+            "dealMoney": 430665129984.0,
+            "indexArea": "中国",
+            "indexCode": "000842",
+            "indexName": "800等权",
+            "lastClose": 5655.59,
+            "sequence": 10
+        },
+        {
+            "current": 7566.09,
+            "dailyChangRate": "-0.89%",
+            "dailyChangValue": -67.69,
+            "dealMoney": 263396978688.0,
+            "indexArea": "中国",
+            "indexCode": "399005",
+            "indexName": "中小板指",
+            "lastClose": 7633.78,
+            "sequence": 11
+        },
+        {
+            "current": 11462.64,
+            "dailyChangRate": "0.61%",
+            "dailyChangValue": 69.13,
+            "dealMoney": 71792345088.0,
+            "indexArea": "中国",
+            "indexCode": "000991",
+            "indexName": "全指医药",
+            "lastClose": 11393.51,
+            "sequence": 12
+        },
+        {
+            "current": 5987.76,
+            "dailyChangRate": "-2.33%",
+            "dailyChangValue": -142.99,
+            "dealMoney": 102471847936.0,
+            "indexArea": "中国",
+            "indexCode": "000992",
+            "indexName": "全指金融",
+            "lastClose": 6130.75,
+            "sequence": 13
+        },
+        {
+            "current": 806.97,
+            "dailyChangRate": "-3.48%",
+            "dailyChangValue": -29.06,
+            "dealMoney": 62198453504.0,
+            "indexArea": "中国",
+            "indexCode": "399975",
+            "indexName": "证券公司",
+            "lastClose": 836.03,
+            "sequence": 14
+        },
+        {
+            "current": 6332.72,
+            "dailyChangRate": "-1.55%",
+            "dailyChangValue": -99.72,
+            "dealMoney": 15432806144.0,
+            "indexArea": "中国",
+            "indexCode": "399986",
+            "indexName": "中证银行",
+            "lastClose": 6432.44,
+            "sequence": 15
+        },
+        {
+            "current": 8063.94,
+            "dailyChangRate": "-0.63%",
+            "dailyChangValue": -51.42,
+            "dealMoney": 48745974016.0,
+            "indexArea": "中国",
+            "indexCode": "399812",
+            "indexName": "养老产业",
+            "lastClose": 8115.36,
+            "sequence": 16
+        },
+        {
+            "current": 1508.3,
+            "dailyChangRate": "-1.27%",
+            "dailyChangValue": -19.43,
+            "dealMoney": 19524024064.0,
+            "indexArea": "中国",
+            "indexCode": "399971",
+            "indexName": "中证传媒",
+            "lastClose": 1527.73,
+            "sequence": 17
+        },
+        {
+            "current": 1421.19,
+            "dailyChangRate": "-0.40%",
+            "dailyChangValue": -5.75,
+            "dealMoney": 47239044096.0,
+            "indexArea": "中国",
+            "indexCode": "000827",
+            "indexName": "中证环保",
+            "lastClose": 1426.94,
+            "sequence": 18
+        },
+        {
+            "current": 26146.67,
+            "dailyChangRate": "-2.32%",
+            "dailyChangValue": -621.2,
+            "dealMoney": 119462420480.0,
+            "indexArea": "中国",
+            "indexCode": "HSI",
+            "indexName": "恒生指数",
+            "lastClose": 26767.87,
+            "sequence": 19
+        },
+        {
+            "current": 10456.93,
+            "dailyChangRate": "-2.53%",
+            "dailyChangValue": -271.14,
+            "dealMoney": 41944167936.0,
+            "indexArea": "中国",
+            "indexCode": "HSCEI",
+            "indexName": "国企指数",
+            "lastClose": 10728.07,
+            "sequence": 20
+        },
+        {
+            "current": 4109.11,
+            "dailyChangRate": "-2.42%",
+            "dailyChangValue": -102.09,
+            "dealMoney": 7761864960.0,
+            "indexArea": "中国",
+            "indexCode": "HSCCI",
+            "indexName": "红筹指数",
+            "lastClose": 4211.2,
+            "sequence": 21
+        }
+    ],
+    "duration": 0.0821,
+    "isCache": false,
+    "msg": "success"
+}

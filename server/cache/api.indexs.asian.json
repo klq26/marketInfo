@@ -1,0 +1,119 @@
+{
+    "aliyun_date": "2020/03/06 18:43:41",
+    "code": 0,
+    "data": [
+        {
+            "current": 20749.75,
+            "dailyChangRate": "-2.72%",
+            "dailyChangValue": -579.37,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "N225",
+            "indexName": "日经225",
+            "lastClose": 21329.12,
+            "sequence": 0
+        },
+        {
+            "current": 37576.62,
+            "dailyChangRate": "-2.32%",
+            "dailyChangValue": -893.99,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "SENSEX",
+            "indexName": "印度SENSEX",
+            "lastClose": 38470.61,
+            "sequence": 1
+        },
+        {
+            "current": 2040.22,
+            "dailyChangRate": "-2.16%",
+            "dailyChangValue": -45.04,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "KS11",
+            "indexName": "韩国KOSPI",
+            "lastClose": 2085.26,
+            "sequence": 2
+        },
+        {
+            "current": 5498.54,
+            "dailyChangRate": "-2.48%",
+            "dailyChangValue": -139.59,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "JKSE",
+            "indexName": "印尼雅加达综合",
+            "lastClose": 5638.13,
+            "sequence": 3
+        },
+        {
+            "current": 11321.81,
+            "dailyChangRate": "-1.68%",
+            "dailyChangValue": -193.01,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "TWII",
+            "indexName": "台湾加权",
+            "lastClose": 11514.82,
+            "sequence": 4
+        },
+        {
+            "current": 1364.57,
+            "dailyChangRate": "-1.89%",
+            "dailyChangValue": -26.26,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "SET",
+            "indexName": "泰国SET",
+            "lastClose": 1390.83,
+            "sequence": 5
+        },
+        {
+            "current": 1483.1,
+            "dailyChangRate": "-0.53%",
+            "dailyChangValue": -7.93,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "KLSE",
+            "indexName": "富时马来西亚KLCI",
+            "lastClose": 1491.03,
+            "sequence": 6
+        },
+        {
+            "current": 2960.98,
+            "dailyChangRate": "-1.90%",
+            "dailyChangValue": -57.29,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "STI",
+            "indexName": "新加坡STI",
+            "lastClose": 3018.27,
+            "sequence": 7
+        },
+        {
+            "current": 6770.38,
+            "dailyChangRate": "-1.66%",
+            "dailyChangValue": -114.39,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "PSI",
+            "indexName": "菲律宾马尼拉",
+            "lastClose": 6884.77,
+            "sequence": 8
+        },
+        {
+            "current": 891.44,
+            "dailyChangRate": "-0.21%",
+            "dailyChangValue": -1.87,
+            "dealMoney": 0.0,
+            "indexArea": "亚洲",
+            "indexCode": "VNINDEX",
+            "indexName": "越南胡志明",
+            "lastClose": 893.31,
+            "sequence": 9
+        }
+    ],
+    "duration": 0.0764,
+    "isCache": false,
+    "msg": "success"
+}
