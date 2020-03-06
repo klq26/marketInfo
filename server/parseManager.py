@@ -39,12 +39,10 @@ class parseManager:
             else:
                 parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
         # print(parsedData)
-        self.dm = datetimeManager()
         end_ts = self.dm.getTimeStamp()
         duration = self.dm.getDurationString(start_ts, end_ts)
         data = self.packDataWithCommonInfo(duration = duration, data = parsedData)
         return data
-        pass
 
     # 沪深两市成交额
     def parse_hslscje(self, name, symbol, text):
@@ -191,6 +189,90 @@ class parseManager:
         return {'name':'行业资金净流入（亿）','symbol':'hyzjjlr', 'value': {'money_in' : moneyIns, 'money_out' : moneyOuts}}
 
     # ////////////////////////////////////////////////////////////////////////////////////////
+    # 解析 A 股涨跌平数据
+    # ////////////////////////////////////////////////////////////////////////////////////////
+
+    def parseZDPInfo(self, start_ts, texts):
+        symbols = []
+        names = []
+        parsedData = []
+        [symbols.append(item['symbol']) for item in self.cm.zdpinfo]
+        [names.append(item['name']) for item in self.cm.zdpinfo]
+        for i in range(0,len(texts)):
+            name = names[i]
+            symbol = symbols[i]
+            text = texts[i]
+            if hasattr(parseManager, 'parse_' + symbol):
+                # 反射机制调用对应解析函数
+                func = getattr(parseManager, 'parse_' + symbol)
+                data = func(self, name, symbol, text)
+                if type(data) == type(list()):
+                    [parsedData.append(x) for x in data]
+                else:
+                    parsedData.append(data)
+            else:
+                parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
+        # print(parsedData)
+        end_ts = self.dm.getTimeStamp()
+        duration = self.dm.getDurationString(start_ts, end_ts)
+        data = self.packDataWithCommonInfo(duration = duration, data = parsedData)
+        return data
+
+    def parse_zdfb_zdt(self, name, symbol, text):
+        finalResult = []
+        jsonData = json.loads(text)
+        arr = jsonData['zdfb_data']['zdfb']
+        finalResult.append({'name' : '涨跌分布','symbol' : 'zdfb', 'value' : list(reversed(jsonData['zdfb_data']['zdfb']))})
+        finalResult.append({'name' : '涨跌停','symbol' : 'zdt', 'value' : [{'name' : '涨停','symbol' : 'zt', 'value' : jsonData['zdt_data']['last_zdt']['ztzs']},{'name' : '跌停','symbol' : 'dt', 'value' : jsonData['zdt_data']['last_zdt']['dtzs']}]})
+        return finalResult
+
+    def parse_zszdp(self, name, symbol, text):
+        finalResult = []
+        zdpRawData = text.split(';')
+        # 接口返回的最后一项是个 '\n'
+        zdpRawData.pop(-1)
+        # 结果集
+        results = []
+        # 正则匹配集
+        rawlist = []
+        # 正则匹配
+        pattern = re.compile('var hq_str_(.*?)_zdp="(.*?)"')
+        for item in zdpRawData:
+            # print(item)
+            result = re.findall(pattern, item)
+            if len(result) > 0:
+                rawlist.append(result[0])
+        # // e.g.
+        # // var hq_str_sh000002_zdp="865,535,97";    沪A
+        # // var hq_str_sz399107_zdp="1396,702,95";   深A
+        # // var hq_str_sh000003_zdp="26,14,9";       沪B
+        # // var hq_str_sz399108_zdp="13,26,7";       深B
+        # // var hq_str_sz399102_zdp="559,217,15";    创业
+        
+        #[('sh000002', '76,1416,5'), ('sz399107', '144,2044,8'), ('sh000003', '1,48,0'), ('sz399108', '3,41,2'), ('sz399102', '48,745,1'), ('sh000016', '2,48,0'), ('sh000300', '17,283,0'), ('sz399905', '20,480,0'), ('sh000852', '54,941,5'), ('sh000842', '37,763,0')]
+        allMarkets = ['sh000002','sh000003','sz399107','sz399108']
+        indexMapping = {'sz399102':'创业板综','sh000016':'上证50','sh000300':'沪深300','sz399905':'中证500','sh000852':'中证1000','sh000842':'等权800'}
+        allUp = 0
+        allEqual = 0
+        allDown = 0
+        for item in rawlist:
+            values = item[1].split(',')
+            if item[0] in allMarkets:
+                allUp = allUp + int(values[0])
+                allEqual = allEqual + int(values[2])
+                allDown = allDown + int(values[1])
+            else:
+                name = indexMapping[item[0]]
+                up = int(values[0])
+                equal = int(values[2])
+                down = int(values[1])
+                results.append({'name' : name, 'symbol' : item[0], 'z':up, 'p':equal, 'd':down})
+        results.insert(0, {'name' : '全市场', 'symbol' : 'all', 'z':allUp, 'p':allEqual, 'd':allDown})
+        # print(results)
+        finalResult.append({'name' : '指数涨跌平','symbol' : 'zdp', 'value' : results})
+        return finalResult
+    
+    # ////////////////////////////////////////////////////////////////////////////////////////
     # 解析指数数据 china asian euro america
     # ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -201,7 +283,6 @@ class parseManager:
             return {}
         else:
             parsedData = {}
-            self.dm = datetimeManager()
             if area.lower() == 'china':
                 # 解析中国数据
                 parsedData = self.parseChinaIndexs(text)
@@ -295,3 +376,244 @@ class parseManager:
             code = -1
         result = {'code' : code, 'msg' : msg, 'isCache' : False, 'aliyun_date' : datetimeManager().getDateTimeString(), 'data' : data, 'duration' : duration}
         return json.dumps(result, ensure_ascii=False, indent=4, sort_keys=True)
+
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 解析期货&外汇数据
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    
+    def parseGoodsAndExchangeInfo(self, start_ts, texts):
+        symbols = []
+        names = []
+        parsedData = []
+        [symbols.append(item['symbol']) for item in self.cm.goods_and_exchanges]
+        [names.append(item['name']) for item in self.cm.goods_and_exchanges]
+        for i in range(0,len(texts)):
+            name = names[i]
+            symbol = symbols[i]
+            text = texts[i]
+            if hasattr(parseManager, 'parse_' + symbol):
+                # 反射机制调用对应解析函数
+                func = getattr(parseManager, 'parse_' + symbol)
+                data = func(self, name, symbol, text)
+                if type(data) == type(list()):
+                    [parsedData.append(x) for x in data]
+                else:
+                    parsedData.append(data)
+            else:
+                parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
+        USDCNH = parsedData.pop(0)
+        # 离岸人民币挪到第五位
+        parsedData.insert(4,USDCNH)
+        # 分组（goods & exchanges）
+        goods = parsedData[0:4]
+        for i in range(0,len(goods)):
+            goods[i]['sequence'] = i
+        exchanges = parsedData[4:len(parsedData)]
+        for i in range(0,len(exchanges)):
+            exchanges[i]['sequence'] = i
+
+        end_ts = self.dm.getTimeStamp()
+        duration = self.dm.getDurationString(start_ts, end_ts)
+        data = self.packDataWithCommonInfo(duration = duration, data = {'goods': goods, 'exchanges':exchanges})
+        return data
+    
+    def parse_larmb(self, name, symbol, text):
+        result = text.replace('updateIndexInfos(', '').replace(');', '')
+        # 清洗&重组数据
+        USDCNH = self.parseEastmoney87Data('外汇', json.loads(result))[0]
+        return USDCNH
+
+    def parse_goods_and_exchanges(self, name, symbol, text):
+        exchanges = text.split(';')
+        # 接口返回的最后一项是个 '\n'
+        exchanges.pop(-1)
+        # 期货
+        # goodKeys = ['hf_CHA50CFD', 'hf_GC', 'hf_SI', 'hf_CL']
+        # 外汇
+        exchangeKeys = ['USDCNY', 'CADCNY', 'GBPCNY', 'EURCNY', 'AUDCNY', 'HKDCNY', 'TWDCNY','fx_sjpycny', 'fx_skrwcny']
+        # 结果
+        results = []
+        # 正则匹配集
+        rawlist = []
+        # 正则匹配
+        pattern = re.compile('var hq_str_(.*?)="(.*?)"')
+        for item in exchanges:
+            # print(item)
+            result = re.findall(pattern, item)
+            if len(result) > 0:
+                rawlist.append(result[0])
+        # 清洗正则匹配集，产出最终数据
+        count = 0
+        for item in rawlist:
+            index = indexModel()
+            # 数据集合
+            values = item[1].split(',')
+            # 代码
+            indexCode = item[0].replace('hf_', '')
+            if indexCode in exchangeKeys:
+                # 外汇
+                # 日元人民币
+                if indexCode == 'fx_sjpycny':
+                    indexCode = 'JPYCNY'
+                    indexName = '日元人民币'
+                # 韩元人民币
+                elif indexCode == 'fx_skrwcny':
+                    indexCode = 'KRWCNY'
+                    indexName = '韩元人民币'
+                else:
+                    indexCode = item[0].replace('hf_', '')
+                    indexName = values[9]
+                index.indexCode = indexCode
+                index.indexName = indexName
+                index.indexArea = '外汇'
+
+                index.current = round(float(values[2]), 4)
+                index.lastClose = round(float(values[3]), 4)
+                index.dailyChangRate = '{0:.2f}%'.format(
+                    round(float((index.current / index.lastClose - 1) * 100), 2))
+                index.dailyChangValue = round(float(index.current - index.lastClose), 4)
+                index.dealMoney = 0.0
+                index.sequence = count
+                count = count + 1
+            else:
+                # 期货
+                index.indexCode = item[0].replace('hf_', '')
+                if item[0] == 'hf_CHA50CFD':
+                    index.indexName = '富时A50'
+                else:
+                    index.indexName = values[-1]
+                index.indexArea = '期货'
+                index.current = round(float(values[0]), 3)
+                index.lastClose = round(float(values[7]), 3)
+                index.dailyChangRate = '{0:.2f}%'.format(
+                    round(float((index.current / index.lastClose - 1) * 100), 2))
+                index.dailyChangValue = round(float(index.current - index.lastClose), 3)
+                index.dealMoney = 0.0
+                index.sequence = count
+                count = count + 1
+            results.append(index.__dict__)
+        return results
+
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 请求债券数据
+    # ////////////////////////////////////////////////////////////////////////////////////////
+
+    def parseBondInfo(self, start_ts, texts):
+        symbols = []
+        names = []
+        parsedData = []
+        [symbols.append(item['symbol']) for item in self.cm.bondinfo]
+        [names.append(item['name']) for item in self.cm.bondinfo]
+        for i in range(0,len(texts)):
+            name = names[i]
+            symbol = symbols[i]
+            text = texts[i]
+            if hasattr(parseManager, 'parse_' + symbol):
+                # 反射机制调用对应解析函数
+                func = getattr(parseManager, 'parse_' + symbol)
+                data = func(self, name, symbol, text)
+                if type(data) == type(list()):
+                    [parsedData.append(x) for x in data]
+                else:
+                    parsedData.append(data)
+            else:
+                parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
+        # print(parsedData)
+        # 调用了三次蛋卷 plan，需要重新组织数据结构
+        non_plan = parsedData[0:2]
+        plans = parsedData[2:len(parsedData)]
+        grouped_plans = []
+        for i in range(0,len(plans)):
+            plans[i]['value']['sequence'] = i
+            grouped_plans.append(plans[i]['value'])
+        new_plans = {'name' : plans[0]['name'], 'symbol' : plans[0]['symbol'], 'value' : grouped_plans}
+        finalResult = []
+        [finalResult.append(x) for x in non_plan]
+        finalResult.append(new_plans)
+        end_ts = self.dm.getTimeStamp()
+        duration = self.dm.getDurationString(start_ts, end_ts)
+        data = self.packDataWithCommonInfo(duration = duration, data = finalResult)
+        return data
+
+    def parse_bond(self, name, symbol, text):
+        jsonData = json.loads(text)
+        finalResult = []
+        # workDate = jsonData['worktime']
+        # 5 7 10 年国债
+        bond5year = 0.0
+        bond7year = 0.0
+        bond10year = 0.0
+        values = jsonData['seriesData']
+        for valueArray in values:
+            if valueArray[0] == 5.0:
+                bond5year = '{0}%'.format(round(float(valueArray[1]),2))
+            elif valueArray[0] == 7.0:
+                bond7year = '{0}%'.format(round(float(valueArray[1]),2))
+            elif valueArray[0] == 10.0:
+                bond10year = '{0}%'.format(round(float(valueArray[1]),2))
+        result5year = { 'indexName' : u'5年期国债', 'indexCode' : '5YEAR','indexArea' : '债券', 'sequence' : 0, 'current' : bond5year, 'lastClose' : bond5year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 5}
+        result7year = { 'indexName' : u'7年期国债', 'indexCode' : '7YEAR','indexArea' : '债券', 'sequence' : 1, 'current' : bond7year, 'lastClose' : bond7year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 7}
+        result10year = { 'indexName' : u'10年期国债', 'indexCode' : '10YEAR','indexArea' : '债券', 'sequence' : 2, 'current' : bond10year, 'lastClose' : bond10year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 10}
+        finalResult.append({'name': name, 'symbol' : symbol, 'value' : [result5year, result7year, result10year]})
+        return finalResult
+
+    def parse_fund(self, name, symbol, text):
+        data = json.loads(text)['data']
+        finalResult = []
+        current = '{0}%'.format(round(float(data['fund_derived']['annual_yield7d']),2))
+        value = { 'indexName' : u'天天利B', 'indexCode' : '003474','indexArea' : '货基', 'sequence' : 0, 'current' : current, 'lastClose' : current,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%'}
+        finalResult.append({'name': name, 'symbol' : symbol, 'value' : [value]})
+        return finalResult
+
+    def parse_plan(self, name, symbol, text):
+        data = json.loads(text)['data']
+        finalResult = []
+        count = 0
+        # index = indexModel()
+        planName = data['plan_name']
+        if u'稳稳' in planName:
+            planName = '稳稳的幸福'
+        if u'90' in planName:
+            planName = '钉钉宝90'
+        if u'365' in planName:
+            planName = '钉钉宝365'
+        current = round(float(data['yield_middle']),2)
+        nav = round(float(data['plan_derived']['unit_nav']),4)
+        dailyChangeRate = round(float(data['plan_derived']['nav_grtd']),2)
+        lastClose = round(float(nav / (1 + dailyChangeRate / 100)),4)
+        dailyChangeValue = round(nav - lastClose,4)
+        
+        value = { 'nav' : nav, 'indexName' : planName, 'indexCode' : data['plan_code'],'indexArea' : '组合', 'sequence' : count, 'current' : "{0:.2f}%".format(current), 'lastClose' : 0,'dailyChangValue' : dailyChangeValue, 'dealMoney' : 0.000, 'dailyChangRate' : "{0}%".format(dailyChangeRate)}
+        count = count + 1
+        finalResult.append({'name': name, 'symbol' : symbol, 'value' : value})
+        return finalResult
+    
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 解析今日类型（开盘日：0 周末：1 节假日：2
+    # ////////////////////////////////////////////////////////////////////////////////////////
+
+    def parseDayType(self, start_ts, text):
+        jsonData = json.loads(text)
+        dayType = jsonData[self.dm.getDateString()]
+        # print(dayType, jsonData)
+        weekday = '0'
+        weekend = '0'
+        holiday = '0'
+        if dayType == '0':
+            weekday = '1'
+            weekend = '0'
+            holiday = '0'
+        elif dayType == '1':
+            weekday = '0'
+            weekend = '1'
+            holiday = '0'
+        elif dayType == '2':
+            weekday = '0'
+            weekend = '0'
+            holiday = '1'
+        parsedData = {'weekday' : weekday, 'weekend' : weekend, 'holiday' : holiday }
+        # 结束时间
+        end_ts = self.dm.getTimeStamp()
+        duration = self.dm.getDurationString(start_ts, end_ts)
+        data = self.packDataWithCommonInfo(duration = duration, data = parsedData)
+        return data

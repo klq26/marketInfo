@@ -11,6 +11,10 @@ class datetimeManager:
     def getTimeStamp(self):
         return time.time()
 
+    def getDateString(self, sep=''):
+        today = time.strftime('%Y' + sep + '%m' + sep + '%d', time.localtime())
+        return today
+
     def getDateTimeString(self):
         ts = self.getTimeStamp()
         timeFormat = '%Y/%m/%d %H:%M:%S'

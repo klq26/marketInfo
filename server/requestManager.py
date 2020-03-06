@@ -35,6 +35,25 @@ class requestsManager:
         return responseTexts
 
     # ////////////////////////////////////////////////////////////////////////////////////////
+    # 请求 A 股涨跌平数据
+    # ////////////////////////////////////////////////////////////////////////////////////////
+
+    def getZDPInfo(self):
+        urls = []
+        responseTexts = []
+        [urls.append(item['url']) for item in self.cm.zdpinfo]
+        # 并发
+        request_list = [grequests.get(url,headers=self.headers) for url in urls]
+        response_list = grequests.map(request_list)
+        for response in response_list:
+            if response.status_code == 200:
+                responseTexts.append(response.text)
+            else:
+                responseTexts.append('{}')
+        return responseTexts
+
+
+    # ////////////////////////////////////////////////////////////////////////////////////////
     # 请求指数数据 china asian euro america
     # ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -111,4 +130,50 @@ class requestsManager:
         else:
             return ''
     
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 请求期货&外汇数据
+    # ////////////////////////////////////////////////////////////////////////////////////////
     
+    def getGoodsAndExchangeInfo(self):
+        urls = []
+        responseTexts = []
+        [urls.append(item['url']) for item in self.cm.goods_and_exchanges]
+        # 并发
+        request_list = [grequests.get(url,headers=self.headers) for url in urls]
+        response_list = grequests.map(request_list)
+        for response in response_list:
+            if response.status_code == 200:
+                responseTexts.append(response.text)
+            else:
+                responseTexts.append('{}')
+        return responseTexts
+
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 请求债券数据
+    # ////////////////////////////////////////////////////////////////////////////////////////
+
+    def getBondInfo(self):
+        urls = []
+        responseTexts = []
+        [urls.append(item['url']) for item in self.cm.bondinfo]
+        # 并发
+        request_list = [grequests.get(url,headers=self.headers) for url in urls]
+        response_list = grequests.map(request_list)
+        for response in response_list:
+            if response.status_code == 200:
+                responseTexts.append(response.text)
+            else:
+                responseTexts.append('{}')
+        return responseTexts
+    
+
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 请求今日类型（开盘日：0 周末：1 节假日：2
+    # ////////////////////////////////////////////////////////////////////////////////////////
+
+    def getDayType(self):
+        today = datetimeManager().getDateString()
+        url = "http://www.easybots.cn/api/holiday.php?d=" + today
+        response = requests.get(url, headers=self.headers, verify=False)
+        if response.status_code == 200:
+            return response.text

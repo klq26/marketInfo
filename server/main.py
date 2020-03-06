@@ -20,7 +20,6 @@ def getMoneyInfo():
     responseTexts = requestsManager().getMoneyInfo()
     data = parseManager().parseMoneyInfo(start_ts, responseTexts)
     return Response(data, status=200, mimetype='application/json')
-    pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////
 # 请求 A 股涨跌平数据
@@ -28,7 +27,11 @@ def getMoneyInfo():
 
 @app.route('/api/zdpinfo', methods=['GET'])
 def getZDPInfo():
-    pass
+    start_ts = datetimeManager().getTimeStamp()
+    responseTexts = requestsManager().getZDPInfo()
+    data = parseManager().parseZDPInfo(start_ts, responseTexts)
+    return Response(data, status=200, mimetype='application/json')
+
 
 # ////////////////////////////////////////////////////////////////////////////////////////
 # 请求指数数据 china asian euro america
@@ -47,7 +50,10 @@ def getIndexInfos():
 
 @app.route('/api/goods_and_exchanges', methods=['GET'])
 def getGoodsAndExchangeInfo():
-    pass
+    start_ts = datetimeManager().getTimeStamp()
+    responseTexts = requestsManager().getGoodsAndExchangeInfo()
+    data = parseManager().parseGoodsAndExchangeInfo(start_ts, responseTexts)
+    return Response(data, status=200, mimetype='application/json')
 
 # ////////////////////////////////////////////////////////////////////////////////////////
 # 请求债券数据
@@ -55,7 +61,10 @@ def getGoodsAndExchangeInfo():
 
 @app.route('/api/bondinfo', methods=['GET'])
 def getBondInfo():
-    pass
+    start_ts = datetimeManager().getTimeStamp()
+    responseTexts = requestsManager().getBondInfo()
+    data = parseManager().parseBondInfo(start_ts, responseTexts)
+    return Response(data, status=200, mimetype='application/json')
 
 # ////////////////////////////////////////////////////////////////////////////////////////
 # 是否工作日
@@ -63,7 +72,10 @@ def getBondInfo():
 
 @app.route('/api/today', methods=['GET'])
 def dayType():
-    pass
+    start_ts = datetimeManager().getTimeStamp()
+    responseText = requestsManager().getDayType()
+    data = parseManager().parseDayType(start_ts, responseText)
+    return Response(data, status=200, mimetype='application/json')
 
 # debug
 if __name__ == '__main__':
