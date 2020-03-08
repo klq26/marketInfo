@@ -1,0 +1,98 @@
+// 教程
+// https://www.w3cschool.cn/less/nested_directives_bubbling.html
+// 在线测试
+// https://www.w3cschool.cn/tools/index?name=LESS
+
+// @import './main_style.less'
+
+/* color */
+
+// 全局背景色
+@app-bg-color:#000000;
+// 全局启用色
+@app-enable-color:#FFFFFF;
+// 全局禁用色
+@app-disable-color:#808080;
+
+// 全局文字前景色
+@app-text-color:#FFFFFF;
+// 全局文字背景色
+@app-text-bg-color:#808080;
+// 上涨颜色
+@app-rise-color:#DD2200;
+// 下跌颜色
+@app-fall-color:#009933;
+
+/* size */
+
+// 标题字号
+@app-title-text-size: 46px;
+// 正文字号
+@app-value-text-size: 36px;
+// 小字号（涨跌分布数值 -10%...）
+@app-small-text-size: 30px;
+// 数据条目高度
+@app-cell-height: 48px;
+
+@index-title-width: 240px;
+@index-value-width: 200px;
+@index-cell-margin: 2px;
+@index-cell-padding: 0px 0px 0px 0px;
+
+/* 指数区 */
+
+// 指数标题前景色
+@index-title-text-color:@app-text-color;
+// 指数标题背景色
+@index-title-bg-color:@app-text-bg-color;
+// 指数数值前景色
+@index-value-text-color:@app-text-color;
+// 指数数值背景色
+@index-value-bg-color:@app-text-bg-color;
+// 指数数值上涨背景色
+@index-value-rise-bg-color:@app-rise-color;
+// 指数数值下跌背景色
+@index-value-fall-bg-color:@app-fall-color;
+// 自动刷新值背景色
+@index-refresh-change-bg-color:#333333;
+
+body {
+    background-color:@app-bg-color;
+}
+
+// .style:extend(.container, .img)
+// {
+//   background: #BF70A5;
+// }
+// .container {
+//   font-style: italic;
+// }
+// .img{
+//    font-size: 30px;
+//  }
+
+// 混合类似于编程语言中的函数。
+// .p1{
+//     color:red;
+//   }
+//   .p2{
+//     background : #64d9c0;
+//     .p1();
+//   }
+//   .p3{
+//      background : #DAA520;
+//     .p1;
+//   }
+
+// Less 将规则集传递给Mixins
+// @detached-ruleset: {
+//     .mixin() {
+//         font-family: "Comic Sans MS";
+//         background-color: #AA86EE;
+//     }
+// };
+
+// .cont {
+//     @detached-ruleset();
+//     .mixin();
+// }
