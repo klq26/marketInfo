@@ -4,7 +4,7 @@
     <MoneyComponent :moneyinfo="moneyinfo"/>
 
     <!-- 涨跌区 -->
-
+    <RiseFallChartComponent :values="zdfb"/>
     <!-- 指数区 -->
     <br/>
     <IndexComponent :indexInfos="china" :showType="0"/>
@@ -30,6 +30,8 @@ import Vue from 'vue'
 
 // 资金组件
 import MoneyComponent from './components/MoneyComponent'
+// 涨跌分布组件
+import RiseFallChartComponent from './components/RiseFallChartComponent'
 // 指数组件
 import IndexComponent from './components/IndexComponent'
 
@@ -40,10 +42,12 @@ export default {
   name: 'App',
   components: {
     MoneyComponent,
+    RiseFallChartComponent,
     IndexComponent
   },
   props: [
     'moneyinfo',
+    'zdfb',
     'industryMoneyInfo',
     'china',
     'asian',
@@ -65,6 +69,11 @@ export default {
       for (var index in that.moneyinfo) {
         that.moneyinfo[index].showType = showTypes[index]
       }
+    })
+    // 请求涨跌数据
+    this.$axios.get('http://112.125.25.230/api/zdpinfo').then(function (response) {
+      that.zdfb = response.data.data[0].value
+      console.log(that.zdfb)
     })
     // 请求中国
     this.$axios.get('http://112.125.25.230/api/indexs/china').then(function (response) {
