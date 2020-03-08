@@ -41,13 +41,6 @@ export default {
     'showType'
   ],
   data () {
-    // var indexInfos = [] 
-    // var that = this
-    // this.$axios.get('http://112.125.25.230/api/indexs/china').then(function (response) {
-    //   that.indexInfos = response.data.data
-    //   // console.log(that.indexInfos)
-    // });
-    // return {indexInfos : indexInfos, showType : 0}
     return {
       indexInfos: [{
         indexName: '中证500',
@@ -81,7 +74,7 @@ export default {
     bgColorWithValue (value) {
       if (value > 0) {
         return 'rise-color'
-      } else if (value == 0) {
+      } else if (value === 0) {
         return 'normal-color'
       } else {
         return 'fall-color'
@@ -91,15 +84,15 @@ export default {
     iconWithValue (value) {
       if (value > 0) {
         return iconUp
-      } else if( value == 0) {
+      } else if (value === 0) {
         return iconEqual
       } else {
         return iconDown
       }
     },
     // 设置数值显示精度（保留小数点后几位）
-    setDemical(value, demical) {
-      return parseFloat(value).toFixed(demical);
+    setDemical (value, demical) {
+      return parseFloat(value).toFixed(demical)
     }
   }
   // created: function() {
