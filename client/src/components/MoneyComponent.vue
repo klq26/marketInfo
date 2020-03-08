@@ -105,13 +105,13 @@ p {
 }
 
 .title {
+  margin: 0px 2px;
   min-width: @index-title-width;
   background-color: @index-title-bg-color;
 }
 
 .value-area {
-  width:620px;
-  margin: 0px 2px;
+  width:616px;
   display: inline-flex;
   flex-wrap: wrap;
   align-items: flex-end;

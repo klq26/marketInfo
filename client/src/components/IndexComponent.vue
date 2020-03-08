@@ -40,35 +40,35 @@ export default {
     'indexInfos',
     'showType'
   ],
-  data () {
-    return {
-      indexInfos: [{
-        indexName: '中证500',
-        indexCode: '399905',
-        current: 5800.34,
-        lastClose: 5789.53,
-        dailyChangValue: 20.13,
-        dailyChangRate: '0.28%',
-        showType: 1
-      }, {
-        indexName: '中证1000',
-        indexCode: '000852',
-        current: 15800.01,
-        lastClose: 15789.53,
-        dailyChangValue: -120.13,
-        dailyChangRate: '-0.28%',
-        showType: 1
-      }, {
-        indexName: '等权800',
-        indexCode: '000842',
-        current: 8800.099,
-        lastClose: 7789.53,
-        dailyChangValue: 0,
-        dailyChangRate: '0%',
-        showType: 1
-      }]
-    }
-  },
+  // data () {
+  //   return {
+  //     indexInfos: [{
+  //       indexName: '中证500',
+  //       indexCode: '399905',
+  //       current: 5800.34,
+  //       lastClose: 5789.53,
+  //       dailyChangValue: 20.13,
+  //       dailyChangRate: '0.28%',
+  //       showType: 1
+  //     }, {
+  //       indexName: '中证1000',
+  //       indexCode: '000852',
+  //       current: 15800.01,
+  //       lastClose: 15789.53,
+  //       dailyChangValue: -120.13,
+  //       dailyChangRate: '-0.28%',
+  //       showType: 1
+  //     }, {
+  //       indexName: '等权800',
+  //       indexCode: '000842',
+  //       current: 8800.099,
+  //       lastClose: 7789.53,
+  //       dailyChangValue: 0,
+  //       dailyChangRate: '0%',
+  //       showType: 1
+  //     }]
+  //   }
+  // },
   methods: {
     // 根据数值决定背景色
     bgColorWithValue (value) {
