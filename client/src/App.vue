@@ -2,8 +2,12 @@
   <div id="app">
     <!-- 资金区 -->
     <MoneyComponent :moneyinfo="moneyinfo"/>
-
-    <!-- 涨跌区 -->
+    <br/>
+    <!-- 涨跌平区 -->
+    <RiseFallBarComponent :zdpinfo="zdpinfo"/>
+    <!-- 涨跌停区 -->
+    <RiseFallMaxBarComponent :zdt="zdt"/>
+    <!-- 涨跌分布区 -->
     <RiseFallChartComponent :values="zdfb"/>
     <!-- 指数区 -->
     <br/>
@@ -30,6 +34,10 @@ import Vue from 'vue'
 
 // 资金组件
 import MoneyComponent from './components/MoneyComponent'
+// 涨跌平组件
+import RiseFallBarComponent from './components/RiseFallBarComponent'
+// 涨跌停组件
+import RiseFallMaxBarComponent from './components/RiseFallMaxBarComponent'
 // 涨跌分布组件
 import RiseFallChartComponent from './components/RiseFallChartComponent'
 // 指数组件
@@ -42,11 +50,15 @@ export default {
   name: 'App',
   components: {
     MoneyComponent,
+    RiseFallBarComponent,
+    RiseFallMaxBarComponent,
     RiseFallChartComponent,
     IndexComponent
   },
   props: [
     'moneyinfo',
+    'zdpinfo',
+    'zdt',
     'zdfb',
     'industryMoneyInfo',
     'china',
@@ -72,8 +84,12 @@ export default {
     })
     // 请求涨跌数据
     this.$axios.get('http://112.125.25.230/api/zdpinfo').then(function (response) {
+      // 指数涨跌平
+      that.zdpinfo = response.data.data[2].value
+      // 全市场涨跌停
+      that.zdt = response.data.data[1].value
+      // 全市场涨跌分布
       that.zdfb = response.data.data[0].value
-      console.log(that.zdfb)
     })
     // 请求中国
     this.$axios.get('http://112.125.25.230/api/indexs/china').then(function (response) {
@@ -110,7 +126,6 @@ export default {
       }
     })
   }
-
 }
 </script>
 

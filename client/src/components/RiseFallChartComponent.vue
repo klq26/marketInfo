@@ -24,9 +24,9 @@ export default {
   props: ['values'],
   data () {
     return {
-      labels: ["10%", "8%", "6%", "4%", "2%", "0", "-2%", "-4%", "-6%", "-8% ", "-10%"],
+      labels: ['10%', '8%', '6%', '4%', '2%', '0', '-2%', '-4%', '-6%', '-8% ', '-10%'],
       // values: [118, 30, 109, 296, 1046, 1341, 662, 146, 24, 6],
-      maxValue : 0
+      maxValue: 0
     }
   },
   methods: {
@@ -51,7 +51,7 @@ export default {
           if (this.maxValue < element) {
             this.maxValue = element
           }
-        });
+        })
         // console.log(this.labels.reverse())
       },
       immediate: true
