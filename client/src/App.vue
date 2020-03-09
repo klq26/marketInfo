@@ -1,30 +1,31 @@
 <template>
   <div id="app">
     <!-- 资金区 -->
+    <SectionHeaderComponent title="大陆及沪港通资金流向"/>
     <MoneyComponent :moneyinfo="moneyinfo"/>
     <!-- 板块资金区 -->
     <IndustryMoneyChartComponent :industryMoneyInfo="industryMoneyInfo"/>
     <!-- 涨跌平区 -->
-    <br/>
+    <SectionHeaderComponent title="指数涨跌分布"/>
     <RiseFallBarComponent :zdpinfo="zdpinfo"/>
     <!-- 涨跌停区 -->
     <RiseFallMaxBarComponent :zdt="zdt"/>
     <!-- 涨跌分布区 -->
     <RiseFallChartComponent :values="zdfb"/>
     <!-- 指数区 -->
-    <br/>
+    <SectionHeaderComponent title="中国大陆及港台地区"/>
     <IndexComponent :indexInfos="china" :showType="0"/>
-    <br/>
+    <SectionHeaderComponent title="亚洲地区"/>
     <IndexComponent :indexInfos="asian" :showType="1"/>
-    <br/>
+    <SectionHeaderComponent title="欧洲地区"/>
     <IndexComponent :indexInfos="euro" :showType="1"/>
-    <br/>
+    <SectionHeaderComponent title="美洲地区"/>
     <IndexComponent :indexInfos="america" :showType="0"/>
-    <br/>
+    <SectionHeaderComponent title="股指及商品期货"/>
     <IndexComponent :indexInfos="goods" :showType="1"/>
-    <br/>
+    <SectionHeaderComponent title="外汇牌价"/>
     <IndexComponent :indexInfos="exchanges" :showType="0"/>
-    <br/>
+    <SectionHeaderComponent title="固定收益债券"/>
     <IndexComponent :indexInfos="bond" :showType="1"/>
   </div>
 </template>
@@ -34,6 +35,8 @@
 import axios from 'axios'
 import Vue from 'vue'
 
+// 标题板块
+import SectionHeaderComponent from './components/SectionHeaderComponent'
 // 资金组件
 import MoneyComponent from './components/MoneyComponent'
 // 板块资金组件
@@ -53,6 +56,7 @@ Vue.config.productionTip = false
 export default {
   name: 'App',
   components: {
+    SectionHeaderComponent,
     MoneyComponent,
     IndustryMoneyChartComponent,
     RiseFallBarComponent,
