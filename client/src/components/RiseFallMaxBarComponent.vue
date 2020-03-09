@@ -3,15 +3,15 @@
     <div class='zdp-cell'>
       <p class="zdp-title">涨跌停板</p>
       <div class='zdp-bar-box'>
-        <p class="zdp-bar-up" :style="{width: dynamicWidth('zt')}">{{zdt[0].value}}</p>
-        <p class="zdp-bar-down" :style="{width: dynamicWidth('dt')}">{{zdt[1].value}}</p>
+        <p class="zdp-bar-up" :style="{width: dynamicWidth('zt')}">{{up}}</p>
+        <p class="zdp-bar-down" :style="{width: dynamicWidth('dt')}">{{down}}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
+/* eslint-disable */
 export default {
   name: 'RiseFallMaxBarComponent',
   props: [
@@ -19,47 +19,59 @@ export default {
   ],
   data () {
     return {
-      // zdpinfo: [
-      //   {name: '全市场', symbol: 'all', 'd':2160,'p':135,'z':1495 },
-      //   {name: '中证500', symbol: 'sh000905', 'd':8,'p':49,'z':450 }
-      // ],
-      measuredInfo: {
-        // {
-        //   symbol:'all', 'd': {count:2160, rate:0, minWidth:0}, 'p': {count:135, rate:0, minWidth:0}, 'z': {count:1495, rate:0, minWidth:0}
-        // },
-        // {
-        //   symbol:'sh000905', 'd': {count:1, rate:0, minWidth:0}, 'p': {count:49, rate:0, minWidth:0}, 'z': {count:450, rate:0, minWidth:0}
-        // }
+      up:0,
+      down:0,
+      upDict:{},
+      downDict:{}
+    }
+  },
+  computed: {
+    dynamicCount(key) {
+      if (key === 'zt' && this.upDict.hasOwnProperty('finalW')) {
+        return parseFloat(this.upDict[key]["count"])
+      } else if (key === 'dt' && this.downDict.hasOwnProperty('finalW')) {
+        return parseFloat(this.downDict[key]["count"])
+      } else {
+        return 0
       }
     }
   },
   methods: {
     dynamicWidth (key) {
-      let result = parseFloat(this.measuredInfo[key]["finalW"]) + 'px'
-      console.log(result, key)
-      return result
+      if (key === 'zt' && this.upDict.hasOwnProperty('finalW')) {
+        return parseFloat(this.upDict["finalW"]) + 'px'
+      } else if (key === 'dt' && this.downDict.hasOwnProperty('finalW')) {
+        return parseFloat(this.downDict["finalW"]) + 'px'
+      } else {
+        return 21.1
+      }
     }
   },
   watch: {
     zdt: {
       handler (newValue, oldValue) {
-        console.log('康力泉')
-        console.log('newValue ' + newValue, oldValue)
+        if (typeof(newValue) === "undefined") {
+          return
+        }
+        console.log('康力泉 ' + newValue)
         // 单个阿拉伯数字的宽度
         let charW = 21.11
         // 值条宽度（vue 是虚拟 dom，无法等到实际 mounted 之后再计算了）
         let zdpBarWidth = 609
+
         let up = newValue[0].value
         let down = newValue[1].value
+        this.up = up
+        this.down = down
         let all = up + down
         let symbol = 'zdt'
         // 生成涨跌平条的全面数据
         var upDict = {
-        "count": up,
-        "calW": parseInt(up / all * zdpBarWidth),
-        "minW": String(up).length * charW,
-        "isCalTooSmall": parseInt(up / all * zdpBarWidth) < String(up).length * charW ? true : false,
-        "finalW": parseInt(up / all * zdpBarWidth) > String(up).length * charW ? parseInt(up / all * zdpBarWidth) : String(up).length * charW
+          "count": up,
+          "calW": parseInt(up / all * zdpBarWidth),
+          "minW": String(up).length * charW,
+          "isCalTooSmall": parseInt(up / all * zdpBarWidth) < String(up).length * charW ? true : false,
+          "finalW": parseInt(up / all * zdpBarWidth) > String(up).length * charW ? parseInt(up / all * zdpBarWidth) : String(up).length * charW
         }
         var downDict = {
         "count": down,
@@ -68,7 +80,7 @@ export default {
         "isCalTooSmall": parseInt(down / all * zdpBarWidth) < String(down).length * charW ? true : false,
         "finalW": parseInt(down / all * zdpBarWidth) > String(down).length * charW ? parseInt(down / all * zdpBarWidth) : String(down).length * charW
         }
-        // console.log(upDict, equalDict, downDict)
+        // console.log(upDict, downDict)
         var dictArray = [upDict, downDict];
         var leftCount = 0;
         var leftWidth = zdpBarWidth;
@@ -91,9 +103,9 @@ export default {
         } else {
             downDict['finalW'] = parseInt(downDict['count']) / leftCount * leftWidth;
         }
-        this.measuredInfo['zt'] = upDict
-        this.measuredInfo['dt'] = downDict
-        console.log(this.measuredInfo)
+        this.upDict = upDict
+        this.downDict = downDict
+        // console.log(this.measuredInfo)
       },
       immediate: true,
       deep: true
