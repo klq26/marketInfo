@@ -1,32 +1,71 @@
 <template>
   <div id="app">
     <!-- 资金区 -->
-    <SectionHeaderComponent title="大陆及沪港通资金流向"/>
-    <MoneyComponent :moneyinfo="moneyinfo"/>
-    <!-- 板块资金区 -->
-    <IndustryMoneyChartComponent :industryMoneyInfo="industryMoneyInfo"/>
+    <SectionHeaderComponent title="大陆及沪港通资金流向" v-on:shouldShow="shouldShowMoney"/>
+    <transition name='fade'>
+      <div v-if="showMoney">
+        <MoneyComponent :moneyinfo="moneyinfo"/>
+        <!-- 板块资金区 -->
+        <IndustryMoneyChartComponent :industryMoneyInfo="industryMoneyInfo"/>
+      </div>
+    </transition>
     <!-- 涨跌平区 -->
-    <SectionHeaderComponent title="指数涨跌分布"/>
-    <RiseFallBarComponent :zdpinfo="zdpinfo"/>
-    <!-- 涨跌停区 -->
-    <RiseFallMaxBarComponent :zdt="zdt"/>
-    <!-- 涨跌分布区 -->
-    <RiseFallChartComponent :values="zdfb"/>
+    <SectionHeaderComponent title="指数涨跌分布" v-on:shouldShow="shouldShowZDP"/>
+    <transition name='fade'>
+      <div v-if="showZDP">
+        <!-- 涨跌平区 -->
+        <RiseFallBarComponent :zdpinfo="zdpinfo"/>
+        <!-- 涨跌停区 -->
+        <RiseFallMaxBarComponent :zdt="zdt"/>
+        <!-- 涨跌分布区 -->
+        <RiseFallChartComponent :values="zdfb"/>
+      </div>
+    </transition>
     <!-- 指数区 -->
-    <SectionHeaderComponent title="中国大陆及港台地区"/>
-    <IndexComponent :indexInfos="china" :showType="0"/>
-    <SectionHeaderComponent title="亚洲地区"/>
-    <IndexComponent :indexInfos="asian" :showType="1"/>
-    <SectionHeaderComponent title="欧洲地区"/>
-    <IndexComponent :indexInfos="euro" :showType="1"/>
-    <SectionHeaderComponent title="美洲地区"/>
-    <IndexComponent :indexInfos="america" :showType="0"/>
-    <SectionHeaderComponent title="股指及商品期货"/>
-    <IndexComponent :indexInfos="goods" :showType="1"/>
-    <SectionHeaderComponent title="外汇牌价"/>
-    <IndexComponent :indexInfos="exchanges" :showType="0"/>
-    <SectionHeaderComponent title="固定收益债券"/>
-    <IndexComponent :indexInfos="bond" :showType="1"/>
+    <SectionHeaderComponent title="中国大陆及港台地区" v-on:shouldShow="shouldShowChina"/>
+    <transition name='fade'>
+      <div v-if="showChina">
+        <IndexComponent :indexInfos="china" :showType="0"/>
+      </div>
+    </transition>
+    <SectionHeaderComponent title="亚洲地区" v-on:shouldShow="shouldShowAsian"/>
+    <transition name='fade'>
+      <div v-if="showAsian">
+        <IndexComponent :indexInfos="asian" :showType="0"/>
+      </div>
+    </transition>
+    <SectionHeaderComponent title="欧洲地区" v-on:shouldShow="shouldShowEuro"/>
+    <transition name='fade'>
+      <div v-if="showEuro">
+        <IndexComponent :indexInfos="euro" :showType="0"/>
+      </div>
+    </transition>
+    <SectionHeaderComponent title="美洲地区" v-on:shouldShow="shouldShowAmerica"/>
+      <transition name='fade'>
+        <div v-if="showAmerica">
+          <IndexComponent :indexInfos="america" :showType="0"/>
+        </div>
+      </transition>
+    <SectionHeaderComponent title="股指及商品期货" v-on:shouldShow="shouldShowGoods"/>
+    <transition name='fade'>
+      <div v-if="showGoods">
+        <IndexComponent :indexInfos="goods" :showType="0"/>
+      </div>
+    </transition>
+    <SectionHeaderComponent title="外汇牌价" v-on:shouldShow="shouldShowExchanges"/>
+      <transition name='fade'>
+      <div v-if="showExchanges">
+        <IndexComponent :indexInfos="exchanges" :showType="0"/>
+      </div>
+    </transition>
+    
+    <SectionHeaderComponent title="固定收益债券" v-on:shouldShow="shouldShowBond"/>
+    <transition name='fade'>
+      <div v-if="showBond">
+        <IndexComponent :indexInfos="bond" :showType="0"/>
+      </div>
+    </transition>
+    
   </div>
 </template>
 
@@ -78,6 +117,48 @@ export default {
     'exchanges',
     'bond'
   ],
+  data () {
+    return {
+      showMoney: true,
+      showZDP: true,
+      showChina: true,
+      showAsian: true,
+      showEuro: true,
+      showAmerica: true,
+      showGoods: true,
+      showExchanges: true,
+      showBond: true
+    }
+  },
+  methods: {
+    shouldShowMoney() {
+      this.showMoney = !this.showMoney
+    },
+    shouldShowZDP() {
+      this.showZDP = !this.showZDP
+    },
+    shouldShowChina() {
+      this.showChina = !this.showChina
+    },
+    shouldShowAsian() {
+      this.showAsian = !this.showAsian
+    },
+    shouldShowEuro() {
+      this.showEuro = !this.showEuro
+    },
+    shouldShowAmerica() {
+      this.showAmerica = !this.showAmerica
+    },
+    shouldShowGoods() {
+      this.showGoods = !this.showGoods
+    },
+    shouldShowExchanges() {
+      this.showExchanges = !this.showExchanges
+    },
+    shouldShowBond() {
+      this.showBond = !this.showBond
+    }
+  },
   created: function () {
     var that = this
     // 请求资金数据

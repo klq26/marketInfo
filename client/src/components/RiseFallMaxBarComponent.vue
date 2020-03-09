@@ -53,7 +53,6 @@ export default {
         if (typeof(newValue) === "undefined") {
           return
         }
-        console.log('康力泉 ' + newValue)
         // 单个阿拉伯数字的宽度
         let charW = 21.11
         // 值条宽度（vue 是虚拟 dom，无法等到实际 mounted 之后再计算了）

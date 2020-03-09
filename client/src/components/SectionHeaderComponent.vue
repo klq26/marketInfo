@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="shouldShow">
     <p>{{title}}</p>
   </div>
 </template>
@@ -15,7 +15,9 @@
     //   }
     // },
     methods: {
-
+      shouldShow () {
+        this.$emit('shouldShow')
+      }
     }
   }
 </script>

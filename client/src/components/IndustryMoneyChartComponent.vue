@@ -71,7 +71,7 @@ export default {
           this.allItem.push(element)
         })
       },
-      immediate: false,
+      immediate: true,
       deep: true
     }
   }
