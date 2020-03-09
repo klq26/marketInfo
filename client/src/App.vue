@@ -2,8 +2,10 @@
   <div id="app">
     <!-- 资金区 -->
     <MoneyComponent :moneyinfo="moneyinfo"/>
-    <br/>
+    <!-- 板块资金区 -->
+    <IndustryMoneyChartComponent :industryMoneyInfo="industryMoneyInfo"/>
     <!-- 涨跌平区 -->
+    <br/>
     <RiseFallBarComponent :zdpinfo="zdpinfo"/>
     <!-- 涨跌停区 -->
     <RiseFallMaxBarComponent :zdt="zdt"/>
@@ -34,6 +36,8 @@ import Vue from 'vue'
 
 // 资金组件
 import MoneyComponent from './components/MoneyComponent'
+// 板块资金组件
+import IndustryMoneyChartComponent from './components/IndustryMoneyChartComponent'
 // 涨跌平组件
 import RiseFallBarComponent from './components/RiseFallBarComponent'
 // 涨跌停组件
@@ -50,6 +54,7 @@ export default {
   name: 'App',
   components: {
     MoneyComponent,
+    IndustryMoneyChartComponent,
     RiseFallBarComponent,
     RiseFallMaxBarComponent,
     RiseFallChartComponent,
