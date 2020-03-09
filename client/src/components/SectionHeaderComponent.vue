@@ -5,21 +5,16 @@
 </template>
 
 <script>
-  export default {
-    props: [
-      'title'
-    ],
-    // data() {
-    //   return {
-    //     title: '标题'
-    //   }
-    // },
-    methods: {
-      shouldShow () {
-        this.$emit('shouldShow')
-      }
+export default {
+  props: [
+    'title'
+  ],
+  methods: {
+    shouldShow () {
+      this.$emit('shouldShow')
     }
   }
+}
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">

@@ -12,7 +12,6 @@
 </template>
 
 <script>
-/* eslint-disable */
 export default {
   name: 'RiseFallBarComponent',
   props: [
@@ -36,7 +35,7 @@ export default {
   },
   methods: {
     dynamicWidth (symbol, key) {
-      let result = parseFloat(this.measuredInfo[symbol][key]["finalW"]) + 'px'
+      let result = parseFloat(this.measuredInfo[symbol][key]['finalW']) + 'px'
       return result
     }
   },
@@ -59,21 +58,21 @@ export default {
             'count': up,
             'calW': parseInt(up / all * zdpBarWidth),
             'minW': String(up).length * charW,
-            'isCalTooSmall': parseInt(up / all * zdpBarWidth) < String(up).length * charW ? true : false,
+            'isCalTooSmall': parseInt(up / all * zdpBarWidth) < String(up).length * charW,
             'finalW': parseInt(up / all * zdpBarWidth) > String(up).length * charW ? parseInt(up / all * zdpBarWidth) : String(up).length * charW
           }
           var equalDict = {
             'count': equal,
             'calW': parseInt(equal / all * zdpBarWidth),
             'minW': String(equal).length * charW,
-            'isCalTooSmall': parseInt(equal / all * zdpBarWidth) < String(equal).length * charW ? true : false,
+            'isCalTooSmall': parseInt(equal / all * zdpBarWidth) < String(equal).length * charW,
             'finalW': parseInt(equal / all * zdpBarWidth) > String(equal).length * charW ? parseInt(equal / all * zdpBarWidth) : String(equal).length * charW
           }
           var downDict = {
             'count': down,
             'calW': parseInt(down / all * zdpBarWidth),
             'minW': String(down).length * charW,
-            'isCalTooSmall': parseInt(down / all * zdpBarWidth) < String(down).length * charW ? true : false,
+            'isCalTooSmall': parseInt(down / all * zdpBarWidth) < String(down).length * charW,
             'finalW': parseInt(down / all * zdpBarWidth) > String(down).length * charW ? parseInt(down / all * zdpBarWidth) : String(down).length * charW
           }
           // console.log(upDict, equalDict, downDict)

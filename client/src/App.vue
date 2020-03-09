@@ -58,14 +58,12 @@
         <IndexComponent :indexInfos="exchanges" :showType="0"/>
       </div>
     </transition>
-    
     <SectionHeaderComponent title="固定收益债券" v-on:shouldShow="shouldShowBond"/>
     <transition name='fade'>
       <div v-if="showBond">
         <IndexComponent :indexInfos="bond" :showType="0"/>
       </div>
     </transition>
-    
   </div>
 </template>
 
@@ -131,31 +129,31 @@ export default {
     }
   },
   methods: {
-    shouldShowMoney() {
+    shouldShowMoney () {
       this.showMoney = !this.showMoney
     },
-    shouldShowZDP() {
+    shouldShowZDP () {
       this.showZDP = !this.showZDP
     },
-    shouldShowChina() {
+    shouldShowChina () {
       this.showChina = !this.showChina
     },
-    shouldShowAsian() {
+    shouldShowAsian () {
       this.showAsian = !this.showAsian
     },
-    shouldShowEuro() {
+    shouldShowEuro () {
       this.showEuro = !this.showEuro
     },
-    shouldShowAmerica() {
+    shouldShowAmerica () {
       this.showAmerica = !this.showAmerica
     },
-    shouldShowGoods() {
+    shouldShowGoods () {
       this.showGoods = !this.showGoods
     },
-    shouldShowExchanges() {
+    shouldShowExchanges () {
       this.showExchanges = !this.showExchanges
     },
-    shouldShowBond() {
+    shouldShowBond () {
       this.showBond = !this.showBond
     }
   },
