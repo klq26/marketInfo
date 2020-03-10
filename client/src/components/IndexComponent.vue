@@ -38,7 +38,9 @@ export default {
   props: {
     indexInfos: {
       type: Array,
-      default: []
+      default () {
+        return []
+      }
     },
     showType: {
       type: Number,
@@ -149,6 +151,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->

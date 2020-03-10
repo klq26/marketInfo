@@ -1,7 +1,8 @@
 <template>
   <div id="app">
+    <TimeComponent />
     <!-- 资金区 -->
-    <SectionHeaderComponent title="大陆及沪港通资金流向" v-on:shouldShow="shouldShowMoney" :isOpenning="isMarketOpenning"/>
+    <SectionHeaderComponent title="大陆及沪港通资金流向" v-on:shouldShow="shouldShowMoney" :isOpenning="isMoneyOpenning"/>
     <transition name='fade'>
       <div v-if="showMoney">
         <MoneyComponent :moneyinfo="moneyinfo"/>
@@ -72,6 +73,8 @@
 import axios from 'axios'
 import Vue from 'vue'
 
+// 时间组件
+import TimeComponent from './components/TimeComponent'
 // 标题板块
 import SectionHeaderComponent from './components/SectionHeaderComponent'
 // 资金组件
@@ -137,20 +140,6 @@ function todayString (sep = '') {
   return year + sep + month + sep + day
 }
 
-// 显示时间
-function timeString () {
-  var date = new Date()
-  var year = date.getFullYear()
-  var month = prefixInteger(date.getMonth() + 1, 2)
-  var day = prefixInteger(date.getDate(), 2)
-  var hh = prefixInteger(date.getHours(), 2)
-  var mi = prefixInteger(date.getMinutes(), 2)
-  var ss = prefixInteger(date.getSeconds(), 2)
-  var dayTag = '日一二三四五六'.charAt(date.getDay())
-  var wk = '周' + dayTag
-  return year + '-' + month + '-' + day + ' ' + hh + ':' + mi + ':' + ss + ' ' + wk
-}
-
 // 是否处于开盘期
 function isMarketOpenning (morningOpen, morningClose, afternoonOpen, afternoonClose) {
   var todayStr = todayString('/')
@@ -160,6 +149,7 @@ function isMarketOpenning (morningOpen, morningClose, afternoonOpen, afternoonCl
 export default {
   name: 'App',
   components: {
+    TimeComponent,
     SectionHeaderComponent,
     MoneyComponent,
     IndustryMoneyChartComponent,
@@ -366,19 +356,17 @@ export default {
     this.requestGoodsAndExchangesIfNeeded(true)
     this.requestBondInfoIfNeeded(true)
     // 定时刷新
-    // 显示时间 1s
-    // setInterval(showtime, 1000)
     // 资金流 60s
-    setInterval(this.requestMoneyInfo, 60 * 1000)
+    setInterval(this.requestMoneyInfoIfNeeded, 60 * 1000)
     // 涨跌平 60s
-    setInterval(this.requestZDPInfo, 60 * 1000)
+    setInterval(this.requestZDPInfoIfNeeded, 60 * 1000)
     // 指数 15s
-    setInterval(this.requestChina, 15 * 1000)
-    setInterval(this.requestAsian, 15 * 1000)
-    setInterval(this.requestEuro, 15 * 1000)
-    setInterval(this.requestAmerica, 15 * 1000)
+    setInterval(this.requestChinaIfNeeded, 15 * 1000)
+    setInterval(this.requestAsianIfNeeded, 15 * 1000)
+    setInterval(this.requestEuroIfNeeded, 15 * 1000)
+    setInterval(this.requestAmericaIfNeeded, 15 * 1000)
     // 期货&外汇 15s
-    setInterval(this.requestGoodsAndExchanges, 15 * 1000)
+    setInterval(this.requestGoodsAndExchangesIfNeeded, 15 * 1000)
   }
 }
 </script>
