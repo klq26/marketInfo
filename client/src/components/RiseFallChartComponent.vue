@@ -4,7 +4,7 @@
   <div id="zdp-bar-area">
     <!-- v-for zdp-value-box -->
       <!-- zdp-value-count +  zdp-value-bar -->
-    <div class="zdp-value-box" v-for="(value, index) in values" :key="value.index">
+    <div class="zdp-value-box" :class="{flash : isUpdating}" v-for="(value, index) in values" :key="value.index">
       <div class="zdp-value-count">{{value}}</div>
       <div class="zdp-value-bar" :class="colorByIndex(index)" :style="{height: dynamicHeight(value)}"></div>
     </div>
@@ -26,7 +26,8 @@ export default {
     return {
       labels: ['10%', '8%', '6%', '4%', '2%', '0', '-2%', '-4%', '-6%', '-8% ', '-10%'],
       // values: [118, 30, 109, 296, 1046, 1341, 662, 146, 24, 6],
-      maxValue: 0
+      maxValue: 0,
+      isUpdating: true
     }
   },
   methods: {
@@ -53,6 +54,10 @@ export default {
           }
         })
         // console.log(this.labels.reverse())
+        this.isUpdating = true
+        setTimeout(() => {
+          this.isUpdating = false
+        }, 1500)
       },
       immediate: true
     }

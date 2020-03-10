@@ -2,7 +2,7 @@
   <div>
     <div class='zdp-cell'>
       <p class="zdp-title">涨跌停板</p>
-      <div class='zdp-bar-box'>
+      <div class='zdp-bar-box' :class="{flash : isUpdating}">
         <p class="zdp-bar-up" :style="{width: dynamicWidth('zt')}">{{up}}</p>
         <p class="zdp-bar-down" :style="{width: dynamicWidth('dt')}">{{down}}</p>
       </div>
@@ -21,7 +21,8 @@ export default {
       up: 0,
       down: 0,
       upDict: {},
-      downDict: {}
+      downDict: {},
+      isUpdating: true
     }
   },
   computed: {
@@ -103,6 +104,10 @@ export default {
         this.upDict = upDict
         this.downDict = downDict
         // console.log(this.measuredInfo)
+        this.isUpdating = true
+        setTimeout(() => {
+          this.isUpdating = false
+        }, 1500)
       },
       immediate: true,
       deep: true

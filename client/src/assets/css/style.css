@@ -1,0 +1,27 @@
+/* color */
+/* size */
+/* 指数区 */
+body {
+  background-color: #000000;
+}
+/* 动画 */
+.flash {
+  animation: flash 1.2s;
+}
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

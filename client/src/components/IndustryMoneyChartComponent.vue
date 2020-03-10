@@ -1,7 +1,7 @@
 <template>
   <div>
   <div id="chart-panel">
-    <div id="industry-bar-area">
+    <div id="industry-bar-area" :class="{flash : isUpdating}">
       <div v-for="item in allItem" :key="item.index">
         <div class="industry-value-box" >
           <div class="industry-value-count">{{item.name}}</div>
@@ -24,7 +24,8 @@ export default {
       maxValue: 0,
       moneyIn: [],
       moneyOut: [],
-      allItem: []
+      allItem: [],
+      isUpdating: true
     }
   },
   methods: {
@@ -69,6 +70,10 @@ export default {
         this.moneyOut.forEach(element => {
           this.allItem.push(element)
         })
+        this.isUpdating = true
+        setTimeout(() => {
+          this.isUpdating = false
+        }, 1500)
       },
       immediate: true,
       deep: true

@@ -10,12 +10,14 @@
         <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)" v-else>
           {{formatNumber(item.dailyChangValue, demical)}}
         </p>
+        <div :class="{flash : isUpdating}">
         <p class="refresh-value" v-if="showType == 0">
           <img :src="iconWithValue(changeValueFromLastRequest(item))"/>
         </p>
         <p class="refresh-value align-right" :class="changeColorFromLastRequest(item)" v-else>
           {{changeValueFromLastRequest(item)}}
         </p>
+        </div>
       </div>
     </div>
   </div>
@@ -53,17 +55,11 @@ export default {
   },
   data () {
     return {
-      lastIndexInfos: []
+      lastIndexInfos: [],
+      isUpdating: true
     }
   },
   methods: {
-    getAnimate () {
-      if (this.showType === 0) {
-        return 'flash-animate'
-      } else {
-        return ''
-      }
-    },
     // 根据数值决定背景色
     bgColorWithValue (value) {
       if (value > 0) {
@@ -153,6 +149,10 @@ export default {
         if (typeof (oldValue) !== 'undefined') {
           this.lastIndexInfos = oldValue
         }
+        this.isUpdating = true
+        setTimeout(() => {
+          this.isUpdating = false
+        }, 1500)
       },
       immediate: true,
       deep: true

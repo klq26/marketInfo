@@ -2,7 +2,7 @@
   <div>
     <div class='zdp-cell' v-for="item in zdpinfo" :key="item.index">
       <p class="zdp-title">{{item.name}}</p>
-      <div class='zdp-bar-box'>
+      <div class='zdp-bar-box' :class="{flash : isUpdating}">
         <p class="zdp-bar-up" :style="{width: dynamicWidth(item.symbol, 'z')}">{{item.z}}</p>
         <p class="zdp-bar-equal" :style="{width: dynamicWidth(item.symbol, 'p')}">{{item.p}}</p>
         <p class="zdp-bar-down" :style="{width: dynamicWidth(item.symbol, 'd')}">{{item.d}}</p>
@@ -19,17 +19,9 @@ export default {
   ],
   data () {
     return {
-      // zdpinfo: [
-      //   {name: '全市场', symbol: 'all', 'd':2160,'p':135,'z':1495 },
-      //   {name: '中证500', symbol: 'sh000905', 'd':8,'p':49,'z':450 }
-      // ],
+      isUpdating: true,
       measuredInfo: {
-        // {
-        //   symbol:'all', 'd': {count:2160, rate:0, minWidth:0}, 'p': {count:135, rate:0, minWidth:0}, 'z': {count:1495, rate:0, minWidth:0}
-        // },
-        // {
-        //   symbol:'sh000905', 'd': {count:1, rate:0, minWidth:0}, 'p': {count:49, rate:0, minWidth:0}, 'z': {count:450, rate:0, minWidth:0}
-        // }
+
       }
     }
   },
@@ -107,6 +99,10 @@ export default {
           this.measuredInfo[symbol] = {'z': upDict, 'p': equalDict, 'd': downDict}
         }
         // console.log(this.measuredInfo)
+        this.isUpdating = true
+        setTimeout(() => {
+          this.isUpdating = false
+        }, 1500)
       },
       immediate: true,
       deep: true

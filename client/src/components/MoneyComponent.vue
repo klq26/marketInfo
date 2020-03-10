@@ -3,7 +3,7 @@
     <div>
       <div class='moneyCell' v-for="info in moneyinfo" :key="info.index">
         <p class="title">{{info.name}}</p>
-        <div class="value-area">
+        <div class="value-area" :class="{flash : isUpdating}">
           <div class="value-box" :class="bgColorWithValue(info.showType, item.value)" v-for="item in info.value" :key="item.index">
             <p class="box-name">{{item.name}}</p>
             <p class="box-value">{{setDemical(info.showType, item.value, 1)}}</p>
@@ -19,27 +19,11 @@ export default {
   props: [
     'moneyinfo'
   ],
-  // data () {
-  //   return {moneyinfo: [{
-  //     name: '沪深两市成交额（亿）',
-  //     value: [
-  //       {name: '沪', value: 12000},
-  //       {name: '深', value: 9000},
-  //       {name: '总', value: 22000},
-  //       {name: '主', value: 22000},
-  //       {name: '特', value: 220}
-  //     ],
-  //     showType: 0
-  //   }, {
-  //     name: '沪深两市看看额（亿）',
-  //     value: [
-  //       {name: '沪', value: 1200},
-  //       {name: '深', value: -9000},
-  //       {name: '总', value: 220}
-  //     ],
-  //     showType: 1
-  //   }]}
-  // },
+  data () {
+    return {
+      isUpdating: true
+    }
+  },
   methods: {
     // 根据数值决定背景色
     bgColorWithValue (showType, value) {
@@ -67,6 +51,18 @@ export default {
           return val
         }
       }
+    }
+  },
+  watch: {
+    moneyinfo: {
+      handler (newValue, oldValue) {
+        this.isUpdating = true
+        setTimeout(() => {
+          this.isUpdating = false
+        }, 1500)
+      },
+      immediate: true,
+      deep: true
     }
   }
 }
