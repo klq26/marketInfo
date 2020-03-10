@@ -10,14 +10,8 @@
 export default {
   data () {
     return {
-      datetime: {
-        type: String,
-        default: '时间'
-      },
-      weekday: {
-        type: String,
-        default: '周一'
-      }
+      datetime: 'XXXX-XX-XX XX:XX:XX',
+      weekday: '周一',
     }
   },
   methods: {
@@ -34,7 +28,6 @@ export default {
       var wk = '周' + dayTag
       this.datetime = year + '-' + month + '-' + day + ' ' + hh + ':' + mi + ':' + ss + ' '
       this.weekday = wk
-      console.log(this.datetime, this.weekday)
     },
     // 时间前置补 0
     prefixInteger (num, length) {

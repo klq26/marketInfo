@@ -11,7 +11,7 @@
           {{formatNumber(item.dailyChangValue, demical)}}
         </p>
         <p class="refresh-value" v-if="showType == 0">
-          <img :src="iconWithValue(item.dailyChangValue)"/>
+          <img :src="iconWithValue(changeValueFromLastRequest(item))"/>
         </p>
         <p class="refresh-value align-right" :class="changeColorFromLastRequest(item)" v-else>
           {{changeValueFromLastRequest(item)}}
@@ -79,9 +79,10 @@ export default {
     },
     // 根据数值决定所使用的 icon
     iconWithValue (value) {
-      if (value > 0) {
+      var val = parseFloat(value)
+      if (val > 0) {
         return iconUp
-      } else if (value === 0) {
+      } else if (val === 0.0) {
         return iconEqual
       } else {
         return iconDown
