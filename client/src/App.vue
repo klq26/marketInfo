@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- 资金区 -->
-    <SectionHeaderComponent title="大陆及沪港通资金流向" v-on:shouldShow="shouldShowMoney"/>
+    <SectionHeaderComponent title="大陆及沪港通资金流向" v-on:shouldShow="shouldShowMoney" :isOpenning="isMarketOpenning"/>
     <transition name='fade'>
       <div v-if="showMoney">
         <MoneyComponent :moneyinfo="moneyinfo"/>
@@ -10,7 +10,7 @@
       </div>
     </transition>
     <!-- 涨跌平区 -->
-    <SectionHeaderComponent title="指数涨跌分布" v-on:shouldShow="shouldShowZDP"/>
+    <SectionHeaderComponent title="指数涨跌分布" v-on:shouldShow="shouldShowZDP" :isOpenning="isZDPOpenning"/>
     <transition name='fade'>
       <div v-if="showZDP">
         <!-- 涨跌平区 -->
@@ -22,43 +22,43 @@
       </div>
     </transition>
     <!-- 指数区 -->
-    <SectionHeaderComponent title="中国大陆及港台地区" v-on:shouldShow="shouldShowChina"/>
+    <SectionHeaderComponent title="中国大陆及港台地区" v-on:shouldShow="shouldShowChina" :isOpenning="isChinaOpenning"/>
     <transition name='fade'>
       <div v-if="showChina">
         <IndexComponent :indexInfos="china"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="亚洲地区" v-on:shouldShow="shouldShowAsian"/>
+    <SectionHeaderComponent title="亚洲地区" v-on:shouldShow="shouldShowAsian" :isOpenning="isAsianOpenning"/>
     <transition name='fade'>
       <div v-if="showAsian">
         <IndexComponent :indexInfos="asian"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="欧洲地区" v-on:shouldShow="shouldShowEuro"/>
+    <SectionHeaderComponent title="欧洲地区" v-on:shouldShow="shouldShowEuro" :isOpenning="isEuroOpenning"/>
     <transition name='fade'>
       <div v-if="showEuro">
         <IndexComponent :indexInfos="euro"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="美洲地区" v-on:shouldShow="shouldShowAmerica"/>
+    <SectionHeaderComponent title="美洲地区" v-on:shouldShow="shouldShowAmerica" :isOpenning="isAmericaOpenning"/>
       <transition name='fade'>
         <div v-if="showAmerica">
           <IndexComponent :indexInfos="america"/>
         </div>
       </transition>
-    <SectionHeaderComponent title="股指及商品期货" v-on:shouldShow="shouldShowGoods"/>
+    <SectionHeaderComponent title="股指及商品期货" v-on:shouldShow="shouldShowGoods" :isOpenning="isGoodsOpenning"/>
     <transition name='fade'>
       <div v-if="showGoods">
         <IndexComponent :indexInfos="goods" :demical="3"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="外汇牌价" v-on:shouldShow="shouldShowExchanges"/>
+    <SectionHeaderComponent title="外汇牌价" v-on:shouldShow="shouldShowExchanges" :isOpenning="isExchangesOpenning"/>
       <transition name='fade'>
       <div v-if="showExchanges">
         <IndexComponent :indexInfos="exchanges" :demical="4"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="固定收益债券" v-on:shouldShow="shouldShowBond"/>
+    <SectionHeaderComponent title="固定收益债券" v-on:shouldShow="shouldShowBond" :isOpenning="isBondOpenning"/>
     <transition name='fade'>
       <div v-if="showBond">
         <IndexComponent :indexInfos="bond"/>
@@ -152,7 +152,7 @@ function timeString () {
 }
 
 // 是否处于开盘期
-function isOpenning (morningOpen, morningClose, afternoonOpen, afternoonClose) {
+function isMarketOpenning (morningOpen, morningClose, afternoonOpen, afternoonClose) {
   var todayStr = todayString('/')
   var openning = isWorkingDay && (isDuringDate(todayStr + ' ' + morningOpen, todayStr + ' ' + morningClose) || isDuringDate(todayStr + ' ' + afternoonOpen, todayStr + ' ' + afternoonClose))
   return openning
@@ -184,6 +184,7 @@ export default {
   ],
   data () {
     return {
+      // 显示隐藏面板
       showMoney: true,
       showZDP: true,
       showChina: true,
@@ -192,7 +193,17 @@ export default {
       showAmerica: true,
       showGoods: true,
       showExchanges: true,
-      showBond: true
+      showBond: true,
+      // 是否开盘
+      isMoneyOpenning: true,
+      isZDPOpenning: true,
+      isChinaOpenning: true,
+      isAsianOpenning: true,
+      isEuroOpenning: true,
+      isAmericaOpenning: true,
+      isGoodsOpenning: true,
+      isExchangesOpenning: true,
+      isBondOpenning: true
     }
   },
   methods: {
@@ -226,8 +237,10 @@ export default {
     },
     /* 网络请求 */
     // 请求资金数据
-    requestMoneyInfo (isForce = false) {
-      if (isForce || isOpenning('9:00', '11:35', '13:00', '16:20')) {
+    requestMoneyInfoIfNeeded (isForce = false) {
+      var isOpenning = isMarketOpenning('9:00', '11:35', '13:00', '16:20')
+      this.isMoneyOpenning = isOpenning
+      if (isForce || isOpenning) {
         var that = this
         this.$axios.get('http://112.125.25.230/api/moneyinfo').then(function (response) {
           that.moneyinfo = response.data.data
@@ -243,8 +256,10 @@ export default {
         console.log('资金数据未开盘')
       }
     },
-    requestZDPInfo (isForce = false) {
-      if (isForce || isOpenning('9:25', '11:35', '13:00', '15:05')) {
+    requestZDPInfoIfNeeded (isForce = false) {
+      var isOpenning = isMarketOpenning('9:25', '11:35', '13:00', '15:05')
+      this.isZDPOpenning = isOpenning
+      if (isForce || isOpenning) {
         var that = this
         // 请求涨跌数据
         this.$axios.get('http://112.125.25.230/api/zdpinfo').then(function (response) {
@@ -259,8 +274,10 @@ export default {
         console.log('涨跌平数据未开盘')
       }
     },
-    requestChina (isForce = false) {
-      if (isForce || isOpenning('9:00', '11:35', '13:00', '16:20')) {
+    requestChinaIfNeeded (isForce = false) {
+      var isOpenning = isMarketOpenning('9:00', '11:35', '13:00', '16:20')
+      this.isChinaOpenning = isOpenning
+      if (isForce || isOpenning) {
         var that = this
         // 请求中国
         this.$axios.get('http://112.125.25.230/api/indexs/china').then(function (response) {
@@ -270,8 +287,10 @@ export default {
         console.log('中国未开盘')
       }
     },
-    requestAsian (isForce = false) {
-      if (isForce || isOpenning('9:00', '11:35', '13:00', '16:20')) {
+    requestAsianIfNeeded (isForce = false) {
+      var isOpenning = isMarketOpenning('9:00', '11:35', '13:00', '16:20')
+      this.isAsianOpenning = isOpenning
+      if (isForce || isOpenning) {
         var that = this
         // 请求亚洲
         this.$axios.get('http://112.125.25.230/api/indexs/asian').then(function (response) {
@@ -281,8 +300,10 @@ export default {
         console.log('亚洲未开盘')
       }
     },
-    requestEuro (isForce = false) {
-      if (isForce || isOpenning('16:00', '23:59', '00:00', '2:30')) {
+    requestEuroIfNeeded (isForce = false) {
+      var isOpenning = isMarketOpenning('16:00', '23:59', '00:00', '2:30')
+      this.isEuroOpenning = isOpenning
+      if (isForce || isOpenning) {
         var that = this
         // 请求欧洲
         this.$axios.get('http://112.125.25.230/api/indexs/euro').then(function (response) {
@@ -292,10 +313,12 @@ export default {
         console.log('欧洲未开盘')
       }
     },
-    requestAmerica (isForce = false) {
+    requestAmericaIfNeeded (isForce = false) {
       // 夏令时（3月-11月）为北京时间21:30-次日4:00，交易时长6个半小时，中间无休。
       // 冬令时（11月-次年3月）为北京时间22:30-次日5:00，交易时长6个半小时，中间无休。
-      if (isForce || isOpenning('21:25', '23:59', '00:00', '4:05')) {
+      var isOpenning = isMarketOpenning('21:25', '23:59', '00:00', '4:05')
+      this.isAmericaOpenning = isOpenning
+      if (isForce || isOpenning) {
         var that = this
         // 请求美洲
         this.$axios.get('http://112.125.25.230/api/indexs/america').then(function (response) {
@@ -305,7 +328,7 @@ export default {
         console.log('美洲未开盘')
       }
     },
-    requestGoodsAndExchanges (isForce = false) {
+    requestGoodsAndExchangesIfNeeded (isForce = false) {
       var that = this
       // 请求期货&外汇
       this.$axios.get('http://112.125.25.230/api/goods_and_exchanges').then(function (response) {
@@ -313,7 +336,7 @@ export default {
         that.exchanges = response.data.data.exchanges
       })
     },
-    requestBondInfo (isForce = false) {
+    requestBondInfoIfNeeded (isForce = false) {
       var that = this
       // 债券&组合
       this.$axios.get('http://112.125.25.230/api/bondinfo').then(function (response) {
@@ -334,14 +357,14 @@ export default {
     // 是否工作日
     todayIsWorkingDay()
     // 初始化数据
-    this.requestMoneyInfo(true)
-    this.requestZDPInfo(true)
-    this.requestChina(true)
-    this.requestAsian(true)
-    this.requestEuro(true)
-    this.requestAmerica(true)
-    this.requestGoodsAndExchanges(true)
-    this.requestBondInfo(true)
+    this.requestMoneyInfoIfNeeded(true)
+    this.requestZDPInfoIfNeeded(true)
+    this.requestChinaIfNeeded(true)
+    this.requestAsianIfNeeded(true)
+    this.requestEuroIfNeeded(true)
+    this.requestAmericaIfNeeded(true)
+    this.requestGoodsAndExchangesIfNeeded(true)
+    this.requestBondInfoIfNeeded(true)
     // 定时刷新
     // 显示时间 1s
     // setInterval(showtime, 1000)

@@ -100,7 +100,7 @@ export default {
     },
     // 返回与上次刷新变化值的颜色
     changeColorFromLastRequest (item) {
-      var lastValue = undefined
+      var lastValue
       for (var index in this.lastIndexInfos) {
         var indexItem = this.lastIndexInfos[index]
         if (indexItem.indexCode === item.indexCode) {
@@ -117,7 +117,7 @@ export default {
     },
     // 返回与上次刷新变化值的值
     changeValueFromLastRequest (item) {
-      var lastValue = undefined
+      var lastValue
       for (var index in this.lastIndexInfos) {
         var indexItem = this.lastIndexInfos[index]
         if (indexItem.indexCode === item.indexCode) {
@@ -134,13 +134,13 @@ export default {
     },
     // 改变显示样式
     changShowType () {
-      this.showType = this.showType != 0 ? 0 : 1
+      this.showType = this.showType !== 0 ? 0 : 1
     }
   },
   watch: {
     indexInfos: {
       handler (newValue, oldValue) {
-        if (typeof (oldValue) != 'undefined') {
+        if (typeof (oldValue) !== 'undefined') {
           this.lastIndexInfos = oldValue
         }
       },
