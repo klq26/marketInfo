@@ -11,7 +11,7 @@ export default {
   data () {
     return {
       datetime: 'XXXX-XX-XX XX:XX:XX',
-      weekday: '周一',
+      weekday: '周一'
     }
   },
   methods: {

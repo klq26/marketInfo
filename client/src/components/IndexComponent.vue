@@ -3,7 +3,7 @@
     <div v-for="item in indexInfos" :key="item.index">
       <div class='indexCell'>
         <p>{{item.indexName}}</p>
-        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)">{{formatNumber(item.current, demical) }}</p>
+        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)">{{formatNumber(item.current, demical)}}</p>
         <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)" v-if="showType == 0">
           {{item.dailyChangRate}}
         </p>
@@ -57,6 +57,13 @@ export default {
     }
   },
   methods: {
+    getAnimate () {
+      if (this.showType === 0) {
+        return 'flash-animate'
+      } else {
+        return ''
+      }
+    },
     // 根据数值决定背景色
     bgColorWithValue (value) {
       if (value > 0) {
