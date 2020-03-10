@@ -98,6 +98,7 @@ export default {
       }
       return number
     },
+    // 返回与上次刷新变化值的颜色
     changeColorFromLastRequest (item) {
       var lastValue = undefined
       for (var index in this.lastIndexInfos) {
@@ -114,6 +115,7 @@ export default {
         return this.textColorWithValue(change)
       }
     },
+    // 返回与上次刷新变化值的值
     changeValueFromLastRequest (item) {
       var lastValue = undefined
       for (var index in this.lastIndexInfos) {
@@ -130,6 +132,7 @@ export default {
         return this.formatNumber(change, this.demical, true)
       }
     },
+    // 改变显示样式
     changShowType () {
       this.showType = this.showType != 0 ? 0 : 1
     }
