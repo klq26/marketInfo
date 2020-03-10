@@ -25,43 +25,43 @@
     <SectionHeaderComponent title="中国大陆及港台地区" v-on:shouldShow="shouldShowChina"/>
     <transition name='fade'>
       <div v-if="showChina">
-        <IndexComponent :indexInfos="china" :showType="0"/>
+        <IndexComponent :indexInfos="china"/>
       </div>
     </transition>
     <SectionHeaderComponent title="亚洲地区" v-on:shouldShow="shouldShowAsian"/>
     <transition name='fade'>
       <div v-if="showAsian">
-        <IndexComponent :indexInfos="asian" :showType="0"/>
+        <IndexComponent :indexInfos="asian"/>
       </div>
     </transition>
     <SectionHeaderComponent title="欧洲地区" v-on:shouldShow="shouldShowEuro"/>
     <transition name='fade'>
       <div v-if="showEuro">
-        <IndexComponent :indexInfos="euro" :showType="0"/>
+        <IndexComponent :indexInfos="euro"/>
       </div>
     </transition>
     <SectionHeaderComponent title="美洲地区" v-on:shouldShow="shouldShowAmerica"/>
       <transition name='fade'>
         <div v-if="showAmerica">
-          <IndexComponent :indexInfos="america" :showType="0"/>
+          <IndexComponent :indexInfos="america"/>
         </div>
       </transition>
     <SectionHeaderComponent title="股指及商品期货" v-on:shouldShow="shouldShowGoods"/>
     <transition name='fade'>
       <div v-if="showGoods">
-        <IndexComponent :indexInfos="goods" :showType="0"/>
+        <IndexComponent :indexInfos="goods" :demical="3"/>
       </div>
     </transition>
     <SectionHeaderComponent title="外汇牌价" v-on:shouldShow="shouldShowExchanges"/>
       <transition name='fade'>
       <div v-if="showExchanges">
-        <IndexComponent :indexInfos="exchanges" :showType="0"/>
+        <IndexComponent :indexInfos="exchanges" :demical="4"/>
       </div>
     </transition>
     <SectionHeaderComponent title="固定收益债券" v-on:shouldShow="shouldShowBond"/>
     <transition name='fade'>
       <div v-if="showBond">
-        <IndexComponent :indexInfos="bond" :showType="0"/>
+        <IndexComponent :indexInfos="bond"/>
       </div>
     </transition>
   </div>
@@ -90,6 +90,73 @@ import IndexComponent from './components/IndexComponent'
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 
+/* 非对象函数 */
+
+// 是否工作日
+var isWorkingDay = true
+
+// 时间前置补 0
+function prefixInteger (num, length) {
+  return (Array(length).join('0') + num).slice(-length)
+}
+
+// 判断是否在某一时间段之内
+function isDuringDate (beginDateStr, endDateStr) {
+  var curDate = new Date()
+  var beginDate = new Date(beginDateStr)
+  var endDate = new Date(endDateStr)
+  if (curDate >= beginDate && curDate <= endDate) {
+    return true
+  }
+  return false
+}
+
+// 判断今天是不是工作日
+function todayIsWorkingDay () {
+  axios.get('http://112.125.25.230/api/today').then(function (response) {
+    let dayType = response.data['data']['weekday']
+    if (dayType === '1') {
+      isWorkingDay = true
+    } else {
+      isWorkingDay = false
+    }
+  })
+  return true
+}
+
+// 今天日期字符串(2020/01/01 或 20200101)
+function todayString (sep = '') {
+  var date = new Date()
+  // yesterdayString
+  // date.setTime(date.getTime() - 24*60*60*1000)
+  // tomorrowString
+  // date.setTime(date.getTime() + 24*60*60*1000)
+  var year = date.getFullYear()
+  var month = prefixInteger(date.getMonth() + 1, 2)
+  var day = prefixInteger(date.getDate(), 2)
+  return year + sep + month + sep + day
+}
+
+// 显示时间
+function timeString () {
+  var date = new Date()
+  var year = date.getFullYear()
+  var month = prefixInteger(date.getMonth() + 1, 2)
+  var day = prefixInteger(date.getDate(), 2)
+  var hh = prefixInteger(date.getHours(), 2)
+  var mi = prefixInteger(date.getMinutes(), 2)
+  var ss = prefixInteger(date.getSeconds(), 2)
+  var dayTag = '日一二三四五六'.charAt(date.getDay())
+  var wk = '周' + dayTag
+  return year + '-' + month + '-' + day + ' ' + hh + ':' + mi + ':' + ss + ' ' + wk
+}
+
+// 是否处于开盘期
+function isOpenning (morningOpen, morningClose, afternoonOpen, afternoonClose) {
+  var todayStr = todayString('/')
+  var openning = isWorkingDay && (isDuringDate(todayStr + ' ' + morningOpen, todayStr + ' ' + morningClose) || isDuringDate(todayStr + ' ' + afternoonOpen, todayStr + ' ' + afternoonClose))
+  return openning
+}
 export default {
   name: 'App',
   components: {
@@ -129,6 +196,7 @@ export default {
     }
   },
   methods: {
+    /* 显示隐藏分区 */
     shouldShowMoney () {
       this.showMoney = !this.showMoney
     },
@@ -155,64 +223,139 @@ export default {
     },
     shouldShowBond () {
       this.showBond = !this.showBond
+    },
+    /* 网络请求 */
+    // 请求资金数据
+    requestMoneyInfo (isForce = false) {
+      if (isForce || isOpenning('9:00', '11:35', '13:00', '16:20')) {
+        var that = this
+        this.$axios.get('http://112.125.25.230/api/moneyinfo').then(function (response) {
+          that.moneyinfo = response.data.data
+          // 行业资金净流入用图标表示
+          that.industryMoneyInfo = that.moneyinfo.pop(-1)
+          // 两市成交额与融资融券是0，显示灰底。其他是1，显示涨跌底色
+          var showTypes = [0, 0, 1, 1, 1]
+          for (var index in that.moneyinfo) {
+            that.moneyinfo[index].showType = showTypes[index]
+          }
+        })
+      } else {
+        console.log('资金数据未开盘')
+      }
+    },
+    requestZDPInfo (isForce = false) {
+      if (isForce || isOpenning('9:25', '11:35', '13:00', '15:05')) {
+        var that = this
+        // 请求涨跌数据
+        this.$axios.get('http://112.125.25.230/api/zdpinfo').then(function (response) {
+          // 指数涨跌平
+          that.zdpinfo = response.data.data[2].value
+          // 全市场涨跌停
+          that.zdt = response.data.data[1].value
+          // 全市场涨跌分布
+          that.zdfb = response.data.data[0].value
+        })
+      } else {
+        console.log('涨跌平数据未开盘')
+      }
+    },
+    requestChina (isForce = false) {
+      if (isForce || isOpenning('9:00', '11:35', '13:00', '16:20')) {
+        var that = this
+        // 请求中国
+        this.$axios.get('http://112.125.25.230/api/indexs/china').then(function (response) {
+          that.china = response.data.data
+        })
+      } else {
+        console.log('中国未开盘')
+      }
+    },
+    requestAsian (isForce = false) {
+      if (isForce || isOpenning('9:00', '11:35', '13:00', '16:20')) {
+        var that = this
+        // 请求亚洲
+        this.$axios.get('http://112.125.25.230/api/indexs/asian').then(function (response) {
+          that.asian = response.data.data
+        })
+      } else {
+        console.log('亚洲未开盘')
+      }
+    },
+    requestEuro (isForce = false) {
+      if (isForce || isOpenning('16:00', '23:59', '00:00', '2:30')) {
+        var that = this
+        // 请求欧洲
+        this.$axios.get('http://112.125.25.230/api/indexs/euro').then(function (response) {
+          that.euro = response.data.data
+        })
+      } else {
+        console.log('欧洲未开盘')
+      }
+    },
+    requestAmerica (isForce = false) {
+      // 夏令时（3月-11月）为北京时间21:30-次日4:00，交易时长6个半小时，中间无休。
+      // 冬令时（11月-次年3月）为北京时间22:30-次日5:00，交易时长6个半小时，中间无休。
+      if (isForce || isOpenning('21:25', '23:59', '00:00', '4:05')) {
+        var that = this
+        // 请求美洲
+        this.$axios.get('http://112.125.25.230/api/indexs/america').then(function (response) {
+          that.america = response.data.data
+        })
+      } else {
+        console.log('美洲未开盘')
+      }
+    },
+    requestGoodsAndExchanges (isForce = false) {
+      var that = this
+      // 请求期货&外汇
+      this.$axios.get('http://112.125.25.230/api/goods_and_exchanges').then(function (response) {
+        that.goods = response.data.data.goods
+        that.exchanges = response.data.data.exchanges
+      })
+    },
+    requestBondInfo (isForce = false) {
+      var that = this
+      // 债券&组合
+      this.$axios.get('http://112.125.25.230/api/bondinfo').then(function (response) {
+        that.bond = []
+        for (var item in response.data.data[0].value) {
+          that.bond.push(response.data.data[0].value[item])
+        }
+        for (item in response.data.data[1].value) {
+          that.bond.push(response.data.data[1].value[item])
+        }
+        for (item in response.data.data[2].value) {
+          that.bond.push(response.data.data[2].value[item])
+        }
+      })
     }
   },
   created: function () {
-    var that = this
-    // 请求资金数据
-    this.$axios.get('http://112.125.25.230/api/moneyinfo').then(function (response) {
-      that.moneyinfo = response.data.data
-      // 行业资金净流入用图标表示
-      that.industryMoneyInfo = that.moneyinfo.pop(-1)
-      // 两市成交额与融资融券是0，显示灰底。其他是1，显示涨跌底色
-      var showTypes = [0, 0, 1, 1, 1]
-      for (var index in that.moneyinfo) {
-        that.moneyinfo[index].showType = showTypes[index]
-      }
-    })
-    // 请求涨跌数据
-    this.$axios.get('http://112.125.25.230/api/zdpinfo').then(function (response) {
-      // 指数涨跌平
-      that.zdpinfo = response.data.data[2].value
-      // 全市场涨跌停
-      that.zdt = response.data.data[1].value
-      // 全市场涨跌分布
-      that.zdfb = response.data.data[0].value
-    })
-    // 请求中国
-    this.$axios.get('http://112.125.25.230/api/indexs/china').then(function (response) {
-      that.china = response.data.data
-    })
-    // 请求亚洲
-    this.$axios.get('http://112.125.25.230/api/indexs/asian').then(function (response) {
-      that.asian = response.data.data
-    })
-    // 请求欧洲
-    this.$axios.get('http://112.125.25.230/api/indexs/euro').then(function (response) {
-      that.euro = response.data.data
-    })
-    // 请求美洲
-    this.$axios.get('http://112.125.25.230/api/indexs/america').then(function (response) {
-      that.america = response.data.data
-    })
-    // 请求期货&外汇
-    this.$axios.get('http://112.125.25.230/api/goods_and_exchanges').then(function (response) {
-      that.goods = response.data.data.goods
-      that.exchanges = response.data.data.exchanges
-    })
-    // 债券&组合
-    this.$axios.get('http://112.125.25.230/api/bondinfo').then(function (response) {
-      that.bond = []
-      for (var item in response.data.data[0].value) {
-        that.bond.push(response.data.data[0].value[item])
-      }
-      for (item in response.data.data[1].value) {
-        that.bond.push(response.data.data[1].value[item])
-      }
-      for (item in response.data.data[2].value) {
-        that.bond.push(response.data.data[2].value[item])
-      }
-    })
+    // 是否工作日
+    todayIsWorkingDay()
+    // 初始化数据
+    this.requestMoneyInfo(true)
+    this.requestZDPInfo(true)
+    this.requestChina(true)
+    this.requestAsian(true)
+    this.requestEuro(true)
+    this.requestAmerica(true)
+    this.requestGoodsAndExchanges(true)
+    this.requestBondInfo(true)
+    // 定时刷新
+    // 显示时间 1s
+    // setInterval(showtime, 1000)
+    // 资金流 60s
+    setInterval(this.requestMoneyInfo, 60 * 1000)
+    // 涨跌平 60s
+    setInterval(this.requestZDPInfo, 60 * 1000)
+    // 指数 15s
+    setInterval(this.requestChina, 15 * 1000)
+    setInterval(this.requestAsian, 15 * 1000)
+    setInterval(this.requestEuro, 15 * 1000)
+    setInterval(this.requestAmerica, 15 * 1000)
+    // 期货&外汇 15s
+    setInterval(this.requestGoodsAndExchanges, 15 * 1000)
   }
 }
 </script>

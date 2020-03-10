@@ -1,15 +1,20 @@
 <template>
-  <div>
+  <div @click="changShowType()">
     <div v-for="item in indexInfos" :key="item.index">
       <div class='indexCell'>
         <p>{{item.indexName}}</p>
-        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)">{{setDemical(item.current, 2) }}</p>
-        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)">{{item.dailyChangRate}}</p>
+        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)">{{formatNumber(item.current, demical) }}</p>
+        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)" v-if="showType == 0">
+          {{item.dailyChangRate}}
+        </p>
+        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)" v-else>
+          {{formatNumber(item.dailyChangValue, demical)}}
+        </p>
         <p class="refresh-value" v-if="showType == 0">
           <img :src="iconWithValue(item.dailyChangValue)"/>
         </p>
-        <p class="refresh-value" v-else>
-          {{setDemical(item.dailyChangValue, 2)}}
+        <p class="refresh-value align-right" :class="changeColorFromLastRequest(item)" v-else>
+          {{changeValueFromLastRequest(item)}}
         </p>
       </div>
     </div>
@@ -30,45 +35,25 @@ Vue.config.productionTip = false
 
 export default {
   name: 'IndexComponent',
-  props: [
-    // 'indexName',
-    // 'indexCode',
-    // 'current',
-    // 'lastClose',
-    // 'dailyChangValue',
-    // 'dailyChangRate'
-    'indexInfos',
-    'showType'
-  ],
-  // data () {
-  //   return {
-  //     indexInfos: [{
-  //       indexName: '中证500',
-  //       indexCode: '399905',
-  //       current: 5800.34,
-  //       lastClose: 5789.53,
-  //       dailyChangValue: 20.13,
-  //       dailyChangRate: '0.28%',
-  //       showType: 1
-  //     }, {
-  //       indexName: '中证1000',
-  //       indexCode: '000852',
-  //       current: 15800.01,
-  //       lastClose: 15789.53,
-  //       dailyChangValue: -120.13,
-  //       dailyChangRate: '-0.28%',
-  //       showType: 1
-  //     }, {
-  //       indexName: '等权800',
-  //       indexCode: '000842',
-  //       current: 8800.099,
-  //       lastClose: 7789.53,
-  //       dailyChangValue: 0,
-  //       dailyChangRate: '0%',
-  //       showType: 1
-  //     }]
-  //   }
-  // },
+  props: {
+    indexInfos: {
+      type: Array,
+      default: []
+    },
+    showType: {
+      type: Number,
+      default: 0
+    },
+    demical: {
+      type: Number,
+      default: 2
+    }
+  },
+  data () {
+    return {
+      lastIndexInfos: []
+    }
+  },
   methods: {
     // 根据数值决定背景色
     bgColorWithValue (value) {
@@ -78,6 +63,16 @@ export default {
         return 'normal-color'
       } else {
         return 'fall-color'
+      }
+    },
+    // 文字颜色
+    textColorWithValue (value) {
+      if (value > 0) {
+        return 'rise-text-color'
+      } else if (value === 0) {
+        return 'normal-text-color'
+      } else {
+        return 'fall-text-color'
       }
     },
     // 根据数值决定所使用的 icon
@@ -90,18 +85,66 @@ export default {
         return iconDown
       }
     },
-    // 设置数值显示精度（保留小数点后几位）
-    setDemical (value, demical) {
-      return parseFloat(value).toFixed(demical)
+    // 设置数值显示精度（保留小数点后几位）以及正负号
+    formatNumber (value, demical, needPlusMark = false) {
+      var number = parseFloat(value).toFixed(demical)
+      var hasPercent = String(value).indexOf('%') > 0
+      var isPositive = number > 0
+      if (needPlusMark) {
+        number = (isPositive ? '+' : '') + number
+      }
+      if (hasPercent) {
+        number = number + '%'
+      }
+      return number
+    },
+    changeColorFromLastRequest (item) {
+      var lastValue = undefined
+      for (var index in this.lastIndexInfos) {
+        var indexItem = this.lastIndexInfos[index]
+        if (indexItem.indexCode === item.indexCode) {
+          lastValue = indexItem
+          break
+        }
+      }
+      if (lastValue === undefined) {
+        return this.textColorWithValue(0)
+      } else {
+        var change = parseFloat(item.current) - parseFloat(lastValue.current)
+        return this.textColorWithValue(change)
+      }
+    },
+    changeValueFromLastRequest (item) {
+      var lastValue = undefined
+      for (var index in this.lastIndexInfos) {
+        var indexItem = this.lastIndexInfos[index]
+        if (indexItem.indexCode === item.indexCode) {
+          lastValue = indexItem
+          break
+        }
+      }
+      if (lastValue === undefined) {
+        return this.formatNumber(0, this.demical, true)
+      } else {
+        var change = parseFloat(item.current) - parseFloat(lastValue.current)
+        return this.formatNumber(change, this.demical, true)
+      }
+    },
+    changShowType () {
+      this.showType = this.showType != 0 ? 0 : 1
+    }
+  },
+  watch: {
+    indexInfos: {
+      handler (newValue, oldValue) {
+        if (typeof (oldValue) != 'undefined') {
+          this.lastIndexInfos = oldValue
+        }
+      },
+      immediate: true,
+      deep: true
     }
   }
-  // created: function() {
-  //   this.$axios.get('http://112.125.25.230/api/indexs/china').then(function (response) {
-  //     console.log(response.data.data)
-  //     this.$indexInfos = response.data.data
-  //   });
-  // }
-
 }
 </script>
 
@@ -119,6 +162,15 @@ export default {
 }
 .fall-color {
   background-color: @app-fall-color;
+}
+.normal-text-color {
+  color: @index-title-text-color;
+}
+.rise-text-color {
+  color: @app-rise-color;
+}
+.fall-text-color {
+  color: @app-fall-color;
 }
 
 // 指数容器（整行）
@@ -150,10 +202,9 @@ p {
   width: @index-value-width;
 }
 
-.refresh-value:extend(p) {
+.refresh-value {
   background-color: @index-refresh-change-bg-color;
   width: @index-value-width;
-  text-align: center;
 }
 
 // icon 尺寸

@@ -43,7 +43,6 @@ export default {
   watch: {
     industryMoneyInfo: {
       handler (newValue, oldValue) {
-        console.log(newValue)
         // 取出最大值
         this.maxValue = 0
         this.moneyIn = []
