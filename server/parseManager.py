@@ -401,14 +401,49 @@ class parseManager:
                     parsedData.append(data)
             else:
                 parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
+
+        # 离岸人民币
         USDCNH = parsedData.pop(0)
+        # COMEX 黄金
+        COMEX_GC = parsedData[1]
+        # COMEX 白银
+        COMEX_SI = parsedData[2]
+        # COMEX 黄金白银的单位是金衡盎司，1金衡盎司 = 31.1034768克
+        # 期货新增工行纸黄金
+        cnGold = indexModel()
+        cnGold.indexCode = 'GOLD'
+        cnGold.indexName = '工行纸黄金'
+        cnGold.indexArea = '期货'
+        cnGold.current = round(float(COMEX_GC['current']) / 31.1034768 * float(USDCNH['current']), 4)
+        cnGold.lastClose = round(float(COMEX_GC['lastClose']) / 31.1034768 * float(USDCNH['lastClose']), 4)
+        cnGold.dailyChangRate = '{0:.2f}%'.format(
+                    round(float((cnGold.current / cnGold.lastClose - 1) * 100), 2))
+        cnGold.dailyChangValue = round(float(cnGold.current - cnGold.lastClose), 4)
+        cnGold.dealMoney = 0.0
+        cnGold.sequence = 0
+        # 纸黄金挪到第四位
+        parsedData.insert(3,cnGold.__dict__)
+        # 期货新增工行纸白银
+        cnSilver = indexModel()
+        cnSilver.indexCode = 'SILVER'
+        cnSilver.indexName = '工行纸白银'
+        cnSilver.indexArea = '期货'
+        cnSilver.current = round(float(COMEX_SI['current']) / 31.1034768 * float(USDCNH['current']), 4)
+        cnSilver.lastClose = round(float(COMEX_SI['lastClose']) / 31.1034768 * float(USDCNH['lastClose']), 4)
+        cnSilver.dailyChangRate = '{0:.2f}%'.format(
+                    round(float((cnSilver.current / cnSilver.lastClose - 1) * 100), 2))
+        cnSilver.dailyChangValue = round(float(cnSilver.current - cnSilver.lastClose), 4)
+        cnSilver.dealMoney = 0.0
+        cnSilver.sequence = 0
+        # 纸白银挪到第五位
+        parsedData.insert(4,cnSilver.__dict__)
         # 离岸人民币挪到第五位
-        parsedData.insert(4,USDCNH)
+        parsedData.insert(6,USDCNH)
         # 分组（goods & exchanges）
-        goods = parsedData[0:4]
+        goods = parsedData[0:6]
         for i in range(0,len(goods)):
             goods[i]['sequence'] = i
-        exchanges = parsedData[4:len(parsedData)]
+        exchanges = parsedData[6:len(parsedData)]
         for i in range(0,len(exchanges)):
             exchanges[i]['sequence'] = i
 
