@@ -59,7 +59,7 @@ class requestsManager:
 
     def getIndexInfos(self, area):
         # 可选区域
-        areaGroup = ['china', 'asian', 'euro', 'america']
+        areaGroup = ['china', 'asian', 'euro', 'america','australia']
         if area == '' or area.lower() not in areaGroup:
             return {}
         else:
@@ -76,6 +76,9 @@ class requestsManager:
             elif area.lower() == 'america':
                 # 请求美洲数据
                 responseText = self.requestAmericaIndexs()
+            elif area.lower() == 'australia':
+                # 请求澳洲数据
+                responseText = self.requestAustraliaIndexs()
             return responseText
     
     # 请求中国
@@ -130,6 +133,19 @@ class requestsManager:
         else:
             return ''
     
+    # 请求澳洲
+    def requestAustraliaIndexs(self):
+        url = "http://87.push2.eastmoney.com/api/qt/ulist.np/get?cb=updateIndexInfos&np=1&pi=0&pz=40&po=1&secids=100.AORD%2C100.NZ50&fields=f14,f12,f2,f4,f3,f18,f6"
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        response = requests.get(url, headers=self.headers, verify=False)
+        if response.status_code == 200:
+            # print(response.text)
+            result = response.text.replace('updateIndexInfos(','').replace(');','')
+            print(result)
+            return result
+        else:
+            return ''
+
     # ////////////////////////////////////////////////////////////////////////////////////////
     # 请求期货&外汇数据
     # ////////////////////////////////////////////////////////////////////////////////////////

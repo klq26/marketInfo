@@ -2,7 +2,7 @@
   <div id="app">
     <TimeComponent />
     <!-- 资金区 -->
-    <SectionHeaderComponent title="大陆及沪港通资金流向" v-on:shouldShow="shouldShowMoney" :isOpenning="isMoneyOpenning"/>
+    <SectionHeaderComponent title="资金" v-on:shouldShow="shouldShowMoney" :isOpenning="isMoneyOpenning"/>
     <transition name='fade'>
       <div v-if="showMoney">
         <MoneyComponent :moneyinfo="moneyinfo"/>
@@ -11,7 +11,7 @@
       </div>
     </transition>
     <!-- 涨跌平区 -->
-    <SectionHeaderComponent title="指数涨跌分布" v-on:shouldShow="shouldShowZDP" :isOpenning="isZDPOpenning"/>
+    <SectionHeaderComponent title="涨跌" v-on:shouldShow="shouldShowZDP" :isOpenning="isZDPOpenning"/>
     <transition name='fade'>
       <div v-if="showZDP">
         <!-- 涨跌平区 -->
@@ -23,43 +23,49 @@
       </div>
     </transition>
     <!-- 指数区 -->
-    <SectionHeaderComponent title="中国大陆及港台地区" v-on:shouldShow="shouldShowChina" :isOpenning="isChinaOpenning"/>
+    <SectionHeaderComponent title="中国" v-on:shouldShow="shouldShowChina" :isOpenning="isChinaOpenning"/>
     <transition name='fade'>
       <div v-if="showChina">
         <IndexComponent :indexInfos="china"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="亚洲地区" v-on:shouldShow="shouldShowAsian" :isOpenning="isAsianOpenning"/>
+    <SectionHeaderComponent title="澳洲" v-on:shouldShow="shouldShowAustralia" :isOpenning="isAustraliaOpenning"/>
+    <transition name='fade'>
+      <div v-if="showAustralia">
+        <IndexComponent :indexInfos="australia"/>
+      </div>
+    </transition>
+    <SectionHeaderComponent title="亚洲" v-on:shouldShow="shouldShowAsian" :isOpenning="isAsianOpenning"/>
     <transition name='fade'>
       <div v-if="showAsian">
         <IndexComponent :indexInfos="asian"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="欧洲地区" v-on:shouldShow="shouldShowEuro" :isOpenning="isEuroOpenning"/>
+    <SectionHeaderComponent title="欧洲" v-on:shouldShow="shouldShowEuro" :isOpenning="isEuroOpenning"/>
     <transition name='fade'>
       <div v-if="showEuro">
         <IndexComponent :indexInfos="euro"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="美洲地区" v-on:shouldShow="shouldShowAmerica" :isOpenning="isAmericaOpenning"/>
+    <SectionHeaderComponent title="美洲" v-on:shouldShow="shouldShowAmerica" :isOpenning="isAmericaOpenning"/>
       <transition name='fade'>
         <div v-if="showAmerica">
           <IndexComponent :indexInfos="america"/>
         </div>
       </transition>
-    <SectionHeaderComponent title="股指及商品期货" v-on:shouldShow="shouldShowGoods" :isOpenning="isGoodsOpenning"/>
+    <SectionHeaderComponent title="期货" v-on:shouldShow="shouldShowGoods" :isOpenning="isGoodsOpenning"/>
     <transition name='fade'>
       <div v-if="showGoods">
         <IndexComponent :indexInfos="goods" :demical="3"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="外汇牌价" v-on:shouldShow="shouldShowExchanges" :isOpenning="isExchangesOpenning"/>
+    <SectionHeaderComponent title="外汇" v-on:shouldShow="shouldShowExchanges" :isOpenning="isExchangesOpenning"/>
       <transition name='fade'>
       <div v-if="showExchanges">
         <IndexComponent :indexInfos="exchanges" :demical="4"/>
       </div>
     </transition>
-    <SectionHeaderComponent title="固定收益债券" v-on:shouldShow="shouldShowBond" :isOpenning="isBondOpenning"/>
+    <SectionHeaderComponent title="固收" v-on:shouldShow="shouldShowBond" :isOpenning="isBondOpenning"/>
     <transition name='fade'>
       <div v-if="showBond">
         <IndexComponent :indexInfos="bond"/>
@@ -119,7 +125,7 @@ function isDuringDate (beginDateStr, endDateStr) {
 
 // 判断今天是不是工作日
 function todayIsWorkingDay () {
-  axios.get('api/today').then(function (response) {
+  axios.get(server_ip + 'api/today').then(function (response) {
     let dayType = response.data['data']['weekday']
     if (dayType === '1') {
       isWorkingDay = true
@@ -168,6 +174,7 @@ export default {
     'zdfb',
     'industryMoneyInfo',
     'china',
+    'australia',
     'asian',
     'euro',
     'america',
@@ -182,6 +189,7 @@ export default {
       showZDP: true,
       showChina: true,
       showAsian: true,
+      showAustralia: true,
       showEuro: true,
       showAmerica: true,
       showGoods: true,
@@ -191,6 +199,7 @@ export default {
       isMoneyOpenning: true,
       isZDPOpenning: true,
       isChinaOpenning: true,
+      isAustraliaOpenning: true,
       isAsianOpenning: true,
       isEuroOpenning: true,
       isAmericaOpenning: true,
@@ -209,6 +218,9 @@ export default {
     },
     shouldShowChina () {
       this.showChina = !this.showChina
+    },
+    shouldShowAustralia () {
+      this.showAustralia = !this.showAustralia
     },
     shouldShowAsian () {
       this.showAsian = !this.showAsian
@@ -278,6 +290,19 @@ export default {
         })
       } else {
         console.log('中国未开盘')
+      }
+    },
+    requestAustraliaIfNeeded (isForce = false) {
+      var isOpenning = isMarketOpenning('6:00', '14:00', '6:00', '14:00')
+      this.isAustraliaOpenning = isOpenning
+      if (isForce || isOpenning) {
+        var that = this
+        // 请求亚洲
+        this.$axios.get(server_ip + 'api/indexs/australia').then(function (response) {
+          that.australia = response.data.data
+        })
+      } else {
+        console.log('亚洲未开盘')
       }
     },
     requestAsianIfNeeded (isForce = false) {
@@ -353,6 +378,7 @@ export default {
     this.requestMoneyInfoIfNeeded(true)
     this.requestZDPInfoIfNeeded(true)
     this.requestChinaIfNeeded(true)
+    this.requestAustraliaIfNeeded(true)
     this.requestAsianIfNeeded(true)
     this.requestEuroIfNeeded(true)
     this.requestAmericaIfNeeded(true)
@@ -365,6 +391,7 @@ export default {
     setInterval(this.requestZDPInfoIfNeeded, 60 * 1000)
     // 指数 15s
     setInterval(this.requestChinaIfNeeded, 15 * 1000)
+    setInterval(this.requestAustraliaIfNeeded, 15 * 1000)
     setInterval(this.requestAsianIfNeeded, 15 * 1000)
     setInterval(this.requestEuroIfNeeded, 15 * 1000)
     setInterval(this.requestAmericaIfNeeded, 15 * 1000)

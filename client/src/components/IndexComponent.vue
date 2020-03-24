@@ -2,17 +2,28 @@
   <div @click="changShowType()">
     <div v-for="item in indexInfos" :key="item.index">
       <div class='indexCell'>
-        <p>{{item.indexName}}</p>
-        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)">{{formatNumber(item.current, demical)}}</p>
-        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)" v-if="showType == 0">
+        <!-- 样式1 -->
+        <!-- 标题区 -->
+        <div class="index-title-container">
+          <img class="index-title-flag-icon" :src="indexFlagConverter(item.indexName)"/>
+          <p class="index-title-name" v-if="showType == 0">{{item.indexName}}</p>
+          <p class="index-title-name" v-else>
+            {{item.indexCode}}
+          </p>
+        </div>
+        <!-- 点数区 -->
+        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)">{{formatNumber(item.current, demical)}}</p>
+        <!-- 日变化区 -->
+        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" v-if="showType == 0">
           {{item.dailyChangRate}}
         </p>
-        <p class="daliy-value" :class="bgColorWithValue(item.dailyChangValue)" v-else>
+        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" v-else>
           {{formatNumber(item.dailyChangValue, demical)}}
         </p>
+        <!-- 自动刷新变化区 -->
         <div :class="{flash : isUpdating}">
-        <p class="refresh-value" v-if="showType == 0">
-          <img :src="iconWithValue(changeValueFromLastRequest(item))"/>
+        <p class="refresh-value align-center" v-if="showType == 0">
+          <img class="change-icon" :src="iconWithValue(changeValueFromLastRequest(item))"/>
         </p>
         <p class="refresh-value align-right" :class="changeColorFromLastRequest(item)" v-else>
           {{changeValueFromLastRequest(item)}}
@@ -60,6 +71,29 @@ export default {
     }
   },
   methods: {
+    indexFlagConverter (value) {
+      // require 是高级语法，不可以 require 变量，必须直接是路径
+      let american = ['道琼斯','标普500','纳斯达克','XOP']
+      let china = ['中证转债','上证指数','深证成指','创业板指','红利指数','中证红利','上证50','沪深300','中证500','中证1000','800等权','中小板指','全指医药','全指金融','证券公司','中证银行','养老产业','中证传媒','中证环保']
+      let hongkong = ['恒生指数','国企指数','红筹指数']
+      let common = ['']
+      if (american.indexOf(value) > -1) {
+        value = '美国';
+      } else if (china.indexOf(value) > -1) {
+        value = '中国大陆';
+      } else if (hongkong.indexOf(value) > -1) {
+        value = '中国香港';
+      }
+      // 如果 require 有错误，使用通用图标
+      try {
+        let path = require("../assets/flags/" + value + ".gif")
+        return path
+      } catch (error) {
+        let path = require("../assets/flags/通用.gif")
+        return path
+      }
+    },
+
     // 根据数值决定背景色
     bgColorWithValue (value) {
       if (value > 0) {
@@ -187,24 +221,7 @@ export default {
   color: @app-fall-color;
 }
 
-// 指数容器（整行）
-.indexCell {
-  width: 100%;
-  display: flex;
-}
-
-// 指数标题
-p {
-  margin: @index-cell-margin;
-  padding: @index-cell-padding;
-  width: @index-title-width;
-  height: @app-cell-height;
-  font-size: @app-value-text-size;
-  text-align: center;
-  color: @index-title-text-color;
-  background-color: @index-title-bg-color;
-}
-
+// 对齐方案
 .align-center {
   text-align: center;
 }
@@ -212,17 +229,71 @@ p {
   text-align: right;
 }
 
-.daliy-value:extend(.align-right) {
-  width: @index-value-width;
+// 指数容器（整行）
+.indexCell {
+  width: 100%;
+  display: flex;
 }
 
-.refresh-value {
-  background-color: @index-refresh-change-bg-color;
+// 标题区容器
+.index-title-container {
+  width: @index-title-width;
+  height: @app-cell-height;
+  margin: @index-cell-margin;
+  padding: @index-cell-padding;
+  background-color: @index-title-bg-color;
+  align-items: center;
+  display: flex;
+}
+
+// 指数图标
+.index-title-flag-icon {
+  width:@index-flag-width;
+  height:@index-flag-height;
+  margin: @index-cell-margin;
+  padding: @index-cell-padding;
+}
+
+// 指数标题
+.index-title-name {
+  width: @index-title-width - @index-flag-width - @index-cell-margin * 4;
+  max-width: @index-title-width - @index-flag-width  - @index-cell-margin * 4;
+  height: @app-cell-height;
+  margin: @index-cell-margin;
+  padding: @index-cell-padding;
+  font-size: @app-value-text-size;
+  text-align: left;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  color: @index-title-text-color;
+  background-color: @index-title-bg-color;
+}
+
+// 值
+.index-value {
+  margin: @index-cell-margin;
+  padding: @index-cell-padding;
   width: @index-value-width;
+  height: @app-cell-height;
+  font-size: @app-value-text-size;
+  text-align: right;
+  color: @index-title-text-color;
+}
+
+
+
+// 刷新值区
+.refresh-value {
+  margin: @index-cell-margin;
+  padding: @index-cell-padding;
+  width: @index-value-width;
+  height: @app-cell-height;
+  font-size: @app-value-text-size;
+  background-color: @index-refresh-change-bg-color;
 }
 
 // icon 尺寸
-img {
+.change-icon {
   width: @app-cell-height;
   height: @app-cell-height;
 }
