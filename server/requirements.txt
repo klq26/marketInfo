@@ -4,5 +4,7 @@ import requests
 import grequests
 # uwsgi application 轻量级框架
 import flask
+# 支持 Flask 本机跨域调试
+import flask-cors
 
-pip install requests grequests flask
+pip install requests grequests flask flask-cors

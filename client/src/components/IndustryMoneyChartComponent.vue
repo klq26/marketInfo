@@ -96,7 +96,7 @@ export default {
 /* 涨跌分布 */
 #chart-panel {
   width: 100%;
-  height: 240px;
+  height: 200px;
   display: inline-flex;
   flex-wrap: nowrap;
   flex-direction: column;

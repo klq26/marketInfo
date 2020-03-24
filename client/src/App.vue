@@ -98,6 +98,9 @@ Vue.config.productionTip = false
 // 是否工作日
 var isWorkingDay = true
 
+// server_ip = server_ip + ''
+var server_ip = 'http://127.0.0.1:5000/'
+
 // 时间前置补 0
 function prefixInteger (num, length) {
   return (Array(length).join('0') + num).slice(-length)
@@ -116,7 +119,7 @@ function isDuringDate (beginDateStr, endDateStr) {
 
 // 判断今天是不是工作日
 function todayIsWorkingDay () {
-  axios.get('http://112.125.25.230/api/today').then(function (response) {
+  axios.get('api/today').then(function (response) {
     let dayType = response.data['data']['weekday']
     if (dayType === '1') {
       isWorkingDay = true
@@ -232,7 +235,7 @@ export default {
       this.isMoneyOpenning = isOpenning
       if (isForce || isOpenning) {
         var that = this
-        this.$axios.get('http://112.125.25.230/api/moneyinfo').then(function (response) {
+        this.$axios.get(server_ip + 'api/moneyinfo').then(function (response) {
           that.moneyinfo = response.data.data
           // 行业资金净流入用图标表示
           that.industryMoneyInfo = that.moneyinfo.pop(-1)
@@ -252,7 +255,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求涨跌数据
-        this.$axios.get('http://112.125.25.230/api/zdpinfo').then(function (response) {
+        this.$axios.get(server_ip + 'api/zdpinfo').then(function (response) {
           // 指数涨跌平
           that.zdpinfo = response.data.data[2].value
           // 全市场涨跌停
@@ -270,7 +273,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求中国
-        this.$axios.get('http://112.125.25.230/api/indexs/china').then(function (response) {
+        this.$axios.get(server_ip + 'api/indexs/china').then(function (response) {
           that.china = response.data.data
         })
       } else {
@@ -283,7 +286,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求亚洲
-        this.$axios.get('http://112.125.25.230/api/indexs/asian').then(function (response) {
+        this.$axios.get(server_ip + 'api/indexs/asian').then(function (response) {
           that.asian = response.data.data
         })
       } else {
@@ -296,7 +299,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求欧洲
-        this.$axios.get('http://112.125.25.230/api/indexs/euro').then(function (response) {
+        this.$axios.get(server_ip + 'api/indexs/euro').then(function (response) {
           that.euro = response.data.data
         })
       } else {
@@ -311,7 +314,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求美洲
-        this.$axios.get('http://112.125.25.230/api/indexs/america').then(function (response) {
+        this.$axios.get(server_ip + 'api/indexs/america').then(function (response) {
           that.america = response.data.data
         })
       } else {
@@ -321,7 +324,7 @@ export default {
     requestGoodsAndExchangesIfNeeded (isForce = false) {
       var that = this
       // 请求期货&外汇
-      this.$axios.get('http://112.125.25.230/api/goods_and_exchanges').then(function (response) {
+      this.$axios.get(server_ip + 'api/goods_and_exchanges').then(function (response) {
         that.goods = response.data.data.goods
         that.exchanges = response.data.data.exchanges
       })
@@ -329,7 +332,7 @@ export default {
     requestBondInfoIfNeeded (isForce = false) {
       var that = this
       // 债券&组合
-      this.$axios.get('http://112.125.25.230/api/bondinfo').then(function (response) {
+      this.$axios.get(server_ip + 'api/bondinfo').then(function (response) {
         that.bond = []
         for (var item in response.data.data[0].value) {
           that.bond.push(response.data.data[0].value[item])

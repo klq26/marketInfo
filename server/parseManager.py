@@ -108,6 +108,9 @@ class parseManager:
                 num = '{0}'.format(num)
             inlandMoneyFlowData.append({'name' : sequencesName[nameIdx], 'value' : num})
             nameIdx = nameIdx + 1
+        # 不要大单和特大单了，为了 UI
+        inlandMoneyFlowData.pop(-1)
+        inlandMoneyFlowData.pop(-1)
         return {'name':name,'symbol':symbol, 'value':inlandMoneyFlowData}
 
     # 沪港通深港通资金情况
@@ -140,7 +143,7 @@ class parseManager:
             hongkongS2NFlowData.append({'name' : sequencesName[nameIdx], 'value' : num})
             nameIdx = nameIdx + 1
         # print(hongkongS2NFlowData)
-        finalResult.append({'name':'北向资金净流入（亿）','symbol':'bxzjjlr', 'value':hongkongS2NFlowData})
+        finalResult.append({'name':'北向资金','symbol':'bxzjjlr', 'value':hongkongS2NFlowData})
         # 南向资金
         N2S = jsonData["data"]["n2s"]
         lastestN2S = 0
@@ -159,7 +162,7 @@ class parseManager:
             hongkongN2SFlowData.append({'name' : sequencesName[nameIdx], 'value' : num})
             nameIdx = nameIdx + 1
         # print(hongkongN2SFlowData)
-        finalResult.append({'name':'南向资金净流入（亿）','symbol':'nxzjjlr', 'value':hongkongN2SFlowData})
+        finalResult.append({'name':'南向资金','symbol':'nxzjjlr', 'value':hongkongN2SFlowData})
         return finalResult
 
     # 行业资金净流入
@@ -305,13 +308,16 @@ class parseManager:
         return self.parseEastmoney100Data(u'中国', json.loads(text))
 
     def parseAsianIndexs(self, text):
-        return self.parseEastmoney87Data(u'亚洲', json.loads(text))
+        countryNames = ['日本','印度','韩国','印尼','中国台湾','泰国','新加坡','马来西亚','菲律宾','巴基斯坦','越南','斯里兰卡']
+        return self.parseEastmoney87Data(u'亚洲',countryNames, json.loads(text))
 
     def parseEuroIndexs(self, text):
-        return self.parseEastmoney87Data(u'欧洲', json.loads(text))
+        countryNames = ['德国','英国','法国','意大利','俄罗斯','西班牙','荷兰','瑞士','波兰','瑞典','比利时','奥地利','挪威','爱尔兰','丹麦','芬兰','捷克','葡萄牙','希腊','冰岛']
+        return self.parseEastmoney87Data(u'欧洲',countryNames, json.loads(text))
 
     def parseAmericaIndexs(self, text):
-        return self.parseEastmoney87Data(u'美洲', json.loads(text))
+        countryNames = ['道琼斯','标普500','纳斯达克','XOP','巴西','加拿大','墨西哥']
+        return self.parseEastmoney87Data(u'美洲',countryNames, json.loads(text))
 
     # 清洗东方财富亚洲数据（100.eastmoney）
     def parseEastmoney100Data(self, indexArea, jsonData):
@@ -334,7 +340,7 @@ class parseManager:
         return result
 
     # 清洗东方财富欧美数据（87.eastmoney）
-    def parseEastmoney87Data(self, indexArea, jsonData):
+    def parseEastmoney87Data(self, indexArea, customNames, jsonData):
         datalist = jsonData['data']['diff']
         result = []
         count = 0
@@ -343,16 +349,9 @@ class parseManager:
             index = indexModel()
             index.indexCode = item['f12']
             index.indexName = item['f14']
-            if index.indexName.find(u'新加坡') > 0:
-                index.indexName = '新加坡STI'
-            if index.indexName == "印度孟买SENSEX":
-                index.indexName = '印度SENSEX'
-            if index.indexName.find(u'ETF') > 0:
-                index.indexName = '油气XOP'
-            if index.indexName.find(u'离岸') > 0:
-                index.indexName = u'离岸人民币'
-            if index.indexName == u"巴西BOVESPA":
-                index.indexName = u'巴西BVSP'
+            if len(customNames) > count:
+                # 对输出项的名称进行干预
+                index.indexName = customNames[count]
             index.indexArea = indexArea
             index.sequence = count
             if index.indexName == u'离岸人民币':
@@ -455,7 +454,8 @@ class parseManager:
     def parse_larmb(self, name, symbol, text):
         result = text.replace('updateIndexInfos(', '').replace(');', '')
         # 清洗&重组数据
-        USDCNH = self.parseEastmoney87Data('外汇', json.loads(result))[0]
+        
+        USDCNH = self.parseEastmoney87Data('外汇',['离岸人民币'], json.loads(result))[0]
         return USDCNH
 
     def parse_goods_and_exchanges(self, name, symbol, text):

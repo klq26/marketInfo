@@ -3,6 +3,8 @@
 from flask import Flask
 from flask import request
 from flask import Response
+# 跨域
+from flask_cors import *
 
 from cacheManager import cacheManager
 from requestManager import requestsManager
@@ -10,6 +12,7 @@ from parseManager import parseManager
 from datetimeManager import datetimeManager
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 
 cm = cacheManager()
 
