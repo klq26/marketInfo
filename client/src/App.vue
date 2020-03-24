@@ -2,73 +2,136 @@
   <div id="app">
     <TimeComponent />
     <!-- 资金区 -->
-    <SectionHeaderComponent title="资金" v-on:shouldShow="shouldShowMoney" :isOpenning="isMoneyOpenning"/>
-    <transition name='fade'>
+    <SectionHeaderComponent
+      title="资金"
+      @shouldShow="showMoney = !showMoney"
+      :isOpenning="isMoneyOpenning"
+    />
+    <transition name="fade">
       <div v-if="showMoney">
-        <MoneyComponent :moneyinfo="moneyinfo"/>
+        <MoneyComponent :moneyinfo="moneyinfo" />
         <!-- 板块资金区 -->
-        <IndustryMoneyChartComponent :industryMoneyInfo="industryMoneyInfo"/>
+        <IndustryMoneyChartComponent :industryMoneyInfo="industryMoneyInfo" />
       </div>
     </transition>
     <!-- 涨跌平区 -->
-    <SectionHeaderComponent title="涨跌" v-on:shouldShow="shouldShowZDP" :isOpenning="isZDPOpenning"/>
-    <transition name='fade'>
+    <SectionHeaderComponent
+      title="涨跌"
+      @shouldShow="showZDP = !showZDP"
+      :isOpenning="isZDPOpenning"
+    />
+    <transition name="fade">
       <div v-if="showZDP">
         <!-- 涨跌平区 -->
-        <RiseFallBarComponent :zdpinfo="zdpinfo"/>
+        <RiseFallBarComponent :zdpinfo="zdpinfo" />
         <!-- 涨跌停区 -->
-        <RiseFallMaxBarComponent :zdt="zdt"/>
+        <RiseFallMaxBarComponent :zdt="zdt" />
         <!-- 涨跌分布区 -->
-        <RiseFallChartComponent :values="zdfb"/>
+        <RiseFallChartComponent :values="zdfb" />
       </div>
     </transition>
     <!-- 指数区 -->
-    <SectionHeaderComponent title="中国" v-on:shouldShow="shouldShowChina" :isOpenning="isChinaOpenning"/>
-    <transition name='fade'>
-      <div v-if="showChina">
-        <IndexComponent :indexInfos="china"/>
+    <SectionHeaderComponent
+      title="中国"
+      ref="china_header_ref"
+      showStyleButton="1"
+      @changeShowType="changeShowType"
+      @shouldShow="headerConfig['china_header_ref']['shouldShow'] = !headerConfig['china_header_ref']['shouldShow']"
+      :isOpenning="isChinaOpenning"
+    />
+    <transition name="fade">
+      <div v-if="headerConfig['china_header_ref']['shouldShow']">
+        <IndexComponent ref="中国" :indexInfos="china" />
       </div>
     </transition>
-    <SectionHeaderComponent title="澳洲" v-on:shouldShow="shouldShowAustralia" :isOpenning="isAustraliaOpenning"/>
-    <transition name='fade'>
+    <SectionHeaderComponent
+      title="澳洲"
+      showStyleButton="1"
+      @changeShowType="changeShowType"
+      @shouldShow="showAustralia = !showAustralia"
+      :isOpenning="isAustraliaOpenning"
+    />
+    <transition name="fade">
       <div v-if="showAustralia">
-        <IndexComponent :indexInfos="australia"/>
+        <IndexComponent ref="澳洲" :indexInfos="australia" />
       </div>
     </transition>
-    <SectionHeaderComponent title="亚洲" v-on:shouldShow="shouldShowAsian" :isOpenning="isAsianOpenning"/>
-    <transition name='fade'>
-      <div v-if="showAsian">
-        <IndexComponent :indexInfos="asian"/>
+    <SectionHeaderComponent
+      ref="asian_header_ref"
+      title="亚洲"
+      showStyleButton="1"
+      showSortButton="1"
+      @shouldShow="headerConfig['asian_header_ref']['shouldShow'] = !headerConfig['asian_header_ref']['shouldShow']"
+      @changeShowType="changeShowType"
+      :isOpenning="isAsianOpenning"
+    />
+    <transition name="fade">
+      <div v-if="headerConfig['asian_header_ref']['shouldShow']">
+        <IndexComponent ref="亚洲" :indexInfos="asian" />
       </div>
     </transition>
-    <SectionHeaderComponent title="欧洲" v-on:shouldShow="shouldShowEuro" :isOpenning="isEuroOpenning"/>
-    <transition name='fade'>
-      <div v-if="showEuro">
-        <IndexComponent :indexInfos="euro"/>
+    <SectionHeaderComponent
+      ref="euro_header_ref"
+      title="欧洲"
+      showStyleButton="1"
+      showSortButton="1"
+      @shouldShow="headerConfig['euro_header_ref']['shouldShow'] = !headerConfig['euro_header_ref']['shouldShow']"
+      @changeShowType="changeShowType"
+      :isOpenning="isEuroOpenning"
+    />
+    <transition name="fade">
+      <div v-if="headerConfig['euro_header_ref']['shouldShow']">
+        <IndexComponent ref="欧洲" :indexInfos="euro" />
       </div>
     </transition>
-    <SectionHeaderComponent title="美洲" v-on:shouldShow="shouldShowAmerica" :isOpenning="isAmericaOpenning"/>
-      <transition name='fade'>
-        <div v-if="showAmerica">
-          <IndexComponent :indexInfos="america"/>
-        </div>
-      </transition>
-    <SectionHeaderComponent title="期货" v-on:shouldShow="shouldShowGoods" :isOpenning="isGoodsOpenning"/>
-    <transition name='fade'>
+    <SectionHeaderComponent
+      ref="america_header_ref"
+      title="美洲"
+      showStyleButton="1"
+      showSortButton="1"
+      @shouldShow="headerConfig['america_header_ref']['shouldShow'] = !headerConfig['america_header_ref']['shouldShow']"
+      @changeShowType="changeShowType"
+      :isOpenning="isAmericaOpenning"
+    />
+    <transition name="fade">
+      <div v-if="headerConfig['america_header_ref']['shouldShow']">
+        <IndexComponent ref="美洲" :indexInfos="america" />
+      </div>
+    </transition>
+    <SectionHeaderComponent
+      title="期货"
+      @shouldShow="showGoods = !showGoods"
+      showStyleButton="1"
+      @changeShowType="changeShowType"
+      :isOpenning="isGoodsOpenning"
+    />
+    <transition name="fade">
       <div v-if="showGoods">
-        <IndexComponent :indexInfos="goods" :demical="3"/>
+        <IndexComponent ref="期货" :indexInfos="goods" :demical="3" />
       </div>
     </transition>
-    <SectionHeaderComponent title="外汇" v-on:shouldShow="shouldShowExchanges" :isOpenning="isExchangesOpenning"/>
-      <transition name='fade'>
+    <SectionHeaderComponent
+      title="外汇"
+      @shouldShow="showExchanges = !showExchanges"
+      showStyleButton="1"
+      @changeShowType="changeShowType"
+      :isOpenning="isExchangesOpenning"
+    />
+    <transition name="fade">
       <div v-if="showExchanges">
-        <IndexComponent :indexInfos="exchanges" :demical="4"/>
+        <IndexComponent ref="外汇" :indexInfos="exchanges" :demical="4" />
       </div>
     </transition>
-    <SectionHeaderComponent title="固收" v-on:shouldShow="shouldShowBond" :isOpenning="isBondOpenning"/>
-    <transition name='fade'>
+    <SectionHeaderComponent
+      title="固收"
+      @shouldShow="showBond = !showBond"
+      showStyleButton="1"
+      @changeShowType="changeShowType"
+      :isOpenning="isBondOpenning"
+    />
+    <transition name="fade">
       <div v-if="showBond">
-        <IndexComponent :indexInfos="bond"/>
+        <IndexComponent ref="固收" :indexInfos="bond" />
       </div>
     </transition>
   </div>
@@ -104,8 +167,8 @@ Vue.config.productionTip = false
 // 是否工作日
 var isWorkingDay = true
 
-// server_ip = server_ip + ''
-var server_ip = 'http://127.0.0.1:5000/'
+// var server_ip = 'http://112.125.25.230/'
+var server_ip = "http://127.0.0.1:5000/"
 
 // 时间前置补 0
 function prefixInteger (num, length) {
@@ -184,17 +247,31 @@ export default {
   ],
   data () {
     return {
+      headerConfig: {
+        china_header_ref: { shouldShow: true },
+        asian_header_ref: { shouldShow: true },
+        euro_header_ref: { shouldShow: true },
+        america_header_ref: {shouldShow: true}
+      },
+      indexAreaConfig: {
+        中国: { showType: 0 },
+        澳洲: { showType: 0 },
+        亚洲: { showType: 0 },
+        欧洲: { showType: 0 },
+        美洲: { showType: 0 },
+        期货: { showType: 0 },
+        外汇: { showType: 0 },
+        固收: { showType: 0 }
+      },
+      
       // 显示隐藏面板
-      showMoney: true,
-      showZDP: true,
-      showChina: true,
-      showAsian: true,
-      showAustralia: true,
-      showEuro: true,
-      showAmerica: true,
+      showMoney: false,
+      showZDP: false,
+      showChina: false,
+      showAustralia: false,
       showGoods: true,
-      showExchanges: true,
-      showBond: true,
+      showExchanges: false,
+      showBond: false,
       // 是否开盘
       isMoneyOpenning: true,
       isZDPOpenning: true,
@@ -209,36 +286,13 @@ export default {
     }
   },
   methods: {
-    /* 显示隐藏分区 */
-    shouldShowMoney () {
-      this.showMoney = !this.showMoney
-    },
-    shouldShowZDP () {
-      this.showZDP = !this.showZDP
-    },
-    shouldShowChina () {
-      this.showChina = !this.showChina
-    },
-    shouldShowAustralia () {
-      this.showAustralia = !this.showAustralia
-    },
-    shouldShowAsian () {
-      this.showAsian = !this.showAsian
-    },
-    shouldShowEuro () {
-      this.showEuro = !this.showEuro
-    },
-    shouldShowAmerica () {
-      this.showAmerica = !this.showAmerica
-    },
-    shouldShowGoods () {
-      this.showGoods = !this.showGoods
-    },
-    shouldShowExchanges () {
-      this.showExchanges = !this.showExchanges
-    },
-    shouldShowBond () {
-      this.showBond = !this.showBond
+    changeShowType(title) {
+      for (var ref_key in this.$refs) {
+        if (title === ref_key) {
+          this.$refs[ref_key].showType = this.$refs[ref_key].showType === 1 ? 0 : 1
+          break;
+        }
+      }
     },
     /* 网络请求 */
     // 请求资金数据
@@ -258,7 +312,7 @@ export default {
           }
         })
       } else {
-        console.log('资金数据未开盘')
+        // console.log('资金数据未开盘')
       }
     },
     requestZDPInfoIfNeeded (isForce = false) {
@@ -276,7 +330,7 @@ export default {
           that.zdfb = response.data.data[0].value
         })
       } else {
-        console.log('涨跌平数据未开盘')
+        // console.log('涨跌平数据未开盘')
       }
     },
     requestChinaIfNeeded (isForce = false) {
@@ -289,7 +343,7 @@ export default {
           that.china = response.data.data
         })
       } else {
-        console.log('中国未开盘')
+        // console.log('中国未开盘')
       }
     },
     requestAustraliaIfNeeded (isForce = false) {
@@ -302,7 +356,7 @@ export default {
           that.australia = response.data.data
         })
       } else {
-        console.log('亚洲未开盘')
+        // console.log('澳洲未开盘')
       }
     },
     requestAsianIfNeeded (isForce = false) {
@@ -315,7 +369,7 @@ export default {
           that.asian = response.data.data
         })
       } else {
-        console.log('亚洲未开盘')
+        // console.log('亚洲未开盘')
       }
     },
     requestEuroIfNeeded (isForce = false) {
@@ -328,7 +382,7 @@ export default {
           that.euro = response.data.data
         })
       } else {
-        console.log('欧洲未开盘')
+        // console.log('欧洲未开盘')
       }
     },
     requestAmericaIfNeeded (isForce = false) {
@@ -343,7 +397,7 @@ export default {
           that.america = response.data.data
         })
       } else {
-        console.log('美洲未开盘')
+        // console.log('美洲未开盘')
       }
     },
     requestGoodsAndExchangesIfNeeded (isForce = false) {
