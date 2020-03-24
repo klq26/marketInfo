@@ -48,7 +48,7 @@ def getZDPInfo():
 
 
 # ////////////////////////////////////////////////////////////////////////////////////////
-# 请求指数数据 china asian euro america
+# 请求指数数据 china asian euro america australia
 # ////////////////////////////////////////////////////////////////////////////////////////
 @app.route('/api/indexs/<string:area>', methods=['GET'])
 def getIndexInfos(area):
@@ -88,6 +88,20 @@ def getBondInfo():
         return Response(data, status=200, mimetype='application/json')
     responseTexts = requestsManager().getBondInfo()
     data = parseManager().parseBondInfo(start_ts, responseTexts)
+    cm.saveCache(request.path, data)
+    return Response(data, status=200, mimetype='application/json')
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+# 请求指数排序数据 china asian euro america australia
+# ////////////////////////////////////////////////////////////////////////////////////////
+@app.route('/api/sortinfo/<string:area>/<string:type>', methods=['GET'])
+def getIndexSortInfos(area, type):
+    start_ts = datetimeManager().getTimeStamp()
+    if cm.cacheAvailable(start_ts, request.path):
+        data = cm.getCache(start_ts, request.path)
+        return Response(data, status=200, mimetype='application/json')
+    responseText = requestsManager().getIndexSortInfos(area, type)
+    data = parseManager().parseIndexSortInfos(start_ts, area, type, responseText)
     cm.saveCache(request.path, data)
     return Response(data, status=200, mimetype='application/json')
 

@@ -1,5 +1,5 @@
 <template>
-  <div @click="changShowType()">
+  <div>
     <div v-for="item in indexInfos" :key="item.index">
       <div class='indexCell'>
         <!-- 样式1 -->
@@ -49,6 +49,12 @@ Vue.config.productionTip = false
 export default {
   name: 'IndexComponent',
   props: {
+    sortInfos: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
     indexInfos: {
       type: Array,
       default () {
@@ -172,10 +178,6 @@ export default {
         return this.formatNumber(change, this.demical, true)
       }
     },
-    // 改变显示样式
-    changShowType () {
-      this.showType = this.showType !== 0 ? 0 : 1
-    }
   },
   watch: {
     indexInfos: {

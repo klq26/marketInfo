@@ -276,7 +276,7 @@ class parseManager:
         return finalResult
     
     # ////////////////////////////////////////////////////////////////////////////////////////
-    # 解析指数数据 china asian euro america
+    # 解析指数数据 china asian euro america australia
     # ////////////////////////////////////////////////////////////////////////////////////////
 
     def parseIndexInfos(self, start_ts, area, text):
@@ -349,7 +349,6 @@ class parseManager:
     # 清洗东方财富欧美数据（87.eastmoney）
     def parseEastmoney87Data(self, indexArea, customNames, jsonData):
         datalist = jsonData['data']['diff']
-        print(jsonData)
         result = []
         count = 0
         # {"f2":1129217,"f3":-124,"f4":-14145,"f6":0.0,"f12":"TWII","f14":"台湾加权","f18":1143362}
@@ -631,6 +630,16 @@ class parseManager:
         finalResult.append({'name': name, 'symbol' : symbol, 'value' : value})
         return finalResult
     
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 解析指数排序数据 china asian euro america australia
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    def parseIndexSortInfos(self, start_ts, area, type, datalist):
+
+        end_ts = self.dm.getTimeStamp()
+        duration = self.dm.getDuration(start_ts, end_ts)
+        data = self.packDataWithCommonInfo(duration = duration, data = datalist)
+        return data
+
     # ////////////////////////////////////////////////////////////////////////////////////////
     # 解析今日类型（开盘日：0 周末：1 节假日：2
     # ////////////////////////////////////////////////////////////////////////////////////////

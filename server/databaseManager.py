@@ -74,29 +74,29 @@ class databaseManager:
     
     def sequenceByDealTime(self, continent=u'亚洲'):
         key = 'deal_time'
-        countrylist = db.getCountryInfosByContinent(continent, key)
+        countrylist = self.getCountryInfosByContinent(continent, key)
         countrylist = reversed(countrylist)
-        self.assignSequence(countrylist, self.country_info_keymapping[key])
+        return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
     def sequenceByGDP(self, continent=u'亚洲'):
         key = 'gdp_rmb'
-        countrylist = db.getCountryInfosByContinent(continent, key)
-        self.assignSequence(countrylist, self.country_info_keymapping[key])
+        countrylist = self.getCountryInfosByContinent(continent, key)
+        return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
     def sequenceByAverageGDP(self, continent=u'亚洲'):
         key = 'gdp_person_avg'
-        countrylist = db.getCountryInfosByContinent(continent, key)
-        self.assignSequence(countrylist, self.country_info_keymapping[key])
+        countrylist = self.getCountryInfosByContinent(continent, key)
+        return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
     def sequenceByPopulation(self, continent=u'亚洲'):
         key = 'population'
-        countrylist = db.getCountryInfosByContinent(continent, key)
-        self.assignSequence(countrylist, self.country_info_keymapping[key])
+        countrylist = self.getCountryInfosByContinent(continent, key)
+        return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
     def sequenceByArea(self, continent=u'亚洲'):
         key = 'area'
-        countrylist = db.getCountryInfosByContinent(continent, key)
-        self.assignSequence(countrylist, self.country_info_keymapping[key])
+        countrylist = self.getCountryInfosByContinent(continent, key)
+        return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
     # 根据数据库返回结果，统一生成 sequence 数组供客户端排序（同时附上排序字段供客户端 debug）
     def assignSequence(self, countrylist, sortKey='id'):
@@ -107,9 +107,9 @@ class databaseManager:
             countryInfo.__dict__ = item
             result.append({'country' : countryInfo.country, 'countryCode': countryInfo.countryCode,'{0}'.format(sortKey): countryInfo[sortKey], 'sequence': index})
             index += 1
-        [print(x) for x in result]
-        print()
-        pass
+        # [print(x) for x in result]
+        # print()
+        return result
 
 if __name__ == "__main__":
     db = databaseManager()

@@ -9,6 +9,8 @@ from configManager import configManager
 from indexModel import indexModel
 from datetimeManager import datetimeManager
 
+from databaseManager import databaseManager
+
 class requestsManager:
 
     def __init__(self):
@@ -52,9 +54,8 @@ class requestsManager:
                 responseTexts.append('{}')
         return responseTexts
 
-
     # ////////////////////////////////////////////////////////////////////////////////////////
-    # 请求指数数据 china asian euro america
+    # 请求指数数据 china asian euro america australia
     # ////////////////////////////////////////////////////////////////////////////////////////
 
     def getIndexInfos(self, area):
@@ -141,7 +142,6 @@ class requestsManager:
         if response.status_code == 200:
             # print(response.text)
             result = response.text.replace('updateIndexInfos(','').replace(');','')
-            print(result)
             return result
         else:
             return ''
@@ -182,6 +182,35 @@ class requestsManager:
                 responseTexts.append('{}')
         return responseTexts
     
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 请求指数排序数据 china asian euro america australia
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    def getIndexSortInfos(self, area, type):
+        # 可选区域
+        areaGroup = ['asian', 'euro', 'america']
+        if area == '' or area.lower() not in areaGroup:
+            return {}
+        else:
+            continent = ''
+            if area.lower() == 'asian':
+                continent = u'亚洲'
+            if area.lower() == 'euro':
+                continent = u'欧洲'
+            if area.lower() == 'america':
+                continent = u'美洲'
+            response = {}
+            if type.lower() == u'gdp' or type == '1':
+                response = {'name': '产值', 'value': databaseManager().sequenceByGDP(continent=continent)}
+            if type.lower() == u'dealtime' or type == '2':
+                response = {'name': '时区', 'value': databaseManager().sequenceByDealTime(continent=continent)}
+            if type.lower() == u'avg_gdp' or type == '3':
+                response = {'name': '人均', 'value': databaseManager().sequenceByAverageGDP(continent=continent)}
+            if type.lower() == u'population' or type == '4':
+                response = {'name': '人口', 'value': databaseManager().sequenceByPopulation(continent=continent)}
+            if type.lower() == u'area' or type == '5':
+                response = {'name': '国土', 'value': databaseManager().sequenceByArea(continent=continent)}
+            
+            return response
 
     # ////////////////////////////////////////////////////////////////////////////////////////
     # 请求今日类型（开盘日：0 周末：1 节假日：2
