@@ -58,7 +58,7 @@ class requestsManager:
     # 请求指数数据 china asian euro america australia
     # ////////////////////////////////////////////////////////////////////////////////////////
 
-    def getIndexInfos(self, area):
+    def getIndexInfos(self, area, codes):
         # 可选区域
         areaGroup = ['china', 'asian', 'euro', 'america','australia']
         if area == '' or area.lower() not in areaGroup:
@@ -70,13 +70,13 @@ class requestsManager:
                 responseText = self.requestChinaIndexs()
             elif area.lower() == 'asian':
                 # 请求亚洲数据
-                responseText = self.requestAsianIndexs()
+                responseText = self.requestAsianIndexs(codes)
             elif area.lower() == 'euro':
                 # 请求欧洲数据
-                responseText = self.requestEuroIndexs()
+                responseText = self.requestEuroIndexs(codes)
             elif area.lower() == 'america':
                 # 请求美洲数据
-                responseText = self.requestAmericaIndexs()
+                responseText = self.requestAmericaIndexs(codes)
             elif area.lower() == 'australia':
                 # 请求澳洲数据
                 responseText = self.requestAustraliaIndexs()
@@ -95,10 +95,10 @@ class requestsManager:
             return ''
     
     # 请求亚洲
-    def requestAsianIndexs(self):
+    def requestAsianIndexs(self, codes):
         # 根据 2019.12 最新 GDP 排名降序请求
         # http://www.southmoney.com/paihangbang/201912/4612448.html
-        url = "http://87.push2.eastmoney.com/api/qt/ulist.np/get?cb=updateIndexInfos&np=1&pi=0&pz=40&po=1&secids=100.N225%2C100.SENSEX%2C100.KS11%2C100.JKSE%2C100.TWII%2C100.SET%2C100.STI%2C100.KLSE%2C100.PSI%2C100.KSE100%2C100.VNINDEX%2C100.CSEALL%2C&fields=f14,f12,f2,f4,f3,f18,f6"
+        url = "http://87.push2.eastmoney.com/api/qt/ulist.np/get?cb=updateIndexInfos&np=1&pi=0&pz=40&po=1&secids={0}&fields=f14,f12,f2,f4,f3,f18,f6".format('%2C'.join(codes))
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         response = requests.get(url, headers=self.headers, verify=False)
         if response.status_code == 200:
@@ -109,10 +109,10 @@ class requestsManager:
             return ''
 
     # 请求欧洲
-    def requestEuroIndexs(self):
+    def requestEuroIndexs(self, codes):
         # 根据 2019.12 最新 GDP 排名降序请求
         # http://www.southmoney.com/paihangbang/201912/4612514.html
-        url = "http://87.push2.eastmoney.com/api/qt/ulist.np/get?cb=updateIndexInfos&np=1&pi=0&pz=40&po=1&secids=100.GDAXI%2C100.FTSE%2C100.FCHI%2C100.MIB%2C100.RTS%2C100.IBEX%2C100.AEX%2C100.SSMI%2C100.WIG%2C100.OMXSPI%2C100.BFX%2C100.ATX%2C100.OSEBX%2C100.ISEQ%2C100.OMXC20%2C100.HEX%2C100.PX%2C100.PSI20%2C100.ASE%2C100.ICEXI%2C&fields=f14,f12,f2,f4,f3,f18,f6"
+        url = "http://87.push2.eastmoney.com/api/qt/ulist.np/get?cb=updateIndexInfos&np=1&pi=0&pz=40&po=1&secids={0}&fields=f14,f12,f2,f4,f3,f18,f6".format('%2C'.join(codes))
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         response = requests.get(url, headers=self.headers, verify=False)
         if response.status_code == 200:
@@ -123,8 +123,9 @@ class requestsManager:
             return ''
 
     # 请求美洲
-    def requestAmericaIndexs(self):
-        url = "http://87.push2.eastmoney.com/api/qt/ulist.np/get?cb=updateIndexInfos&np=1&pi=0&pz=40&po=1&secids=100.DJIA%2C100.SPX%2C100.NDX%2C107.XOP%2C100.BVSP%2C100.TSX%2C100.MXX%2C&fields=f14,f12,f2,f4,f3,f18,f6"
+    def requestAmericaIndexs(self, codes):
+        url = "http://87.push2.eastmoney.com/api/qt/ulist.np/get?cb=updateIndexInfos&np=1&pi=0&pz=40&po=1&secids={0}&fields=f14,f12,f2,f4,f3,f18,f6".format('%2C'.join(codes))
+        print('美国',url)
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         response = requests.get(url, headers=self.headers, verify=False)
         if response.status_code == 200:
@@ -162,6 +163,7 @@ class requestsManager:
                 responseTexts.append(response.text)
             else:
                 responseTexts.append('{}')
+        print('测试 ',responseTexts)
         return responseTexts
 
     # ////////////////////////////////////////////////////////////////////////////////////////

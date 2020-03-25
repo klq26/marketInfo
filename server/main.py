@@ -10,6 +10,8 @@ from cacheManager import cacheManager
 from requestManager import requestsManager
 from parseManager import parseManager
 from datetimeManager import datetimeManager
+from databaseManager import databaseManager
+
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -53,13 +55,55 @@ def getZDPInfo():
 @app.route('/api/indexs/<string:area>', methods=['GET'])
 def getIndexInfos(area):
     start_ts = datetimeManager().getTimeStamp()
-    if cm.cacheAvailable(start_ts, request.path):
-        data = cm.getCache(start_ts, request.path)
+    sortType = request.args.get('sort', '')
+    if not sortType:
+        sortType = 1
+        # 目前，带 sort 的都不命中缓存，这块后续还得想想办法 TODO
+        if cm.cacheAvailable(start_ts, request.path):
+            data = cm.getCache(start_ts, request.path)
+            return Response(data, status=200, mimetype='application/json')
+    else:
+        sortType = int(sortType)
+    areaGroup = ['china', 'asian', 'euro', 'america','australia']
+    if area == '' or area.lower() not in areaGroup:
+        return {}
+    else:
+        continent = ''
+        if area.lower() == 'china':
+            # 请求中国数据
+            continent = '中国'
+        elif area.lower() == 'asian':
+            # 请求亚洲数据
+            continent = '亚洲'
+        elif area.lower() == 'euro':
+            # 请求欧洲数据
+            continent = '欧洲'
+        elif area.lower() == 'america':
+            # 请求美洲数据
+            continent = '美洲'
+        elif area.lower() == 'australia':
+            # 请求澳洲数据
+            continent = '澳洲'
+        names, codes = getSequence(continent, sortType)
+        responseText = requestsManager().getIndexInfos(area, codes)
+        data = parseManager().parseIndexInfos(start_ts, area, names, responseText)
+        cm.saveCache(request.path, data)
         return Response(data, status=200, mimetype='application/json')
-    responseText = requestsManager().getIndexInfos(area)
-    data = parseManager().parseIndexInfos(start_ts, area, responseText)
-    cm.saveCache(request.path, data)
-    return Response(data, status=200, mimetype='application/json')
+
+# 根据 sort 类型和目标大陆返回指数名称和指数代码数组
+def getSequence(continent, sortType):
+    db = databaseManager()
+    if sortType == 2:
+        return db.sequenceByDealTime(continent)
+    elif sortType == 3:
+        return db.sequenceByAverageGDP(continent)
+    elif sortType == 4:
+        return db.sequenceByPopulation(continent)
+    elif sortType == 5:
+        return db.sequenceByArea(continent)
+    else:
+        # 等于 1 和非法数字都给默认 GDP 降序
+        return db.sequenceByGDP(continent)
 
 # ////////////////////////////////////////////////////////////////////////////////////////
 # 请求期货&外汇数据

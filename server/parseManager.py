@@ -279,7 +279,7 @@ class parseManager:
     # 解析指数数据 china asian euro america australia
     # ////////////////////////////////////////////////////////////////////////////////////////
 
-    def parseIndexInfos(self, start_ts, area, text):
+    def parseIndexInfos(self, start_ts, area, names, text):
         # 可选区域
         areaGroup = ['china', 'asian', 'euro', 'america', 'australia']
         if area == '' or area.lower() not in areaGroup:
@@ -291,13 +291,13 @@ class parseManager:
                 parsedData = self.parseChinaIndexs(text)
             elif area.lower() == 'asian':
                 # 解析亚洲数据
-                parsedData = self.parseAsianIndexs(text)
+                parsedData = self.parseAsianIndexs(text, names)
             elif area.lower() == 'euro':
                 # 解析欧洲数据
-                parsedData = self.parseEuroIndexs(text)
+                parsedData = self.parseEuroIndexs(text, names)
             elif area.lower() == 'america':
                 # 解析美洲数据
-                parsedData = self.parseAmericaIndexs(text)
+                parsedData = self.parseAmericaIndexs(text, names)
             elif area.lower() == 'australia':
                 # 解析澳洲数据
                 parsedData = self.parseAustraliaIndexs(text)
@@ -310,16 +310,13 @@ class parseManager:
     def parseChinaIndexs(self, text):
         return self.parseEastmoney100Data(u'中国', json.loads(text))
 
-    def parseAsianIndexs(self, text):
-        countryNames = ['日本','印度','韩国','印尼','中国台湾','泰国','新加坡','马来西亚','菲律宾','巴基斯坦','越南','斯里兰卡']
+    def parseAsianIndexs(self, text, countryNames):
         return self.parseEastmoney87Data(u'亚洲',countryNames, json.loads(text))
 
-    def parseEuroIndexs(self, text):
-        countryNames = ['德国','英国','法国','意大利','俄罗斯','西班牙','荷兰','瑞士','波兰','瑞典','比利时','奥地利','挪威','爱尔兰','丹麦','芬兰','捷克','葡萄牙','希腊','冰岛']
+    def parseEuroIndexs(self, text, countryNames):
         return self.parseEastmoney87Data(u'欧洲',countryNames, json.loads(text))
 
-    def parseAmericaIndexs(self, text):
-        countryNames = ['道琼斯','标普500','纳斯达克','XOP','巴西','加拿大','墨西哥']
+    def parseAmericaIndexs(self, text, countryNames):
         return self.parseEastmoney87Data(u'美洲',countryNames, json.loads(text))
 
     def parseAustraliaIndexs(self, text):
@@ -361,7 +358,7 @@ class parseManager:
                 index.indexName = customNames[count]
             index.indexArea = indexArea
             index.sequence = count
-            if index.indexName == u'离岸人民币':
+            if index.indexName == u'离岸汇率':
                 index.current = round(float(item['f2'])/10000,4)
                 index.lastClose = round(float(item['f18'])/10000,4)
                 index.dailyChangValue = round(float(item['f4'])/10000,4)
@@ -418,7 +415,7 @@ class parseManager:
         # 期货新增工行纸黄金
         cnGold = indexModel()
         cnGold.indexCode = 'GOLD'
-        cnGold.indexName = '工行纸黄金'
+        cnGold.indexName = '工行黄金'
         cnGold.indexArea = '期货'
         cnGold.current = round(float(COMEX_GC['current']) / 31.1034768 * float(USDCNH['current']), 4)
         cnGold.lastClose = round(float(COMEX_GC['lastClose']) / 31.1034768 * float(USDCNH['lastClose']), 4)
@@ -432,7 +429,7 @@ class parseManager:
         # 期货新增工行纸白银
         cnSilver = indexModel()
         cnSilver.indexCode = 'SILVER'
-        cnSilver.indexName = '工行纸白银'
+        cnSilver.indexName = '工行白银'
         cnSilver.indexArea = '期货'
         cnSilver.current = round(float(COMEX_SI['current']) / 31.1034768 * float(USDCNH['current']), 4)
         cnSilver.lastClose = round(float(COMEX_SI['lastClose']) / 31.1034768 * float(USDCNH['lastClose']), 4)
@@ -462,7 +459,7 @@ class parseManager:
         result = text.replace('updateIndexInfos(', '').replace(');', '')
         # 清洗&重组数据
         
-        USDCNH = self.parseEastmoney87Data('外汇',['离岸人民币'], json.loads(result))[0]
+        USDCNH = self.parseEastmoney87Data('外汇',['离岸汇率'], json.loads(result))[0]
         return USDCNH
 
     def parse_goods_and_exchanges(self, name, symbol, text):
@@ -506,6 +503,8 @@ class parseManager:
                     indexCode = item[0].replace('hf_', '')
                     indexName = values[9]
                 index.indexCode = indexCode
+                if u'人民币' in indexName:
+                    indexName = indexName.replace(u'人民币',u'汇率')
                 index.indexName = indexName
                 index.indexArea = '外汇'
 
@@ -522,8 +521,9 @@ class parseManager:
                 index.indexCode = item[0].replace('hf_', '')
                 if item[0] == 'hf_CHA50CFD':
                     index.indexName = '富时A50'
+                    index.indexCode = 'A50CFD'
                 else:
-                    index.indexName = values[-1]
+                    index.indexName = values[-2]
                 index.indexArea = '期货'
                 index.current = round(float(values[0]), 3)
                 index.lastClose = round(float(values[7]), 3)
@@ -593,9 +593,9 @@ class parseManager:
                 bond7year = '{0}%'.format(round(float(valueArray[1]),2))
             elif valueArray[0] == 10.0:
                 bond10year = '{0}%'.format(round(float(valueArray[1]),2))
-        result5year = { 'indexName' : u'5年期国债', 'indexCode' : '5YEAR','indexArea' : '债券', 'sequence' : 0, 'current' : bond5year, 'lastClose' : bond5year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 5}
-        result7year = { 'indexName' : u'7年期国债', 'indexCode' : '7YEAR','indexArea' : '债券', 'sequence' : 1, 'current' : bond7year, 'lastClose' : bond7year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 7}
-        result10year = { 'indexName' : u'10年期国债', 'indexCode' : '10YEAR','indexArea' : '债券', 'sequence' : 2, 'current' : bond10year, 'lastClose' : bond10year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 10}
+        result5year = { 'indexName' : u'5年国债', 'indexCode' : '5YEAR','indexArea' : '债券', 'sequence' : 0, 'current' : bond5year, 'lastClose' : bond5year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 5}
+        result7year = { 'indexName' : u'7年国债', 'indexCode' : '7YEAR','indexArea' : '债券', 'sequence' : 1, 'current' : bond7year, 'lastClose' : bond7year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 7}
+        result10year = { 'indexName' : u'10年国债', 'indexCode' : '10YEAR','indexArea' : '债券', 'sequence' : 2, 'current' : bond10year, 'lastClose' : bond10year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 10}
         finalResult.append({'name': name, 'symbol' : symbol, 'value' : [result5year, result7year, result10year]})
         return finalResult
 
@@ -614,7 +614,7 @@ class parseManager:
         # index = indexModel()
         planName = data['plan_name']
         if u'稳稳' in planName:
-            planName = '稳稳的幸福'
+            planName = '稳稳幸福'
         if u'90' in planName:
             planName = '钉钉宝90'
         if u'365' in planName:

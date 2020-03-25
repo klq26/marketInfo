@@ -2,7 +2,7 @@
   <div class="container">
     <p class="title" @click="shouldShow">{{title}}</p>
     <div class="panel">
-      <div class="button" @click="changeSortType" v-show="showSortButton === '1' ? true : false">排序</div>
+      <div class="button" @click="changeSortType" v-show="showSortButton === '1' ? true : false">{{sortNameConverter(sortType)}}</div>
       <div class="button" @click="changeShowType" v-show="showStyleButton === '1' ? true : false">样式</div>
       <p class="status" :class="isOpenning ? 'enable-color' : 'disable-color'">{{isOpenning ? '开盘' : '收盘'}}</p>
     </div>
@@ -15,9 +15,32 @@ export default {
     'title',
     'isOpenning',
     'showSortButton',
-    'showStyleButton'
+    'showStyleButton',
+    'sortType'
   ],
+  data () {
+    return {
+      sortName: '产值',
+    }
+  },
   methods: {
+    sortNameConverter (sortType) {
+      if (sortType === '1') {
+        return '产值'
+      }
+      if (sortType === '2') {
+        return '时区'
+      }
+      if (sortType === '3') {
+        return '人均'
+      }
+      if (sortType === '4') {
+        return '人口'
+      }
+      if (sortType === '5') {
+        return '国土'
+      }
+    },
     shouldShow () {
       // // 子组件
       // this.$emit('test',this.param1，this.param2, this.param3)
@@ -29,7 +52,7 @@ export default {
       this.$emit('changeShowType', this.title)
     },
     changeSortType () {
-      this.$emit('changeSortType', this.title)
+      this.$emit('changeSortType', this.title, this.sortType)
     }
   }
 }

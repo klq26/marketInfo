@@ -14,6 +14,8 @@ class countryInfoModel:
         self.timezone = u'UTC+8'
         self.dealTime = '09:25-15:00'
         self.breakTime = '11:30-13:00'
+        self.indexName = u'上证指数'
+        self.indexCode = u'0000001'
         self.population = 1400000000
         self.area = 9600000  # 单位：平方公里
         self.gdpRMB = 99086500000000  # 单位：元

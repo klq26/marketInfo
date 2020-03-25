@@ -17,8 +17,8 @@ class databaseManager:
         elif sys.platform.startswith('linux'):
             self.ip_address = '127.0.0.1'
         # 数据库与 model 模型的 key 匹配
-        country_info_db_keys = ['id','country','country_code','capital','continent','timezone','deal_time','break_time','population','area','gdp_rmb','gdp_person_avg','inland_currency','currency_code','summer_time']
-        country_info_model_keys = ['id','country','countryCode','capital','continent','timezone','dealTime','breakTime','population','area','gdpRMB','gdpPersonAvg','inlandCurrency','inlandCurrencyCode','summerTime']
+        country_info_db_keys = ['id','country','country_code','capital','index_name','index_code','continent','timezone','deal_time','break_time','population','area','gdp_rmb','gdp_person_avg','inland_currency','currency_code','summer_time']
+        country_info_model_keys = ['id','country','countryCode','capital','indexName','indexCode','continent','timezone','dealTime','breakTime','population','area','gdpRMB','gdpPersonAvg','inlandCurrency','inlandCurrencyCode','summerTime']
         self.country_info_keymapping = dict(zip(country_info_db_keys, country_info_model_keys))
 
     # 按大洲查询指数历史数据
@@ -41,7 +41,7 @@ class databaseManager:
         db.close()
         return result
     
-    def getCountryByIndexCode(self, continent='亚洲', code='N225'):
+    def getCountryByIndexCode(self, continent='美洲', code='N225'):
         historyList = self.getIndexHistorysByContinent(continent)
         for item in historyList:
             if item['indexCode'] == code:
@@ -49,14 +49,14 @@ class databaseManager:
         return {'country': 'NA', 'countryCode': 'NA', 'indexCode':code}
 
     # 按大洲查询国家数据（默认 GDP 降序排列）
-    def getCountryInfosByContinent(self, continent=u'中国', orderby='gdp_rmb'):
+    def getCountryInfosByContinent(self, continent=u'中国', orderby='gdp_rmb', desc='DESC'):
         db = pymysql.connect(self.ip_address,'klq26','abc123!@#==','finance')
         cursor = db.cursor()
         # 数据库字段名
         db_keys = self.country_info_keymapping.keys()
         # 模型字段名
         model_keys = self.country_info_keymapping.values()
-        sql = "SELECT {0} FROM country_info WHERE continent = '{1}' ORDER BY {2} DESC".format(','.join(db_keys), continent, orderby)
+        sql = "SELECT {0} FROM country_info WHERE continent = '{1}' ORDER BY {2} {3}".format(','.join(db_keys), continent, orderby, desc)
         # print(sql)
         cursor.execute(sql)
         db.commit()
@@ -72,56 +72,70 @@ class databaseManager:
     # 按国情指标降序排序 #
     ####################
     
-    def sequenceByDealTime(self, continent=u'亚洲'):
+    def sequenceByDealTime(self, continent=u'美洲'):
         key = 'deal_time'
-        countrylist = self.getCountryInfosByContinent(continent, key)
-        countrylist = reversed(countrylist)
+        countrylist = self.getCountryInfosByContinent(continent, key, desc="ASC")
         return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
-    def sequenceByGDP(self, continent=u'亚洲'):
+    def sequenceByGDP(self, continent=u'美洲'):
         key = 'gdp_rmb'
         countrylist = self.getCountryInfosByContinent(continent, key)
         return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
-    def sequenceByAverageGDP(self, continent=u'亚洲'):
+    def sequenceByAverageGDP(self, continent=u'美洲'):
         key = 'gdp_person_avg'
         countrylist = self.getCountryInfosByContinent(continent, key)
         return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
-    def sequenceByPopulation(self, continent=u'亚洲'):
+    def sequenceByPopulation(self, continent=u'美洲'):
         key = 'population'
         countrylist = self.getCountryInfosByContinent(continent, key)
         return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
-    def sequenceByArea(self, continent=u'亚洲'):
+    def sequenceByArea(self, continent=u'美洲'):
         key = 'area'
         countrylist = self.getCountryInfosByContinent(continent, key)
         return self.assignSequence(countrylist, self.country_info_keymapping[key])
 
     # 根据数据库返回结果，统一生成 sequence 数组供客户端排序（同时附上排序字段供客户端 debug）
     def assignSequence(self, countrylist, sortKey='id'):
-        result = []
-        index = 1
-        for item in countrylist:
-            countryInfo = countryInfoModel()
-            countryInfo.__dict__ = item
-            result.append({'country' : countryInfo.country, 'countryCode': countryInfo.countryCode,'{0}'.format(sortKey): countryInfo[sortKey], 'sequence': index})
-            index += 1
-        # [print(x) for x in result]
-        # print()
-        return result
+        # print(sortKey)
+        db_countrys = [x['country'] for x in countrylist]
+        db_names = [x['indexName'] for x in countrylist]
+        db_codes = [x['indexCode'] for x in countrylist]
+
+        names = []
+        codes = []
+        # 指数换国家
+        for i in range(0,len(db_countrys)):
+            country = db_countrys[i]
+            code = db_codes[i]
+            name = db_names[i]
+            # 当该国只有一只观察指数时
+            if '-' not in name:
+                names.append(country)
+                codes.append(code.replace('i:',''))
+            else:
+                indexNames = name.split('-')
+                indexCodes = code.split('-')
+                [names.append(x) for x in indexNames]
+                [codes.append(x.replace('i:','')) for x in indexCodes]
+        # print(names)
+        # print(codes)
+        return (names, codes)
+
 
 if __name__ == "__main__":
     db = databaseManager()
     # 测试历史年 K
-    result = db.getIndexHistorysByContinent('澳洲')
-    for item in result:
-        indexHistory = indexHistoryModel()
-        indexHistory.__dict__ = item
-        print(indexHistory)
+    # result = db.getIndexHistorysByContinent('澳洲')
+    # for item in result:
+    #     indexHistory = indexHistoryModel()
+    #     indexHistory.__dict__ = item
+    #     print(indexHistory)
     
     # 测试根据指数 symbol 获取指数国家的功能
-    print(db.getCountryByIndexCode(code='PSI'))
+    # print(db.getCountryByIndexCode(code='PSI'))
 
     # 测试国家数据
     db.sequenceByGDP()

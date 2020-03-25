@@ -33,14 +33,14 @@
     <!-- 指数区 -->
     <SectionHeaderComponent
       title="中国"
-      ref="china_header_ref"
+      ref="中国_header"
       showStyleButton="1"
       @changeShowType="changeShowType"
-      @shouldShow="headerConfig['china_header_ref']['shouldShow'] = !headerConfig['china_header_ref']['shouldShow']"
+      @shouldShow="headerConfig['中国_header']['shouldShow'] = !headerConfig['中国_header']['shouldShow']"
       :isOpenning="isChinaOpenning"
     />
     <transition name="fade">
-      <div v-if="headerConfig['china_header_ref']['shouldShow']">
+      <div v-if="headerConfig['中国_header']['shouldShow']">
         <IndexComponent ref="中国" :indexInfos="china" />
       </div>
     </transition>
@@ -57,44 +57,50 @@
       </div>
     </transition>
     <SectionHeaderComponent
-      ref="asian_header_ref"
+      ref="亚洲_header"
       title="亚洲"
       showStyleButton="1"
       showSortButton="1"
-      @shouldShow="headerConfig['asian_header_ref']['shouldShow'] = !headerConfig['asian_header_ref']['shouldShow']"
+      @shouldShow="headerConfig['亚洲_header']['shouldShow'] = !headerConfig['亚洲_header']['shouldShow']"
       @changeShowType="changeShowType"
+      :sortType="indexSortConfig['亚洲']['sortType']"
+      @changeSortType="changeSortType(arguments)"
       :isOpenning="isAsianOpenning"
     />
     <transition name="fade">
-      <div v-if="headerConfig['asian_header_ref']['shouldShow']">
+      <div v-if="headerConfig['亚洲_header']['shouldShow']">
         <IndexComponent ref="亚洲" :indexInfos="asian" />
       </div>
     </transition>
     <SectionHeaderComponent
-      ref="euro_header_ref"
+      ref="欧洲_header"
       title="欧洲"
       showStyleButton="1"
       showSortButton="1"
-      @shouldShow="headerConfig['euro_header_ref']['shouldShow'] = !headerConfig['euro_header_ref']['shouldShow']"
+      @shouldShow="headerConfig['欧洲_header']['shouldShow'] = !headerConfig['欧洲_header']['shouldShow']"
       @changeShowType="changeShowType"
+      :sortType="indexSortConfig['欧洲']['sortType']"
+      @changeSortType="changeSortType(arguments)"
       :isOpenning="isEuroOpenning"
     />
     <transition name="fade">
-      <div v-if="headerConfig['euro_header_ref']['shouldShow']">
+      <div v-if="headerConfig['欧洲_header']['shouldShow']">
         <IndexComponent ref="欧洲" :indexInfos="euro" />
       </div>
     </transition>
     <SectionHeaderComponent
-      ref="america_header_ref"
+      ref="美洲_header"
       title="美洲"
       showStyleButton="1"
       showSortButton="1"
-      @shouldShow="headerConfig['america_header_ref']['shouldShow'] = !headerConfig['america_header_ref']['shouldShow']"
+      @shouldShow="headerConfig['美洲_header']['shouldShow'] = !headerConfig['美洲_header']['shouldShow']"
       @changeShowType="changeShowType"
+      :sortType="indexSortConfig['美洲']['sortType']"
+      @changeSortType="changeSortType(arguments)"
       :isOpenning="isAmericaOpenning"
     />
     <transition name="fade">
-      <div v-if="headerConfig['america_header_ref']['shouldShow']">
+      <div v-if="headerConfig['美洲_header']['shouldShow']">
         <IndexComponent ref="美洲" :indexInfos="america" />
       </div>
     </transition>
@@ -248,10 +254,10 @@ export default {
   data () {
     return {
       headerConfig: {
-        china_header_ref: { shouldShow: true },
-        asian_header_ref: { shouldShow: true },
-        euro_header_ref: { shouldShow: true },
-        america_header_ref: {shouldShow: true}
+        中国_header: { shouldShow: true },
+        亚洲_header: { shouldShow: true },
+        欧洲_header: { shouldShow: true },
+        美洲_header: {shouldShow: true}
       },
       indexAreaConfig: {
         中国: { showType: 0 },
@@ -263,15 +269,19 @@ export default {
         外汇: { showType: 0 },
         固收: { showType: 0 }
       },
-      
+      indexSortConfig: {
+        亚洲: { sortType: "2" },
+        欧洲: { sortType: "2" },
+        美洲: { sortType: "2" }
+      },
       // 显示隐藏面板
-      showMoney: false,
-      showZDP: false,
-      showChina: false,
-      showAustralia: false,
+      showMoney: true,
+      showZDP: true,
+      showChina: true,
+      showAustralia: true,
       showGoods: true,
-      showExchanges: false,
-      showBond: false,
+      showExchanges: true,
+      showBond: true,
       // 是否开盘
       isMoneyOpenning: true,
       isZDPOpenning: true,
@@ -286,13 +296,23 @@ export default {
     }
   },
   methods: {
-    changeShowType(title) {
+    changeShowType (title) {
       for (var ref_key in this.$refs) {
         if (title === ref_key) {
           this.$refs[ref_key].showType = this.$refs[ref_key].showType === 1 ? 0 : 1
           break;
         }
       }
+    },
+    changeSortType (params) {
+      var type = parseInt(this.indexSortConfig[params[0]]['sortType'])
+      if (type < 5) {
+        type += 1
+      } else {
+        type = 1
+      }
+      this.indexSortConfig[params[0]]['sortType'] = type.toString()
+      this.requestIndexSortInfos(params[0], type)
     },
     /* 网络请求 */
     // 请求资金数据
@@ -365,7 +385,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求亚洲
-        this.$axios.get(server_ip + 'api/indexs/asian').then(function (response) {
+        this.$axios.get(server_ip + 'api/indexs/asian?sort=' + this.indexSortConfig['亚洲']['sortType']).then(function (response) {
           that.asian = response.data.data
         })
       } else {
@@ -378,7 +398,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求欧洲
-        this.$axios.get(server_ip + 'api/indexs/euro').then(function (response) {
+        this.$axios.get(server_ip + 'api/indexs/euro?sort=' + this.indexSortConfig['欧洲']['sortType']).then(function (response) {
           that.euro = response.data.data
         })
       } else {
@@ -393,7 +413,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求美洲
-        this.$axios.get(server_ip + 'api/indexs/america').then(function (response) {
+        this.$axios.get(server_ip + 'api/indexs/america?sort=' + this.indexSortConfig['美洲']['sortType']).then(function (response) {
           that.america = response.data.data
         })
       } else {
@@ -423,6 +443,21 @@ export default {
           that.bond.push(response.data.data[2].value[item])
         }
       })
+    },
+    requestIndexSortInfos (continent, type) {
+      var that = this
+      var area = ''
+      if (continent === '亚洲') {
+        this.requestAsianIfNeeded(true)
+      } else if (continent === '欧洲') {
+        this.requestEuroIfNeeded(true)
+      }
+      else if (continent === '美洲') {
+        this.requestAmericaIfNeeded(true)
+      } else {
+        console.log('Wrong continent')
+        return
+      }
     }
   },
   created: function () {
