@@ -48,7 +48,6 @@ def getZDPInfo():
     cm.saveCache(request.path, data)
     return Response(data, status=200, mimetype='application/json')
 
-
 # ////////////////////////////////////////////////////////////////////////////////////////
 # 请求指数数据 china asian euro america australia
 # ////////////////////////////////////////////////////////////////////////////////////////
@@ -136,16 +135,30 @@ def getBondInfo():
     return Response(data, status=200, mimetype='application/json')
 
 # ////////////////////////////////////////////////////////////////////////////////////////
-# 请求指数排序数据 china asian euro america australia
+# 请求指数所属国家的信息
 # ////////////////////////////////////////////////////////////////////////////////////////
-@app.route('/api/sortinfo/<string:area>/<string:type>', methods=['GET'])
-def getIndexSortInfos(area, type):
+@app.route('/api/countryinfo/<string:indexName>', methods=['GET'])
+def getCountryinfo(indexName):
     start_ts = datetimeManager().getTimeStamp()
     if cm.cacheAvailable(start_ts, request.path):
         data = cm.getCache(start_ts, request.path)
         return Response(data, status=200, mimetype='application/json')
-    responseText = requestsManager().getIndexSortInfos(area, type)
-    data = parseManager().parseIndexSortInfos(start_ts, area, type, responseText)
+    responseText = requestsManager().getCountryinfo(indexName)
+    data = parseManager().parseCountryinfo(start_ts, indexName, responseText)
+    cm.saveCache(request.path, data)
+    return Response(data, status=200, mimetype='application/json')
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+# 请求指数历史数据
+# ////////////////////////////////////////////////////////////////////////////////////////
+@app.route('/api/indexhistory/<string:indexName>', methods=['GET'])
+def getIndexHistory(indexName):
+    start_ts = datetimeManager().getTimeStamp()
+    if cm.cacheAvailable(start_ts, request.path):
+        data = cm.getCache(start_ts, request.path)
+        return Response(data, status=200, mimetype='application/json')
+    responseText = requestsManager().getIndexHistory(indexName)
+    data = parseManager().parseIndexHistory(start_ts, indexName, responseText)
     cm.saveCache(request.path, data)
     return Response(data, status=200, mimetype='application/json')
 

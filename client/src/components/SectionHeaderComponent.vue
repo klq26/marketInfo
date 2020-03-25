@@ -2,6 +2,7 @@
   <div class="container">
     <p class="title" @click="shouldShow">{{title}}</p>
     <div class="panel">
+      <p class="time">{{openTime}}</p>
       <div class="button" @click="changeSortType" v-show="showSortButton === '1' ? true : false">{{sortNameConverter(sortType)}}</div>
       <div class="button" @click="changeShowType" v-show="showStyleButton === '1' ? true : false">样式</div>
       <p class="status" :class="isOpenning ? 'enable-color' : 'disable-color'">{{isOpenning ? '开盘' : '收盘'}}</p>
@@ -14,6 +15,7 @@ export default {
   props: [
     'title',
     'isOpenning',
+    'openTime',
     'showSortButton',
     'showStyleButton',
     'sortType'
@@ -85,6 +87,16 @@ export default {
   background-color: @index-title-bg-color;
   display:inline-flex;
   justify-content: flex-end;
+}
+
+.time {
+  margin: 0px;
+  width: max-content;
+  text-align: center;
+  position: absolute;
+  left: 252px;
+  font-size: @app-small-text-size;
+  color: @index-title-text-color;
 }
 
 .button {

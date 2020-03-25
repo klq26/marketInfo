@@ -163,7 +163,6 @@ class requestsManager:
                 responseTexts.append(response.text)
             else:
                 responseTexts.append('{}')
-        print('测试 ',responseTexts)
         return responseTexts
 
     # ////////////////////////////////////////////////////////////////////////////////////////
@@ -224,3 +223,29 @@ class requestsManager:
         response = requests.get(url, headers=self.headers, verify=False)
         if response.status_code == 200:
             return response.text
+
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 请求国家信息
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    def getCountryinfo(self, indexName):
+        result = []
+        db = databaseManager()
+        # 先尝试按国家名称找
+        result = db.getSingleCountryInfo('country', indexName)
+        if len(result) == 0:
+            # 国家名称没有，说明是一个国家对应多个指数（如中美），此时应该进行 index_code 查询
+            result = databaseManager().getSingleCountryInfo('index_name', indexName)
+        return result
+
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 请求指数历史数据
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    def getIndexHistory(self, indexName):
+        result = []
+        db = databaseManager()
+        # 先尝试按国家名称找
+        result = db.getSingleIndexHistory('country', indexName)
+        if len(result) == 0:
+            # 国家名称没有，说明是一个国家对应多个指数（如中美），此时应该进行 index_code 查询
+            result = databaseManager().getSingleIndexHistory('index_name', indexName)
+        return result

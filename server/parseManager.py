@@ -634,7 +634,7 @@ class parseManager:
     # 解析指数排序数据 china asian euro america australia
     # ////////////////////////////////////////////////////////////////////////////////////////
     def parseIndexSortInfos(self, start_ts, area, type, datalist):
-
+        # 本地数据库查询结果，直接打包
         end_ts = self.dm.getTimeStamp()
         duration = self.dm.getDuration(start_ts, end_ts)
         data = self.packDataWithCommonInfo(duration = duration, data = datalist)
@@ -669,3 +669,28 @@ class parseManager:
         duration = self.dm.getDuration(start_ts, end_ts)
         data = self.packDataWithCommonInfo(duration = duration, data = parsedData)
         return data
+
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 解析国家信息
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    def parseCountryinfo(self, start_ts, indexName, datalist):
+        # 本地数据库查询结果，直接打包
+        end_ts = self.dm.getTimeStamp()
+        duration = self.dm.getDuration(start_ts, end_ts)
+        data = self.packDataWithCommonInfo(duration = duration, data = datalist)
+        return data
+    
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    # 解析指数历史数据
+    # ////////////////////////////////////////////////////////////////////////////////////////
+    def parseIndexHistory(self, start_ts, indexName, datalist):
+        # 本地数据库查询结果，直接打包
+        end_ts = self.dm.getTimeStamp()
+        duration = self.dm.getDuration(start_ts, end_ts)
+        if len(datalist) > 0:
+            values = datalist[0]['indexHistory'].split('-')
+            datalist[0]['indexHistory'] = values
+        data = self.packDataWithCommonInfo(duration = duration, data = datalist)
+        return data
+
+    

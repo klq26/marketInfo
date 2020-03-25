@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <PopupComponent :show="showPopup" :title="popupTitle" :popupMessage=popupMessage @submit="submit">
+    </PopupComponent>
     <TimeComponent />
     <!-- 资金区 -->
     <SectionHeaderComponent
@@ -38,10 +40,11 @@
       @changeShowType="changeShowType"
       @shouldShow="headerConfig['中国_header']['shouldShow'] = !headerConfig['中国_header']['shouldShow']"
       :isOpenning="isChinaOpenning"
+      openTime="09:00 - 15:01"
     />
     <transition name="fade">
       <div v-if="headerConfig['中国_header']['shouldShow']">
-        <IndexComponent ref="中国" :indexInfos="china" />
+        <IndexComponent ref="中国" :indexInfos="china" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -50,10 +53,11 @@
       @changeShowType="changeShowType"
       @shouldShow="showAustralia = !showAustralia"
       :isOpenning="isAustraliaOpenning"
+      openTime="06:00 - 14:00"
     />
     <transition name="fade">
       <div v-if="showAustralia">
-        <IndexComponent ref="澳洲" :indexInfos="australia" />
+        <IndexComponent ref="澳洲" :indexInfos="australia" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -66,10 +70,11 @@
       :sortType="indexSortConfig['亚洲']['sortType']"
       @changeSortType="changeSortType(arguments)"
       :isOpenning="isAsianOpenning"
+      openTime="08:00 - 19:30"
     />
     <transition name="fade">
       <div v-if="headerConfig['亚洲_header']['shouldShow']">
-        <IndexComponent ref="亚洲" :indexInfos="asian" />
+        <IndexComponent ref="亚洲" :indexInfos="asian" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -82,10 +87,11 @@
       :sortType="indexSortConfig['欧洲']['sortType']"
       @changeSortType="changeSortType(arguments)"
       :isOpenning="isEuroOpenning"
+      openTime="15:00 - 01:30"
     />
     <transition name="fade">
       <div v-if="headerConfig['欧洲_header']['shouldShow']">
-        <IndexComponent ref="欧洲" :indexInfos="euro" />
+        <IndexComponent ref="欧洲" :indexInfos="euro" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -98,10 +104,11 @@
       :sortType="indexSortConfig['美洲']['sortType']"
       @changeSortType="changeSortType(arguments)"
       :isOpenning="isAmericaOpenning"
+      openTime="22:00 - 05:30"
     />
     <transition name="fade">
       <div v-if="headerConfig['美洲_header']['shouldShow']">
-        <IndexComponent ref="美洲" :indexInfos="america" />
+        <IndexComponent ref="美洲" :indexInfos="america" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -148,6 +155,8 @@
 import axios from 'axios'
 import Vue from 'vue'
 
+// 弹窗组件
+import PopupComponent from './components/PopupComponent'
 // 时间组件
 import TimeComponent from './components/TimeComponent'
 // 标题板块
@@ -173,8 +182,8 @@ Vue.config.productionTip = false
 // 是否工作日
 var isWorkingDay = true
 
-// var server_ip = 'http://112.125.25.230/'
-var server_ip = "http://127.0.0.1:5000/"
+var server_ip = 'http://112.125.25.230/'
+// server_ip = "http://127.0.0.1:5000/"
 
 // 时间前置补 0
 function prefixInteger (num, length) {
@@ -227,6 +236,7 @@ function isMarketOpenning (morningOpen, morningClose, afternoonOpen, afternoonCl
 export default {
   name: 'App',
   components: {
+    PopupComponent,
     TimeComponent,
     SectionHeaderComponent,
     MoneyComponent,
@@ -253,6 +263,9 @@ export default {
   ],
   data () {
     return {
+      showPopup: false,
+      popupTitle: '默认标题',
+      popupMessage: '默认弹窗消息',
       headerConfig: {
         中国_header: { shouldShow: true },
         亚洲_header: { shouldShow: true },
@@ -296,6 +309,47 @@ export default {
     }
   },
   methods: {
+    indexTitleClicked (title) {
+      var that = this
+      this.popupTitle = title
+      this.$axios.get(server_ip + 'api/countryinfo/' + title).then(function (response) {
+        that.showPopup = true
+        var jsonData = response.data.data[0]
+        var infos = []
+        infos.push('国家：' + jsonData.country)
+        infos.push('首都：' + jsonData.capital)
+        infos.push('大洲：' + jsonData.continent)
+        infos.push('代码：' + jsonData.countryCode)
+        infos.push('交易：' + jsonData.dealTime)
+        infos.push('间休：' + jsonData.breakTime)
+        infos.push('产值：' + jsonData.gdpRMB)
+        infos.push('人均：' + jsonData.gdpPersonAvg)
+        infos.push('人口：' + jsonData.population)
+        infos.push('面积：' + jsonData.area)
+        that.popupMessage = infos
+      })
+    },
+    indexValueClicked (item) {
+      this.popupTitle = item.indexName + item.indexCode
+      var that = this
+      this.$axios.get(server_ip + 'api/indexhistory/' + item.indexName).then(function (response) {
+        that.showPopup = true
+        var jsonData = response.data.data[0]
+        var infos = []
+        infos.push('名称：' + jsonData.indexName)
+        infos.push('代码：' + jsonData.indexCode)
+        infos.push('年线：\n')
+        for (var key in jsonData.indexHistory) {
+          var info = jsonData.indexHistory[key]
+           infos.push(info)
+        }
+        that.popupMessage = infos
+      })
+    },
+    submit () {
+    // 确认弹窗回调
+      this.showPopup = false
+    },
     changeShowType (title) {
       for (var ref_key in this.$refs) {
         if (title === ref_key) {
@@ -380,7 +434,7 @@ export default {
       }
     },
     requestAsianIfNeeded (isForce = false) {
-      var isOpenning = isMarketOpenning('9:00', '11:35', '13:00', '16:20')
+      var isOpenning = isMarketOpenning('8:00', '19:30', '8:00', '19:30')
       this.isAsianOpenning = isOpenning
       if (isForce || isOpenning) {
         var that = this
@@ -393,7 +447,7 @@ export default {
       }
     },
     requestEuroIfNeeded (isForce = false) {
-      var isOpenning = isMarketOpenning('16:00', '23:59', '00:00', '2:30')
+      var isOpenning = isMarketOpenning('15:00', '23:59', '00:00', '1:30')
       this.isEuroOpenning = isOpenning
       if (isForce || isOpenning) {
         var that = this
@@ -408,7 +462,7 @@ export default {
     requestAmericaIfNeeded (isForce = false) {
       // 夏令时（3月-11月）为北京时间21:30-次日4:00，交易时长6个半小时，中间无休。
       // 冬令时（11月-次年3月）为北京时间22:30-次日5:00，交易时长6个半小时，中间无休。
-      var isOpenning = isMarketOpenning('21:25', '23:59', '00:00', '4:05')
+      var isOpenning = isMarketOpenning('21:00', '23:59', '00:00', '4:30')
       this.isAmericaOpenning = isOpenning
       if (isForce || isOpenning) {
         var that = this
@@ -473,19 +527,44 @@ export default {
     this.requestAmericaIfNeeded(true)
     this.requestGoodsAndExchangesIfNeeded(true)
     this.requestBondInfoIfNeeded(true)
+    // 自动收起不在开盘时段的 Section
+    var todayStr = todayString('/')
+    if(!isDuringDate(todayStr + ' ' + '9:00', todayStr + ' ' + '15:01')) {
+      this.showMoney = false
+      this.showZDP = false
+      this.headerConfig['中国_header']['shouldShow'] = false
+    }
+    if(!isDuringDate(todayStr + ' ' + '6:00', todayStr + ' ' + '14:01')) {
+      this.showAustralia = false
+    }
+    if(!isDuringDate(todayStr + ' ' + '8:00', todayStr + ' ' + '19:31')) {
+      this.headerConfig['亚洲_header']['shouldShow'] = false
+    }
+    if(!isDuringDate(todayStr + ' ' + '15:00', todayStr + ' ' + '23:59') && !isDuringDate(todayStr + ' ' + '00:00', todayStr + ' ' + '0:30')) {
+      this.headerConfig['欧洲_header']['shouldShow'] = false
+    }
+    if(!isDuringDate(todayStr + ' ' + '21:00', todayStr + ' ' + '23:59') && !isDuringDate(todayStr + ' ' + '00:00', todayStr + ' ' + '4:30')) {
+      this.headerConfig['美洲_header']['shouldShow'] = false
+    }
+    // this.showGoods = false
+    // this.showExchanges = false
+    // this.showBond = false
+      
     // 定时刷新
     // 资金流 60s
     setInterval(this.requestMoneyInfoIfNeeded, 60 * 1000)
     // 涨跌平 60s
     setInterval(this.requestZDPInfoIfNeeded, 60 * 1000)
-    // 指数 15s
+    // 指数 
+    // 中国 15s
     setInterval(this.requestChinaIfNeeded, 15 * 1000)
-    setInterval(this.requestAustraliaIfNeeded, 15 * 1000)
-    setInterval(this.requestAsianIfNeeded, 15 * 1000)
-    setInterval(this.requestEuroIfNeeded, 15 * 1000)
-    setInterval(this.requestAmericaIfNeeded, 15 * 1000)
+    // 其他国家 60s
+    setInterval(this.requestAustraliaIfNeeded, 60 * 1000)
+    setInterval(this.requestAsianIfNeeded, 60 * 1000)
+    setInterval(this.requestEuroIfNeeded, 60 * 1000)
+    setInterval(this.requestAmericaIfNeeded, 60 * 1000)
     // 期货&外汇 15s
-    setInterval(this.requestGoodsAndExchangesIfNeeded, 15 * 1000)
+    setInterval(this.requestGoodsAndExchangesIfNeeded, 60 * 1000)
   }
 }
 </script>

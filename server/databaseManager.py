@@ -17,9 +17,13 @@ class databaseManager:
         elif sys.platform.startswith('linux'):
             self.ip_address = '127.0.0.1'
         # 数据库与 model 模型的 key 匹配
-        country_info_db_keys = ['id','country','country_code','capital','index_name','index_code','continent','timezone','deal_time','break_time','population','area','gdp_rmb','gdp_person_avg','inland_currency','currency_code','summer_time']
-        country_info_model_keys = ['id','country','countryCode','capital','indexName','indexCode','continent','timezone','dealTime','breakTime','population','area','gdpRMB','gdpPersonAvg','inlandCurrency','inlandCurrencyCode','summerTime']
+        country_info_db_keys = ['id','country','country_code','capital','trading_market','market_code','index_name','index_code','continent','timezone','deal_time','break_time','population','area','gdp_rmb','gdp_person_avg','inland_currency','currency_code','summer_time']
+        country_info_model_keys = ['id','country','countryCode','capital','tradingMarket','marketCode','indexName','indexCode','continent','timezone','dealTime','breakTime','population','area','gdpRMB','gdpPersonAvg','inlandCurrency','inlandCurrencyCode','summerTime']
         self.country_info_keymapping = dict(zip(country_info_db_keys, country_info_model_keys))
+
+        index_history_db_keys = ['id','country','country_code','continent','index_name','index_code','index_history']
+        index_history_model_keys = ['id','country','countryCode','continent','indexName','indexCode','indexHistory']
+        self.index_history_keymapping = dict(zip(index_history_db_keys, index_history_model_keys))
 
     # 按大洲查询指数历史数据
     def getIndexHistorysByContinent(self, continent=u'中国', orderby='id'):
@@ -124,6 +128,45 @@ class databaseManager:
         # print(codes)
         return (names, codes)
 
+    # 根据字段获取单个国家
+    def getSingleCountryInfo(self, db_key, value):
+        db = pymysql.connect(self.ip_address,'klq26','abc123!@#==','finance')
+        cursor = db.cursor()
+        # 数据库字段名
+        db_keys = self.country_info_keymapping.keys()
+        # 模型字段名
+        model_keys = self.country_info_keymapping.values()
+        sql = "SELECT {0} FROM country_info WHERE {1} LIKE '%{2}%'".format(','.join(db_keys), db_key, value)
+        # print(sql)
+        cursor.execute(sql)
+        db.commit()
+        datalist = list(cursor.fetchall())
+        result = []
+        for item in datalist:
+            result.append(dict(zip(model_keys, list(item))))
+        cursor.close()
+        db.close()
+        return result
+
+    # 根据字段获取单个国家
+    def getSingleIndexHistory(self, db_key, value):
+        db = pymysql.connect(self.ip_address,'klq26','abc123!@#==','finance')
+        cursor = db.cursor()
+        # 数据库字段名
+        db_keys = self.index_history_keymapping.keys()
+        # 模型字段名
+        model_keys = self.index_history_keymapping.values()
+        sql = "SELECT {0} FROM index_history WHERE {1} LIKE '%{2}%'".format(','.join(db_keys), db_key, value)
+        # print(sql)
+        cursor.execute(sql)
+        db.commit()
+        datalist = list(cursor.fetchall())
+        result = []
+        for item in datalist:
+            result.append(dict(zip(model_keys, list(item))))
+        cursor.close()
+        db.close()
+        return result
 
 if __name__ == "__main__":
     db = databaseManager()

@@ -17,13 +17,13 @@ class cacheManager:
             {'path' : '/api/moneyinfo', 'cache_duration' : 30},
             # 涨跌平数据，缓存 30 秒
             {'path' : '/api/zdpinfo', 'cache_duration' : 30},
-            # 指数数据，缓存 10 秒
-            {'path' : '/api/indexs/china', 'cache_duration' : 10},
-            {'path' : '/api/indexs/asian', 'cache_duration' : 10},
-            {'path' : '/api/indexs/euro', 'cache_duration' : 10},
-            {'path' : '/api/indexs/america', 'cache_duration' : 10},
+            # 指数数据，缓存中国 10 秒，其他国家 30 秒
+            {'path' : '/api/indexs/china', 'cache_duration' : 15},
+            {'path' : '/api/indexs/asian', 'cache_duration' : 30},
+            {'path' : '/api/indexs/euro', 'cache_duration' : 30},
+            {'path' : '/api/indexs/america', 'cache_duration' : 30},
             # 期货及外汇，缓存 10 秒
-            {'path' : '/api/goods_and_exchanges', 'cache_duration' : 10},
+            {'path' : '/api/goods_and_exchanges', 'cache_duration' : 30},
             # 债券及投资组合，缓存 60 秒
             {'path' : '/api/bondinfo', 'cache_duration' : 60},
             # 是否工作日，缓存 60 秒

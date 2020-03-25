@@ -4,7 +4,7 @@
       <div class='indexCell'>
         <!-- 样式1 -->
         <!-- 标题区 -->
-        <div class="index-title-container">
+        <div class="index-title-container" @click="indexTitleClicked(item.indexName)">
           <img class="index-title-flag-icon" :src="indexFlagConverter(item.indexName)"/>
           <p class="index-title-name" v-if="showType == 0">{{item.indexName}}</p>
           <p class="index-title-name" v-else>
@@ -12,7 +12,7 @@
           </p>
         </div>
         <!-- 点数区 -->
-        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)">{{formatNumber(item.current, demical)}}</p>
+        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" @click="indexValueClicked(item)">{{formatNumber(item.current, demical)}}</p>
         <!-- 日变化区 -->
         <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" v-if="showType == 0">
           {{item.dailyChangRate}}
@@ -42,19 +42,13 @@ import iconDown from '../assets/icon_down.png'
 
 import Vue from 'vue'
 import axios from 'axios'
-Vue.prototype.$axios = axios
 
+Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 
 export default {
   name: 'IndexComponent',
   props: {
-    sortInfos: {
-      type: Array,
-      default () {
-        return []
-      }
-    },
     indexInfos: {
       type: Array,
       default () {
@@ -77,9 +71,15 @@ export default {
     }
   },
   methods: {
+    indexTitleClicked (title) {
+      this.$emit('indexTitleClicked', title)
+    },
+    indexValueClicked (item) {
+      this.$emit('indexValueClicked', item)
+    },
     indexFlagConverter (value) {
       // require 是高级语法，不可以 require 变量，必须直接是路径
-      let american = ['道琼斯','标普500','纳斯达克','XOP']
+      let american = ['道琼斯','标普500','纳斯达克','油气XOP']
       let china = ['中证转债','上证指数','深证成指','创业板指','红利指数','中证红利','上证50','沪深300','中证500','中证1000','800等权','中小板指','全指医药','全指金融','证券公司','中证银行','养老产业','中证传媒','中证环保']
       let hongkong = ['恒生指数','国企指数','红筹指数']
       let common = ['']
