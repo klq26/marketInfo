@@ -22,7 +22,7 @@ export default {
   ],
   data () {
     return {
-      sortName: '产值',
+      sortName: '产值'
     }
   },
   methods: {

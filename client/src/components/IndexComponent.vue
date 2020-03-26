@@ -14,14 +14,14 @@
         <!-- 点数区 -->
         <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" @click="indexValueClicked(item)">{{formatNumber(item.current, demical)}}</p>
         <!-- 日变化区 -->
-        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" v-if="showType == 0">
+        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" @click="indexRefreshCellClicked" v-if="showType == 0">
           {{item.dailyChangRate}}
         </p>
-        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" v-else>
+        <p class="index-value" :class="bgColorWithValue(item.dailyChangValue)" @click="indexRefreshCellClicked" v-else>
           {{formatNumber(item.dailyChangValue, demical)}}
         </p>
         <!-- 自动刷新变化区 -->
-        <div :class="{flash : isUpdating}">
+        <div :class="{flash : isUpdating}" @click="indexRefreshCellClicked">
         <p class="refresh-value align-center" v-if="showType == 0">
           <img class="change-icon" :src="iconWithValue(changeValueFromLastRequest(item))"/>
         </p>
@@ -62,6 +62,10 @@ export default {
     demical: {
       type: Number,
       default: 2
+    },
+    headerRef: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -77,25 +81,27 @@ export default {
     indexValueClicked (item) {
       this.$emit('indexValueClicked', item)
     },
+    indexRefreshCellClicked () {
+      this.$emit('indexRefreshCellClicked', this.headerRef)
+    },
     indexFlagConverter (value) {
       // require 是高级语法，不可以 require 变量，必须直接是路径
-      let american = ['道琼斯','标普500','纳斯达克','油气XOP']
-      let china = ['中证转债','上证指数','深证成指','创业板指','红利指数','中证红利','上证50','沪深300','中证500','中证1000','800等权','中小板指','全指医药','全指金融','证券公司','中证银行','养老产业','中证传媒','中证环保']
-      let hongkong = ['恒生指数','国企指数','红筹指数']
-      let common = ['']
+      let american = ['道琼斯', '标普500', '纳斯达克', '油气XOP']
+      let china = ['中证转债', '上证指数', '深证成指', '创业板指', '红利指数', '中证红利', '上证50', '沪深300', '中证500', '中证1000', '800等权', '中小板指', '全指医药', '全指金融', '证券公司', '中证银行', '养老产业', '中证传媒', '中证环保']
+      let hongkong = ['恒生指数', '国企指数', '红筹指数']
       if (american.indexOf(value) > -1) {
-        value = '美国';
+        value = '美国'
       } else if (china.indexOf(value) > -1) {
-        value = '中国大陆';
+        value = '中国大陆'
       } else if (hongkong.indexOf(value) > -1) {
-        value = '中国香港';
+        value = '中国香港'
       }
       // 如果 require 有错误，使用通用图标
       try {
-        let path = require("../assets/flags/" + value + ".gif")
+        let path = require('../assets/flags/' + value + '.gif')
         return path
       } catch (error) {
-        let path = require("../assets/flags/通用.gif")
+        let path = require('../assets/flags/通用.gif')
         return path
       }
     },
@@ -177,7 +183,7 @@ export default {
         var change = parseFloat(item.current) - parseFloat(lastValue.current)
         return this.formatNumber(change, this.demical, true)
       }
-    },
+    }
   },
   watch: {
     indexInfos: {
@@ -281,8 +287,6 @@ export default {
   text-align: right;
   color: @index-title-text-color;
 }
-
-
 
 // 刷新值区
 .refresh-value {

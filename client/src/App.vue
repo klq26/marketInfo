@@ -35,16 +35,16 @@
     <!-- 指数区 -->
     <SectionHeaderComponent
       title="中国"
-      ref="中国_header"
+      ref="中国Header"
       showStyleButton="1"
       @changeShowType="changeShowType"
-      @shouldShow="headerConfig['中国_header']['shouldShow'] = !headerConfig['中国_header']['shouldShow']"
+      @shouldShow="headerConfig['中国Header']['shouldShow'] = !headerConfig['中国Header']['shouldShow']"
       :isOpenning="isChinaOpenning"
       openTime="09:00 - 15:01"
     />
     <transition name="fade">
-      <div v-if="headerConfig['中国_header']['shouldShow']">
-        <IndexComponent ref="中国" :indexInfos="china" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
+      <div v-if="headerConfig['中国Header']['shouldShow']">
+        <IndexComponent ref="中国" headerRef="中国" :indexInfos="china" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -57,15 +57,15 @@
     />
     <transition name="fade">
       <div v-if="showAustralia">
-        <IndexComponent ref="澳洲" :indexInfos="australia" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
+        <IndexComponent ref="澳洲" headerRef="澳洲" :indexInfos="australia" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
-      ref="亚洲_header"
+      ref="亚洲Header"
       title="亚洲"
       showStyleButton="1"
       showSortButton="1"
-      @shouldShow="headerConfig['亚洲_header']['shouldShow'] = !headerConfig['亚洲_header']['shouldShow']"
+      @shouldShow="headerConfig['亚洲Header']['shouldShow'] = !headerConfig['亚洲Header']['shouldShow']"
       @changeShowType="changeShowType"
       :sortType="indexSortConfig['亚洲']['sortType']"
       @changeSortType="changeSortType(arguments)"
@@ -73,16 +73,16 @@
       openTime="08:00 - 19:30"
     />
     <transition name="fade">
-      <div v-if="headerConfig['亚洲_header']['shouldShow']">
-        <IndexComponent ref="亚洲" :indexInfos="asian" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
+      <div v-if="headerConfig['亚洲Header']['shouldShow']">
+        <IndexComponent ref="亚洲" headerRef="亚洲" :indexInfos="asian" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
-      ref="欧洲_header"
+      ref="欧洲Header"
       title="欧洲"
       showStyleButton="1"
       showSortButton="1"
-      @shouldShow="headerConfig['欧洲_header']['shouldShow'] = !headerConfig['欧洲_header']['shouldShow']"
+      @shouldShow="headerConfig['欧洲Header']['shouldShow'] = !headerConfig['欧洲Header']['shouldShow']"
       @changeShowType="changeShowType"
       :sortType="indexSortConfig['欧洲']['sortType']"
       @changeSortType="changeSortType(arguments)"
@@ -90,16 +90,16 @@
       openTime="15:00 - 01:30"
     />
     <transition name="fade">
-      <div v-if="headerConfig['欧洲_header']['shouldShow']">
-        <IndexComponent ref="欧洲" :indexInfos="euro" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
+      <div v-if="headerConfig['欧洲Header']['shouldShow']">
+        <IndexComponent ref="欧洲" headerRef="欧洲" :indexInfos="euro" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
-      ref="美洲_header"
+      ref="美洲Header"
       title="美洲"
       showStyleButton="1"
       showSortButton="1"
-      @shouldShow="headerConfig['美洲_header']['shouldShow'] = !headerConfig['美洲_header']['shouldShow']"
+      @shouldShow="headerConfig['美洲Header']['shouldShow'] = !headerConfig['美洲Header']['shouldShow']"
       @changeShowType="changeShowType"
       :sortType="indexSortConfig['美洲']['sortType']"
       @changeSortType="changeSortType(arguments)"
@@ -107,8 +107,8 @@
       openTime="22:00 - 05:30"
     />
     <transition name="fade">
-      <div v-if="headerConfig['美洲_header']['shouldShow']">
-        <IndexComponent ref="美洲" :indexInfos="america" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked"/>
+      <div v-if="headerConfig['美洲Header']['shouldShow']">
+        <IndexComponent ref="美洲" headerRef="美洲" :indexInfos="america" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -120,7 +120,7 @@
     />
     <transition name="fade">
       <div v-if="showGoods">
-        <IndexComponent ref="期货" :indexInfos="goods" :demical="3" />
+        <IndexComponent ref="期货" headerRef="期货" :indexInfos="goods" :demical="3" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -132,7 +132,7 @@
     />
     <transition name="fade">
       <div v-if="showExchanges">
-        <IndexComponent ref="外汇" :indexInfos="exchanges" :demical="4" />
+        <IndexComponent ref="外汇" headerRef="外汇" :indexInfos="exchanges" :demical="4" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
     <SectionHeaderComponent
@@ -144,7 +144,7 @@
     />
     <transition name="fade">
       <div v-if="showBond">
-        <IndexComponent ref="固收" :indexInfos="bond" />
+        <IndexComponent ref="固收" headerRef="固收" :indexInfos="bond" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
   </div>
@@ -182,8 +182,8 @@ Vue.config.productionTip = false
 // 是否工作日
 var isWorkingDay = true
 
-var server_ip = 'http://112.125.25.230/'
-// server_ip = "http://127.0.0.1:5000/"
+var serverIp = 'http://112.125.25.230/'
+serverIp = 'http://127.0.0.1:5000/'
 
 // 时间前置补 0
 function prefixInteger (num, length) {
@@ -203,7 +203,7 @@ function isDuringDate (beginDateStr, endDateStr) {
 
 // 判断今天是不是工作日
 function todayIsWorkingDay () {
-  axios.get(server_ip + 'api/today').then(function (response) {
+  axios.get(serverIp + 'api/today').then(function (response) {
     let dayType = response.data['data']['weekday']
     if (dayType === '1') {
       isWorkingDay = true
@@ -265,12 +265,17 @@ export default {
     return {
       showPopup: false,
       popupTitle: '默认标题',
-      popupMessage: '默认弹窗消息',
+      popupMessage: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
       headerConfig: {
-        中国_header: { shouldShow: true },
-        亚洲_header: { shouldShow: true },
-        欧洲_header: { shouldShow: true },
-        美洲_header: {shouldShow: true}
+        中国Header: { shouldShow: true },
+        亚洲Header: { shouldShow: true },
+        欧洲Header: { shouldShow: true },
+        美洲Header: {shouldShow: true}
       },
       indexAreaConfig: {
         中国: { showType: 0 },
@@ -283,9 +288,9 @@ export default {
         固收: { showType: 0 }
       },
       indexSortConfig: {
-        亚洲: { sortType: "2" },
-        欧洲: { sortType: "2" },
-        美洲: { sortType: "2" }
+        亚洲: { sortType: '2' },
+        欧洲: { sortType: '2' },
+        美洲: { sortType: '2' }
       },
       // 显示隐藏面板
       showMoney: true,
@@ -312,7 +317,7 @@ export default {
     indexTitleClicked (title) {
       var that = this
       this.popupTitle = title
-      this.$axios.get(server_ip + 'api/countryinfo/' + title).then(function (response) {
+      this.$axios.get(serverIp + 'api/countryinfo/' + title).then(function (response) {
         that.showPopup = true
         var jsonData = response.data.data[0]
         var infos = []
@@ -326,22 +331,25 @@ export default {
         infos.push('人均：' + jsonData.gdpPersonAvg)
         infos.push('人口：' + jsonData.population)
         infos.push('面积：' + jsonData.area)
+        infos.push('货币：' + jsonData.inlandCurrency)
+        infos.push('符号：' + jsonData.inlandCurrencyCode)
+        infos.push('夏制：' + jsonData.summerTime)
         that.popupMessage = infos
       })
     },
     indexValueClicked (item) {
-      this.popupTitle = item.indexName + item.indexCode
+      this.popupTitle = '指数历史'
       var that = this
-      this.$axios.get(server_ip + 'api/indexhistory/' + item.indexName).then(function (response) {
+      this.$axios.get(serverIp + 'api/indexhistory/' + item.indexName).then(function (response) {
         that.showPopup = true
         var jsonData = response.data.data[0]
         var infos = []
         infos.push('名称：' + jsonData.indexName)
         infos.push('代码：' + jsonData.indexCode)
-        infos.push('年线：\n')
         for (var key in jsonData.indexHistory) {
           var info = jsonData.indexHistory[key]
-           infos.push(info)
+          infos.push(info.name + '：' + ((item.current / parseFloat(info.open) - 1) * 100).toFixed(2) + '%')
+          infos.push('年化：' + ((Math.pow(item.current / parseFloat(info.open), 1 / parseInt(info.count)).toFixed(4) - 1) * 100).toFixed(2) + '%')
         }
         that.popupMessage = infos
       })
@@ -350,11 +358,14 @@ export default {
     // 确认弹窗回调
       this.showPopup = false
     },
+    indexRefreshCellClicked (headerName) {
+      this.changeShowType(headerName)
+    },
     changeShowType (title) {
-      for (var ref_key in this.$refs) {
-        if (title === ref_key) {
-          this.$refs[ref_key].showType = this.$refs[ref_key].showType === 1 ? 0 : 1
-          break;
+      for (var refKey in this.$refs) {
+        if (title === refKey) {
+          this.$refs[refKey].showType = this.$refs[refKey].showType === 1 ? 0 : 1
+          break
         }
       }
     },
@@ -375,7 +386,7 @@ export default {
       this.isMoneyOpenning = isOpenning
       if (isForce || isOpenning) {
         var that = this
-        this.$axios.get(server_ip + 'api/moneyinfo').then(function (response) {
+        this.$axios.get(serverIp + 'api/moneyinfo').then(function (response) {
           that.moneyinfo = response.data.data
           // 行业资金净流入用图标表示
           that.industryMoneyInfo = that.moneyinfo.pop(-1)
@@ -395,7 +406,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求涨跌数据
-        this.$axios.get(server_ip + 'api/zdpinfo').then(function (response) {
+        this.$axios.get(serverIp + 'api/zdpinfo').then(function (response) {
           // 指数涨跌平
           that.zdpinfo = response.data.data[2].value
           // 全市场涨跌停
@@ -413,7 +424,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求中国
-        this.$axios.get(server_ip + 'api/indexs/china').then(function (response) {
+        this.$axios.get(serverIp + 'api/indexs/china').then(function (response) {
           that.china = response.data.data
         })
       } else {
@@ -426,7 +437,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求亚洲
-        this.$axios.get(server_ip + 'api/indexs/australia').then(function (response) {
+        this.$axios.get(serverIp + 'api/indexs/australia').then(function (response) {
           that.australia = response.data.data
         })
       } else {
@@ -439,7 +450,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求亚洲
-        this.$axios.get(server_ip + 'api/indexs/asian?sort=' + this.indexSortConfig['亚洲']['sortType']).then(function (response) {
+        this.$axios.get(serverIp + 'api/indexs/asian?sort=' + this.indexSortConfig['亚洲']['sortType']).then(function (response) {
           that.asian = response.data.data
         })
       } else {
@@ -452,7 +463,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求欧洲
-        this.$axios.get(server_ip + 'api/indexs/euro?sort=' + this.indexSortConfig['欧洲']['sortType']).then(function (response) {
+        this.$axios.get(serverIp + 'api/indexs/euro?sort=' + this.indexSortConfig['欧洲']['sortType']).then(function (response) {
           that.euro = response.data.data
         })
       } else {
@@ -467,7 +478,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求美洲
-        this.$axios.get(server_ip + 'api/indexs/america?sort=' + this.indexSortConfig['美洲']['sortType']).then(function (response) {
+        this.$axios.get(serverIp + 'api/indexs/america?sort=' + this.indexSortConfig['美洲']['sortType']).then(function (response) {
           that.america = response.data.data
         })
       } else {
@@ -477,7 +488,7 @@ export default {
     requestGoodsAndExchangesIfNeeded (isForce = false) {
       var that = this
       // 请求期货&外汇
-      this.$axios.get(server_ip + 'api/goods_and_exchanges').then(function (response) {
+      this.$axios.get(serverIp + 'api/goods_and_exchanges').then(function (response) {
         that.goods = response.data.data.goods
         that.exchanges = response.data.data.exchanges
       })
@@ -485,7 +496,7 @@ export default {
     requestBondInfoIfNeeded (isForce = false) {
       var that = this
       // 债券&组合
-      this.$axios.get(server_ip + 'api/bondinfo').then(function (response) {
+      this.$axios.get(serverIp + 'api/bondinfo').then(function (response) {
         that.bond = []
         for (var item in response.data.data[0].value) {
           that.bond.push(response.data.data[0].value[item])
@@ -499,18 +510,13 @@ export default {
       })
     },
     requestIndexSortInfos (continent, type) {
-      var that = this
-      var area = ''
       if (continent === '亚洲') {
         this.requestAsianIfNeeded(true)
       } else if (continent === '欧洲') {
         this.requestEuroIfNeeded(true)
-      }
-      else if (continent === '美洲') {
+      } else if (continent === '美洲') {
         this.requestAmericaIfNeeded(true)
       } else {
-        console.log('Wrong continent')
-        return
       }
     }
   },
@@ -529,33 +535,29 @@ export default {
     this.requestBondInfoIfNeeded(true)
     // 自动收起不在开盘时段的 Section
     var todayStr = todayString('/')
-    if(!isDuringDate(todayStr + ' ' + '9:00', todayStr + ' ' + '15:01')) {
+    if (!isDuringDate(todayStr + ' ' + '9:00', todayStr + ' ' + '15:01')) {
       this.showMoney = false
       this.showZDP = false
-      this.headerConfig['中国_header']['shouldShow'] = false
+      this.headerConfig['中国Header']['shouldShow'] = false
     }
-    if(!isDuringDate(todayStr + ' ' + '6:00', todayStr + ' ' + '14:01')) {
+    if (!isDuringDate(todayStr + ' ' + '6:00', todayStr + ' ' + '14:01')) {
       this.showAustralia = false
     }
-    if(!isDuringDate(todayStr + ' ' + '8:00', todayStr + ' ' + '19:31')) {
-      this.headerConfig['亚洲_header']['shouldShow'] = false
+    if (!isDuringDate(todayStr + ' ' + '8:00', todayStr + ' ' + '19:31')) {
+      this.headerConfig['亚洲Header']['shouldShow'] = false
     }
-    if(!isDuringDate(todayStr + ' ' + '15:00', todayStr + ' ' + '23:59') && !isDuringDate(todayStr + ' ' + '00:00', todayStr + ' ' + '0:30')) {
-      this.headerConfig['欧洲_header']['shouldShow'] = false
+    if (!isDuringDate(todayStr + ' ' + '15:00', todayStr + ' ' + '23:59') && !isDuringDate(todayStr + ' ' + '00:00', todayStr + ' ' + '0:30')) {
+      this.headerConfig['欧洲Header']['shouldShow'] = false
     }
-    if(!isDuringDate(todayStr + ' ' + '21:00', todayStr + ' ' + '23:59') && !isDuringDate(todayStr + ' ' + '00:00', todayStr + ' ' + '4:30')) {
-      this.headerConfig['美洲_header']['shouldShow'] = false
+    if (!isDuringDate(todayStr + ' ' + '21:00', todayStr + ' ' + '23:59') && !isDuringDate(todayStr + ' ' + '00:00', todayStr + ' ' + '4:30')) {
+      this.headerConfig['美洲Header']['shouldShow'] = false
     }
-    // this.showGoods = false
-    // this.showExchanges = false
-    // this.showBond = false
-      
     // 定时刷新
     // 资金流 60s
     setInterval(this.requestMoneyInfoIfNeeded, 60 * 1000)
     // 涨跌平 60s
     setInterval(this.requestZDPInfoIfNeeded, 60 * 1000)
-    // 指数 
+    // 指数
     // 中国 15s
     setInterval(this.requestChinaIfNeeded, 15 * 1000)
     // 其他国家 60s

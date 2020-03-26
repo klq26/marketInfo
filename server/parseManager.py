@@ -677,9 +677,43 @@ class parseManager:
         # 本地数据库查询结果，直接打包
         end_ts = self.dm.getTimeStamp()
         duration = self.dm.getDuration(start_ts, end_ts)
+        datalist[0]['area'] = self.numToUnitType(datalist[0]['area'], '平方公里')
+        datalist[0]['gdpRMB'] = self.numToUnitType(datalist[0]['gdpRMB'], '元')
+        datalist[0]['population'] = self.numToUnitType(datalist[0]['population'], '人')
+        datalist[0]['gdpPersonAvg'] = self.numToUnitType(datalist[0]['gdpPersonAvg'], '元')
+        summerTime = datalist[0]['summerTime']
+        if summerTime == 'NA':
+            summerTime = '无'
+        else:
+            summerTime = ' - '.join([x.replace(' ','') + '月' for x in summerTime.split('-')])
+        datalist[0]['summerTime'] = summerTime
+        dealTime = datalist[0]['dealTime']
+        values = dealTime.split('-')
+        close = values[1]
+        close_hour, close_minute = close.split(':')
+        if int(close_hour) >= 24:
+            close_hour = str(int(close_hour) - 24)
+        close = close_hour + ':' + close_minute
+        datalist[0]['dealTime'] = '{0} - {1}'.format(values[0], close)
+        datalist[0]['breakTime'] = datalist[0]['breakTime'].replace('-',' - ')
         data = self.packDataWithCommonInfo(duration = duration, data = datalist)
         return data
     
+    def numToUnitType(self, num, unit):
+        length = len(str(int(num)))
+        result = ''
+        if length > 12:
+            result = '{0}{1}{2}'.format(round(float(num) / 1000000000000, 2),'万亿',unit)
+        elif length > 8:
+            result = '{0}{1}{2}'.format(round(float(num) / 100000000, 2),'亿',unit)
+        elif length > 4:
+            result = '{0}{1}{2}'.format(round(float(num) / 10000, 2),'万',unit)
+        return result
+        # 9600000
+        # 99086500000000
+        # 1400000000
+
+
     # ////////////////////////////////////////////////////////////////////////////////////////
     # 解析指数历史数据
     # ////////////////////////////////////////////////////////////////////////////////////////
@@ -688,8 +722,22 @@ class parseManager:
         end_ts = self.dm.getTimeStamp()
         duration = self.dm.getDuration(start_ts, end_ts)
         if len(datalist) > 0:
-            values = datalist[0]['indexHistory'].split('-')
-            datalist[0]['indexHistory'] = values
+            result = []
+            historyInfos = datalist[0]['indexHistory'].split('-')
+            count = len(historyInfos)
+            if count == 10:
+                yearData = historyInfos[count - 10].split(',')
+                result.append({'name':'十年', 'open':yearData[1], 'count': 10, 'year': yearData[0]})
+            if count >= 5:
+                yearData = historyInfos[count - 5].split(',')
+                result.append({'name':'五年', 'open':yearData[1], 'count': 5, 'year': yearData[0]})
+            if count >= 3:
+                yearData = historyInfos[count - 3].split(',')
+                result.append({'name':'三年', 'open':yearData[1], 'count': 3, 'year': yearData[0]})
+            if count >= 1:
+                yearData = historyInfos[-1].split(',')
+                result.append({'name':'今年', 'open':yearData[1], 'count': 1, 'year': yearData[0]})
+            datalist[0]['indexHistory'] = result
         data = self.packDataWithCommonInfo(duration = duration, data = datalist)
         return data
 
