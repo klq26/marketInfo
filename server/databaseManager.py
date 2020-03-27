@@ -6,10 +6,14 @@ import pymysql
 from indexHistoryModel import indexHistoryModel
 from countryInfoModel import countryInfoModel
 
+from account import account
+
 class databaseManager:
 
     def __init__(self):
         super().__init__()
+        # 取用户名密码
+        self.account = account()
         # 打开数据库
         self.ip_address = ''
         if sys.platform.startswith('win'):
@@ -27,7 +31,7 @@ class databaseManager:
 
     # 按大洲查询指数历史数据
     def getIndexHistorysByContinent(self, continent=u'中国', orderby='id'):
-        db = pymysql.connect(self.ip_address,'klq26','abc123!@#==','finance')
+        db = pymysql.connect(self.ip_address,self.account.user,self.account.password,'finance')
         cursor = db.cursor()
         # 数据库字段名
         db_keys = ['id','country','country_code','continent','index_name','index_code','index_history']
@@ -54,7 +58,7 @@ class databaseManager:
 
     # 按大洲查询国家数据（默认 GDP 降序排列）
     def getCountryInfosByContinent(self, continent=u'中国', orderby='gdp_rmb', desc='DESC'):
-        db = pymysql.connect(self.ip_address,'klq26','abc123!@#==','finance')
+        db = pymysql.connect(self.ip_address,self.account.user,self.account.password,'finance')
         cursor = db.cursor()
         # 数据库字段名
         db_keys = self.country_info_keymapping.keys()
@@ -130,7 +134,7 @@ class databaseManager:
 
     # 根据字段获取单个国家
     def getSingleCountryInfo(self, db_key, value):
-        db = pymysql.connect(self.ip_address,'klq26','abc123!@#==','finance')
+        db = pymysql.connect(self.ip_address,self.account.user,self.account.password,'finance')
         cursor = db.cursor()
         # 数据库字段名
         db_keys = self.country_info_keymapping.keys()
@@ -150,7 +154,7 @@ class databaseManager:
 
     # 根据字段获取单个国家
     def getSingleIndexHistory(self, db_key, value):
-        db = pymysql.connect(self.ip_address,'klq26','abc123!@#==','finance')
+        db = pymysql.connect(self.ip_address,self.account.user,self.account.password,'finance')
         cursor = db.cursor()
         # 数据库字段名
         db_keys = self.index_history_keymapping.keys()

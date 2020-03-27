@@ -2,13 +2,17 @@ import os
 import sys
 import pymysql
 
+from account import account
+
+# 取用户名密码
+account = account()
 # 打开数据库
 ip_address = ''
 if sys.platform.startswith('win'):
     ip_address = '112.125.25.230'
 elif sys.platform.startswith('linux'):
     ip_address = '127.0.0.1'
-db = pymysql.connect(ip_address,'klq26','abc123!@#==','finance')
+db = pymysql.connect(ip_address,account.user,account.password,'finance')
 cursor = db.cursor()
 
 # 创建表 SQL 代码
