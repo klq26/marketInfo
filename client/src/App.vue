@@ -183,7 +183,7 @@ Vue.config.productionTip = false
 var isWorkingDay = true
 
 var serverIp = 'http://112.125.25.230/'
-serverIp = 'http://127.0.0.1:5000/'
+// serverIp = 'http://127.0.0.1:5000/'
 
 // 时间前置补 0
 function prefixInteger (num, length) {
