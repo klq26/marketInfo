@@ -47,7 +47,7 @@
         <IndexComponent ref="中国" headerRef="中国" :indexInfos="china" @indexTitleClicked="indexTitleClicked" @indexValueClicked="indexValueClicked" @indexRefreshCellClicked="indexRefreshCellClicked"/>
       </div>
     </transition>
-    <SectionHeaderComponent
+        <SectionHeaderComponent
       title="澳洲"
       showStyleButton="1"
       @changeShowType="changeShowType"
@@ -181,9 +181,8 @@ Vue.config.productionTip = false
 
 // 是否工作日
 var isWorkingDay = true
-
-var serverIp = 'http://112.125.25.230/'
-// serverIp = 'http://127.0.0.1:5000/'
+// 根据不同环境，动态切换 API 域名
+var serverIp = process.env.API_ROOT
 
 // 时间前置补 0
 function prefixInteger (num, length) {
@@ -203,7 +202,7 @@ function isDuringDate (beginDateStr, endDateStr) {
 
 // 判断今天是不是工作日
 function todayIsWorkingDay () {
-  axios.get(serverIp + 'api/today').then(function (response) {
+  axios.get(serverIp + 'marketinfo/api/today').then(function (response) {
     let dayType = response.data['data']['weekday']
     if (dayType === '1') {
       isWorkingDay = true
@@ -317,7 +316,7 @@ export default {
     indexTitleClicked (title) {
       var that = this
       this.popupTitle = title
-      this.$axios.get(serverIp + 'api/countryinfo/' + title).then(function (response) {
+      this.$axios.get(serverIp + 'marketinfo/api/countryinfo/' + title).then(function (response) {
         that.showPopup = true
         var jsonData = response.data.data[0]
         var infos = []
@@ -340,7 +339,7 @@ export default {
     indexValueClicked (item) {
       this.popupTitle = '指数历史'
       var that = this
-      this.$axios.get(serverIp + 'api/indexhistory/' + item.indexName).then(function (response) {
+      this.$axios.get(serverIp + 'marketinfo/api/indexhistory/' + item.indexName).then(function (response) {
         that.showPopup = true
         var jsonData = response.data.data[0]
         var infos = []
@@ -386,7 +385,7 @@ export default {
       this.isMoneyOpenning = isOpenning
       if (isForce || isOpenning) {
         var that = this
-        this.$axios.get(serverIp + 'api/moneyinfo').then(function (response) {
+        this.$axios.get(serverIp + 'marketinfo/api/moneyinfo').then(function (response) {
           that.moneyinfo = response.data.data
           // 行业资金净流入用图标表示
           that.industryMoneyInfo = that.moneyinfo.pop(-1)
@@ -406,7 +405,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求涨跌数据
-        this.$axios.get(serverIp + 'api/zdpinfo').then(function (response) {
+        this.$axios.get(serverIp + 'marketinfo/api/zdpinfo').then(function (response) {
           // 指数涨跌平
           that.zdpinfo = response.data.data[2].value
           // 全市场涨跌停
@@ -424,7 +423,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求中国
-        this.$axios.get(serverIp + 'api/indexs/china').then(function (response) {
+        this.$axios.get(serverIp + 'marketinfo/api/indexs/china').then(function (response) {
           that.china = response.data.data
         })
       } else {
@@ -437,7 +436,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求亚洲
-        this.$axios.get(serverIp + 'api/indexs/australia').then(function (response) {
+        this.$axios.get(serverIp + 'marketinfo/api/indexs/australia').then(function (response) {
           that.australia = response.data.data
         })
       } else {
@@ -450,7 +449,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求亚洲
-        this.$axios.get(serverIp + 'api/indexs/asian?sort=' + this.indexSortConfig['亚洲']['sortType']).then(function (response) {
+        this.$axios.get(serverIp + 'marketinfo/api/indexs/asian?sort=' + this.indexSortConfig['亚洲']['sortType']).then(function (response) {
           that.asian = response.data.data
         })
       } else {
@@ -463,7 +462,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求欧洲
-        this.$axios.get(serverIp + 'api/indexs/euro?sort=' + this.indexSortConfig['欧洲']['sortType']).then(function (response) {
+        this.$axios.get(serverIp + 'marketinfo/api/indexs/euro?sort=' + this.indexSortConfig['欧洲']['sortType']).then(function (response) {
           that.euro = response.data.data
         })
       } else {
@@ -478,7 +477,7 @@ export default {
       if (isForce || isOpenning) {
         var that = this
         // 请求美洲
-        this.$axios.get(serverIp + 'api/indexs/america?sort=' + this.indexSortConfig['美洲']['sortType']).then(function (response) {
+        this.$axios.get(serverIp + 'marketinfo/api/indexs/america?sort=' + this.indexSortConfig['美洲']['sortType']).then(function (response) {
           that.america = response.data.data
         })
       } else {
@@ -488,7 +487,7 @@ export default {
     requestGoodsAndExchangesIfNeeded (isForce = false) {
       var that = this
       // 请求期货&外汇
-      this.$axios.get(serverIp + 'api/goods_and_exchanges').then(function (response) {
+      this.$axios.get(serverIp + 'marketinfo/api/goods_and_exchanges').then(function (response) {
         that.goods = response.data.data.goods
         that.exchanges = response.data.data.exchanges
       })
@@ -496,7 +495,7 @@ export default {
     requestBondInfoIfNeeded (isForce = false) {
       var that = this
       // 债券&组合
-      this.$axios.get(serverIp + 'api/bondinfo').then(function (response) {
+      this.$axios.get(serverIp + 'marketinfo/api/bondinfo').then(function (response) {
         that.bond = []
         for (var item in response.data.data[0].value) {
           that.bond.push(response.data.data[0].value[item])
@@ -576,7 +575,8 @@ export default {
 @import './assets/css/style.less';
 
 #app {
-  width: 856px; /* 240 + 4 * 4 + 200 * 3 = 856 */
+  // width: 856px; /* 240 + 4 * 4 + 200 * 3 = 856 */
+  width: 10rem;
   background-color: @app-bg-color;
 }
 </style>

@@ -85,9 +85,11 @@ export default {
 
 // 指数容器（整行）
 .moneyCell {
-  margin: 2px 0px;
+  margin: @index-cell-margin 0px;
   width: 100%;
-  display: inline-flex;
+  display: flex;
+  align-items:flex-start;
+  justify-content:flex-start;
 }
 
 // 指数标题
@@ -101,13 +103,16 @@ p {
 }
 
 .title {
-  margin: 0px 2px;
+  margin: 0px 0px;
+  // margin: 0px @index-cell-margin;
+  height: @app-cell-height;
   min-width: @index-title-width;
   background-color: @index-title-bg-color;
 }
 
 .value-area {
-  width:616px;
+  width:7.2rem;
+  margin: 0px @index-cell-margin 0px @index-cell-margin;
   display: inline-flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -116,17 +121,22 @@ p {
 .value-box {
   width: @index-value-width;
   height: @app-cell-height;
-  margin: 0px 2px;
-  display: inline-flex;
+  margin: 0px @index-cell-margin 0px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .box-name {
   text-align: left;
-  padding: 0px 2px;
+  padding: 0px @index-cell-margin;
 }
 
 .box-value {
   text-align: right;
-  padding: 0px 2px;
+  padding: 0px @index-cell-margin;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>

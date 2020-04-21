@@ -38,7 +38,7 @@ export default {
     },
 
     dynamicHeight (value) {
-      return Math.abs(value) / this.maxValue * 150 + 'px'
+      return Math.abs(value) / this.maxValue * 2.3 + 'rem'
     }
   },
   watch: {
@@ -96,10 +96,9 @@ export default {
 /* 涨跌分布 */
 #chart-panel {
   width: 100%;
-  height: 200px;
+  height: 2.9rem;
   display: inline-flex;
   flex-wrap: nowrap;
-  flex-direction: column;
   align-items: center;
   justify-content: flex-end;
 }
@@ -116,18 +115,19 @@ export default {
 
 /* 柱状条 + 个股数的容器 */
 .industry-value-box {
-  width: @app-cell-height + @app-small-text-size;
+  width: 1rem;
   display: inline-flex;
   flex-direction: row;
   flex-wrap: nowrap;
   // justify-content: space-between;
+  justify-items: center;
   align-items: flex-end;
   // background-color: pink;
 }
 
 /* 个股数 */
 .industry-value-count {
-  width: 30px;
+  width: 0.5rem;
   height: min-content;
   font-size: @app-small-text-size;
   color: @app-text-color;
@@ -137,11 +137,10 @@ export default {
 
 /* 柱状条 */
 .industry-value-bar {
-  width: 30px;
-  height: 100px;
+  width: 0.5rem;
+  height: 2.3rem;
   display: inline-flex;
   color: @app-text-color;
-  width: @app-cell-height;
   justify-content: center;
   // background-color: pink;
 }
@@ -150,12 +149,12 @@ export default {
 .separate-line {
   background-color: @app-text-color;
   width: 100%;
-  height: 2px;
+  height: @index-cell-margin;
 }
 
 /* 涨跌幅度标题区域 */
 .industry-label-area {
-  margin: 0px 2px;
+  margin: 0px @index-cell-margin;
   width: 100%;
   display: inline-flex;
   flex-wrap: nowrap;
@@ -166,8 +165,8 @@ export default {
 .industry-label {
   margin: 0px;
   padding: @index-cell-padding;
-  width: @app-cell-height + @app-small-text-size;
-  font-size: 24px;
+  width: 1rem;
+  font-size: @app-small-text-size;
   color: @index-title-text-color;
   display: inline-flex;
   justify-content: center;

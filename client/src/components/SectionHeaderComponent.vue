@@ -66,16 +66,17 @@ export default {
 
 .container {
   width:100%;
+  height: @app-section-title-height;
   background-color: @index-title-bg-color;
-  display:inline-flex;
+  display:flex;
+  align-items: center;
   justify-content:space-between;
 }
 
 .title {
-  margin: 0px 4px;
+  margin: 0px 0.1rem;
   padding: 0px;
   width: 30%;
-  height: 60px;
   font-size: @app-title-text-size;
   text-align: left;
   color: @index-title-text-color;
@@ -94,7 +95,7 @@ export default {
   width: max-content;
   text-align: center;
   position: absolute;
-  left: 252px;
+  left: 2.943rem;
   font-size: @app-small-text-size;
   color: @index-title-text-color;
 }

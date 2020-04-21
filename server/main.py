@@ -23,6 +23,10 @@ cm = cacheManager()
 # ////////////////////////////////////////////////////////////////////////////////////////
 
 @app.route('/api/moneyinfo', methods=['GET'])
+def getMoneyInfo_deprecated():
+    return getMoneyInfo()
+
+@app.route('/marketinfo/api/moneyinfo', methods=['GET'])
 def getMoneyInfo():
     start_ts = datetimeManager().getTimeStamp()
     if cm.cacheAvailable(start_ts, request.path):
@@ -38,6 +42,10 @@ def getMoneyInfo():
 # ////////////////////////////////////////////////////////////////////////////////////////
 
 @app.route('/api/zdpinfo', methods=['GET'])
+def getZDPInfo_deprecated():
+    return getZDPInfo()
+
+@app.route('/marketinfo/api/zdpinfo', methods=['GET'])
 def getZDPInfo():
     start_ts = datetimeManager().getTimeStamp()
     if cm.cacheAvailable(start_ts, request.path):
@@ -52,6 +60,10 @@ def getZDPInfo():
 # 请求指数数据 china asian euro america australia
 # ////////////////////////////////////////////////////////////////////////////////////////
 @app.route('/api/indexs/<string:area>', methods=['GET'])
+def getIndexInfos_deprecated(area):
+    return getIndexInfos(area)
+
+@app.route('/marketinfo/api/indexs/<string:area>', methods=['GET'])
 def getIndexInfos(area):
     start_ts = datetimeManager().getTimeStamp()
     sortType = request.args.get('sort', '')
@@ -109,6 +121,10 @@ def getSequence(continent, sortType):
 # ////////////////////////////////////////////////////////////////////////////////////////
 
 @app.route('/api/goods_and_exchanges', methods=['GET'])
+def getGoodsAndExchangeInfo_deprecated():
+    return getGoodsAndExchangeInfo()
+
+@app.route('/marketinfo/api/goods_and_exchanges', methods=['GET'])
 def getGoodsAndExchangeInfo():
     start_ts = datetimeManager().getTimeStamp()
     if cm.cacheAvailable(start_ts, request.path):
@@ -124,6 +140,10 @@ def getGoodsAndExchangeInfo():
 # ////////////////////////////////////////////////////////////////////////////////////////
 
 @app.route('/api/bondinfo', methods=['GET'])
+def getBondInfo_deprecated():
+    return getBondInfo()
+
+@app.route('/marketinfo/api/bondinfo', methods=['GET'])
 def getBondInfo():
     start_ts = datetimeManager().getTimeStamp()
     if cm.cacheAvailable(start_ts, request.path):
@@ -137,7 +157,12 @@ def getBondInfo():
 # ////////////////////////////////////////////////////////////////////////////////////////
 # 请求指数所属国家的信息
 # ////////////////////////////////////////////////////////////////////////////////////////
+
 @app.route('/api/countryinfo/<string:indexName>', methods=['GET'])
+def getCountryinfo_deprecated(indexName):
+    return getCountryinfo(indexName)
+
+@app.route('/marketinfo/api/countryinfo/<string:indexName>', methods=['GET'])
 def getCountryinfo(indexName):
     start_ts = datetimeManager().getTimeStamp()
     if cm.cacheAvailable(start_ts, request.path):
@@ -151,7 +176,12 @@ def getCountryinfo(indexName):
 # ////////////////////////////////////////////////////////////////////////////////////////
 # 请求指数历史数据
 # ////////////////////////////////////////////////////////////////////////////////////////
+
 @app.route('/api/indexhistory/<string:indexName>', methods=['GET'])
+def getIndexHistory_deprecated(indexName):
+    return getIndexHistory(indexName)
+
+@app.route('/marketinfo/api/indexhistory/<string:indexName>', methods=['GET'])
 def getIndexHistory(indexName):
     start_ts = datetimeManager().getTimeStamp()
     if cm.cacheAvailable(start_ts, request.path):
@@ -167,6 +197,10 @@ def getIndexHistory(indexName):
 # ////////////////////////////////////////////////////////////////////////////////////////
 
 @app.route('/api/today', methods=['GET'])
+def dayType_deprecated():
+    return dayType()
+
+@app.route('/marketinfo/api/today', methods=['GET'])
 def dayType():
     start_ts = datetimeManager().getTimeStamp()
     if cm.cacheAvailable(start_ts, request.path):

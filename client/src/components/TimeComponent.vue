@@ -44,29 +44,35 @@ export default {
 @import "../assets/css/style.less";
 
 .clock {
-  height: 60px;
+  height: @app-section-title-height;
   width: 100%;
   background-color: @index-title-bg-color;
-  display: inline-flex;
+  display: flex;
+  align-items:center;
+  justify-content:flex-start;
 }
 
 .datetime {
   margin: 0px;
   padding: 0px;
   width: 50%;
-  height: 60px;
   font-size: @app-title-text-size;
   text-align: left;
   color: @index-title-text-color;
+  display: flex;
+  align-items: center;
+  justify-content:center;
 }
 
 .weekday {
   margin: 0px;
   padding: 0px;
   width: 15%;
-  height: 60px;
   font-size: @app-title-text-size;
   text-align: center;
   color: @index-title-text-color;
+  display: flex;
+  align-items: center;
+  justify-content:center;
 }
 </style>

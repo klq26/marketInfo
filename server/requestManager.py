@@ -218,11 +218,21 @@ class requestsManager:
     # ////////////////////////////////////////////////////////////////////////////////////////
 
     def getDayType(self):
-        today = datetimeManager().getDateString()
-        url = "http://www.easybots.cn/api/holiday.php?d=" + today
-        response = requests.get(url, headers=self.headers, verify=False)
-        if response.status_code == 200:
-            return response.text
+        dm = datetimeManager()
+        today = dm.getDateString()
+        if dm.isHoliday():
+            return {today: '2'}
+        elif dm.isWeekday():
+            return {today: '0'}
+        else:
+            return {today: '1'}
+        # 第三方接口老挂，不搞了
+        # url = "http://www.easybots.cn/api/holiday.php?d=" + today
+        # response = requests.get(url, headers=self.headers, verify=False)
+        # if response.status_code == 200:
+        #     return response.text
+
+    
 
     # ////////////////////////////////////////////////////////////////////////////////////////
     # 请求国家信息

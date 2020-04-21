@@ -519,9 +519,12 @@ class parseManager:
             else:
                 # 期货
                 index.indexCode = item[0].replace('hf_', '')
-                if item[0] == 'hf_CHA50CFD':
+                if 'hf_CHA50CFD' in item[0]:
                     index.indexName = '富时A50'
                     index.indexCode = 'A50CFD'
+                elif 'hf_CL' in item[0]:
+                    index.indexName = '纽约原油'
+                    index.indexCode = 'CL'
                 else:
                     index.indexName = values[-2]
                 index.indexArea = '期货'
@@ -645,9 +648,8 @@ class parseManager:
     # ////////////////////////////////////////////////////////////////////////////////////////
 
     def parseDayType(self, start_ts, text):
-        jsonData = json.loads(text)
+        jsonData = text
         dayType = jsonData[self.dm.getDateString()]
-        # print(dayType, jsonData)
         weekday = '0'
         weekend = '0'
         holiday = '0'

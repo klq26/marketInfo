@@ -89,8 +89,8 @@ export default {
 }
 .modal-footer button {
   width: 160px;
-  height: 60px;
-  font-size: 30px;
+  height: 0.8rem;
+  font-size: @app-small-text-size;
   border-radius: 10px;
 }
 

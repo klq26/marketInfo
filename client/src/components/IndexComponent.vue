@@ -229,14 +229,6 @@ export default {
   color: @app-fall-color;
 }
 
-// 对齐方案
-.align-center {
-  text-align: center;
-}
-.align-right {
-  text-align: right;
-}
-
 // 指数容器（整行）
 .indexCell {
   width: 100%;
@@ -275,6 +267,9 @@ export default {
   text-overflow: ellipsis;
   color: @index-title-text-color;
   background-color: @index-title-bg-color;
+  display: flex;
+  justify-items: center;
+  align-items: center;
 }
 
 // 值
@@ -286,6 +281,9 @@ export default {
   font-size: @app-value-text-size;
   text-align: right;
   color: @index-title-text-color;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 // 刷新值区
@@ -296,6 +294,17 @@ export default {
   height: @app-cell-height;
   font-size: @app-value-text-size;
   background-color: @index-refresh-change-bg-color;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+// 对齐方案
+.align-center {
+  justify-content: center;
+}
+.align-right {
+  justify-content: flex-end;
 }
 
 // icon 尺寸
