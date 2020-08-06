@@ -332,6 +332,8 @@ class parseManager:
             index = indexModel()
             index.indexCode = item['f12']
             index.indexName = item['f14'].replace(' ','')
+            if index.indexName == u'国证Ａ指':
+                index.indexName = u'国证A指'
             index.indexArea = indexArea
             index.sequence = int(key)
             index.current = round(float(item['f2'])/100, 2)

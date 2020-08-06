@@ -22,7 +22,7 @@ class configManager:
 
         self.zdpinfo = [
             {'name' : '涨跌分布与涨跌停', 'symbol' : 'zdfb_zdt', 'url' : 'http://q.10jqka.com.cn/api.php?t=indexflash'},
-            {'name' : '指数涨跌平', 'symbol' : 'zszdp', 'url' : 'https://hq.sinajs.cn/list=sh000002_zdp,sz399107_zdp,sh000003_zdp,sz399108_zdp,sz399102_zdp,sh000016_zdp,sh000300_zdp,sz399905_zdp,sh000852_zdp,sh000842_zdp'},
+            {'name' : '指数涨跌平', 'symbol' : 'zszdp', 'url' : 'https://hq.sinajs.cn/list=sh000002_zdp,sz399107_zdp,sh000003_zdp,sz399108_zdp,sz399102_zdp,sh000016_zdp,sh000300_zdp,sz399905_zdp,sh000852_zdp'},
         ]
 
         self.goods_and_exchanges = [

@@ -7,7 +7,8 @@
           <div class="industry-value-count">{{item.name}}</div>
           <div class="industry-value-bar" :class="colorByValue(item.value)" :style="{height: dynamicHeight(item.value)}"></div>
         </div>
-        <div class="industry-label">{{item.value}}</div>
+        <!-- &lt; 就是 < 小于号的原始码 -->
+        <div class="industry-label">{{(item.value >= 100 || item.value &lt;= -100) ? item.value.toFixed(0) : item.value}}</div>
       </div>
     </div>
   </div>
