@@ -67,16 +67,16 @@ class parseManager:
 
     # 融资融券
     def parse_rzrqye(self, name, symbol, text):
-        jsonData = json.loads(text)
+        jsonData = json.loads(text.replace('cb(','').replace(');',''))['result']
         rzrqData = []
         if jsonData['data'] and len(jsonData['data']) > 0:
             lastestData = jsonData['data'][0]
             # ts = int(lastestData['dim_date'])/1000  # python 只处理秒
             # timeTuple = time.localtime(ts)
             # rzrqyeDate = time.strftime("%Y-%m-%d", timeTuple)
-            rzrqyeValue = round(lastestData['rzrqye']/(10000 * 10000), 1)
-            rzyeValue = round(lastestData['rzye']/(10000 * 10000), 1)
-            rqyeValue = round(lastestData['rqye']/(10000 * 10000), 1)
+            rzrqyeValue = round(lastestData['RZRQYE']/(10000 * 10000), 1)
+            rzyeValue = round(lastestData['RZYE']/(10000 * 10000), 1)
+            rqyeValue = round(lastestData['RQYE']/(10000 * 10000), 1)
             
             rzrqData.append({'name' : '资', 'value' : rzyeValue})
             rzrqData.append({'name' : '券', 'value' : rqyeValue})
