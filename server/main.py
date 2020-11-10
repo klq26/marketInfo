@@ -10,7 +10,7 @@ from cacheManager import cacheManager
 from requestManager import requestsManager
 from parseManager import parseManager
 from datetimeManager import datetimeManager
-from databaseManager import databaseManager
+from pandasManager import pandasManager
 
 
 app = Flask(__name__)
@@ -103,7 +103,7 @@ def getIndexInfos(area):
 
 # 根据 sort 类型和目标大陆返回指数名称和指数代码数组
 def getSequence(continent, sortType):
-    db = databaseManager()
+    db = pandasManager()
     if sortType == 2:
         return db.sequenceByDealTime(continent)
     elif sortType == 3:

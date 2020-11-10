@@ -9,7 +9,7 @@ from configManager import configManager
 from indexModel import indexModel
 from datetimeManager import datetimeManager
 
-from databaseManager import databaseManager
+from pandasManager import pandasManager
 
 class requestsManager:
 
@@ -125,7 +125,6 @@ class requestsManager:
     # 请求美洲
     def requestAmericaIndexs(self, codes):
         url = "http://87.push2.eastmoney.com/api/qt/ulist.np/get?cb=updateIndexInfos&np=1&pi=0&pz=40&po=1&secids={0}&fields=f14,f12,f2,f4,f3,f18,f6".format('%2C'.join(codes))
-        print('美国',url)
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         response = requests.get(url, headers=self.headers, verify=False)
         if response.status_code == 200:
@@ -201,15 +200,15 @@ class requestsManager:
                 continent = u'美洲'
             response = {}
             if type.lower() == u'gdp' or type == '1':
-                response = {'name': '产值', 'value': databaseManager().sequenceByGDP(continent=continent)}
+                response = {'name': '产值', 'value': pandasManager().sequenceByGDP(continent=continent)}
             if type.lower() == u'dealtime' or type == '2':
-                response = {'name': '时区', 'value': databaseManager().sequenceByDealTime(continent=continent)}
+                response = {'name': '时区', 'value': pandasManager().sequenceByDealTime(continent=continent)}
             if type.lower() == u'avg_gdp' or type == '3':
-                response = {'name': '人均', 'value': databaseManager().sequenceByAverageGDP(continent=continent)}
+                response = {'name': '人均', 'value': pandasManager().sequenceByAverageGDP(continent=continent)}
             if type.lower() == u'population' or type == '4':
-                response = {'name': '人口', 'value': databaseManager().sequenceByPopulation(continent=continent)}
+                response = {'name': '人口', 'value': pandasManager().sequenceByPopulation(continent=continent)}
             if type.lower() == u'area' or type == '5':
-                response = {'name': '国土', 'value': databaseManager().sequenceByArea(continent=continent)}
+                response = {'name': '国土', 'value': pandasManager().sequenceByArea(continent=continent)}
             
             return response
 
@@ -239,12 +238,12 @@ class requestsManager:
     # ////////////////////////////////////////////////////////////////////////////////////////
     def getCountryinfo(self, indexName):
         result = []
-        db = databaseManager()
+        db = pandasManager()
         # 先尝试按国家名称找
         result = db.getSingleCountryInfo('country', indexName)
         if len(result) == 0:
             # 国家名称没有，说明是一个国家对应多个指数（如中美），此时应该进行 index_code 查询
-            result = databaseManager().getSingleCountryInfo('index_name', indexName)
+            result = pandasManager().getSingleCountryInfo('index_name', indexName)
         return result
 
     # ////////////////////////////////////////////////////////////////////////////////////////
@@ -252,10 +251,10 @@ class requestsManager:
     # ////////////////////////////////////////////////////////////////////////////////////////
     def getIndexHistory(self, indexName):
         result = []
-        db = databaseManager()
+        db = pandasManager()
         # 先尝试按国家名称找
         result = db.getSingleIndexHistory('country', indexName)
         if len(result) == 0:
             # 国家名称没有，说明是一个国家对应多个指数（如中美），此时应该进行 index_code 查询
-            result = databaseManager().getSingleIndexHistory('index_name', indexName)
+            result = pandasManager().getSingleIndexHistory('index_name', indexName)
         return result

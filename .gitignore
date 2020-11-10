@@ -1,1 +1,4 @@
 server/account.py
+server/.vscode/launch.json
+server/__pycache__
+server/cache
