@@ -3,6 +3,8 @@
 import re
 import json
 
+import numpy as np
+
 from configManager import configManager
 from datetimeManager import datetimeManager
 from indexModel import indexModel
@@ -223,10 +225,34 @@ class parseManager:
 
     def parse_zdfb_zdt(self, name, symbol, text):
         finalResult = []
-        jsonData = json.loads(text)
-        arr = jsonData['zdfb_data']['zdfb']
-        finalResult.append({'name' : '涨跌分布','symbol' : 'zdfb', 'value' : list(reversed(jsonData['zdfb_data']['zdfb']))})
-        finalResult.append({'name' : '涨跌停','symbol' : 'zdt', 'value' : [{'name' : '涨停','symbol' : 'zt', 'value' : jsonData['zdt_data']['last_zdt']['ztzs']},{'name' : '跌停','symbol' : 'dt', 'value' : jsonData['zdt_data']['last_zdt']['dtzs']}]})
+        jsonResult = text.replace('callback(', '').replace(');', '')
+        jsonData = json.loads(jsonResult)
+        data = jsonData['data']['fenbu']
+        fenbu = {}
+        for x in data:
+            # 高效合并两个字典
+            fenbu = dict(fenbu, **x)
+        zdfb = []
+        # 下跌（把 -10 和 -9 合并成 -10% ~ -8%，下同。这里的 -9 实际上是 -8%）
+        fall_keys = np.arange(-10, 0, 1).reshape(5, -1).tolist()
+        for group in fall_keys:
+        #     print(group)
+            total = 0
+            for x in group:
+                total += fenbu[str(x)]
+            zdfb.append(total)
+        # 上涨（把 1 和 2 合并成 0% ~ 2%）
+        raise_keys = np.arange(1, 11, 1).reshape(5, -1).tolist()
+        for group in raise_keys:
+        #     print(group)
+            total = 0
+            for x in group:
+                total += fenbu[str(x)]
+        #     print(total)
+            zdfb.append(total)
+
+        finalResult.append({'name' : '涨跌分布','symbol' : 'zdfb', 'value' : zdfb})
+        finalResult.append({'name' : '涨跌停','symbol' : 'zdt', 'value' : [{'name' : '涨停','symbol' : 'zt', 'value' : fenbu['11']},{'name' : '跌停','symbol' : 'dt', 'value' : fenbu['-11']}]})
         return finalResult
 
     def parse_zszdp(self, name, symbol, text):
