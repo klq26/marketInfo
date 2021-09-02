@@ -228,6 +228,7 @@ class parseManager:
         jsonResult = text.replace('callback(', '').replace(');', '')
         jsonData = json.loads(jsonResult)
         data = jsonData['data']['fenbu']
+        print(data)
         fenbu = {}
         for x in data:
             # 高效合并两个字典
@@ -251,7 +252,7 @@ class parseManager:
         #     print(total)
             zdfb.append(total)
 
-        finalResult.append({'name' : '涨跌分布','symbol' : 'zdfb', 'value' : zdfb})
+        finalResult.append({'name' : '涨跌分布','symbol' : 'zdfb', 'value' : zdfb[::-1]})
         finalResult.append({'name' : '涨跌停','symbol' : 'zdt', 'value' : [{'name' : '涨停','symbol' : 'zt', 'value' : fenbu['11']},{'name' : '跌停','symbol' : 'dt', 'value' : fenbu['-11']}]})
         return finalResult
 
@@ -360,6 +361,10 @@ class parseManager:
             index.indexName = item['f14'].replace(' ','')
             if index.indexName == u'国证Ａ指':
                 index.indexName = u'国证A指'
+            if index.indexName == u'中国互联网50':
+                index.indexName = u'海外互联'
+            if index.indexName == u'恒生科技指数':
+                index.indexName = u'恒生科技'
             index.indexArea = indexArea
             index.sequence = int(key)
             index.current = round(float(item['f2'])/100, 2)
