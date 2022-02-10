@@ -48,21 +48,16 @@ class parseManager:
 
     # 沪深两市成交额
     def parse_hslscje(self, name, symbol, text):
-        indexInfos = text.split(';')
-        # 接口返回的最后一项是个 '\n'
-        indexInfos.pop(-1)
-        shanghaiDealMoney = 0
-        shenzhenDealMoney = 0
-        pattern = re.compile('var hq_str_(.*?)="(.*?)"')
-        for item in indexInfos:
-            result = re.findall(pattern, item)
-            if len(result) > 0:
-                if result[0][0] == 'sh000002':
-                    values = result[0][1].split(',')
-                    shanghaiDealMoney = round(float(result[0][1].split(',')[9]) / 100000000,1)
-                elif result[0][0] == 'sz399107':
-                    shenzhenDealMoney = round(float(result[0][1].split(',')[9]) / 100000000,1)
-        totalDealMoney = shanghaiDealMoney + shenzhenDealMoney
+        jsonResult = text.replace('callback(', '').replace(');', '')
+        jsonData = json.loads(jsonResult)
+        datalist = jsonData.get('data', {}).get('diff', [])
+        if len(datalist) == 2:
+            shanghaiDealMoney = round(float(datalist[0]['f6']) / 100000000, 1)
+            shenzhenDealMoney = round(float(datalist[1]['f6']) / 100000000, 1)
+        else:
+            shanghaiDealMoney = 0.0
+            shenzhenDealMoney = 0.0
+        totalDealMoney = round(shanghaiDealMoney + shenzhenDealMoney, 1)
         # 结果
         inlandDealMoneyData = [{'name' : '沪', 'value' : shanghaiDealMoney},{'name' : '深', 'value' : shenzhenDealMoney},{'name' : '总', 'value' : totalDealMoney}]
         return {'name': name,'symbol':symbol, 'value':inlandDealMoneyData}
@@ -253,53 +248,36 @@ class parseManager:
             zdfb.append(total)
 
         finalResult.append({'name' : '涨跌分布','symbol' : 'zdfb', 'value' : zdfb[::-1]})
-        finalResult.append({'name' : '涨跌停','symbol' : 'zdt', 'value' : [{'name' : '涨停','symbol' : 'zt', 'value' : fenbu['11']},{'name' : '跌停','symbol' : 'dt', 'value' : fenbu['-11']}]})
+        finalResult.append({'name' : '涨跌停','symbol' : 'zdt', 'value' : [{'name' : '涨停','symbol' : 'zt', 'value' : fenbu['11']},{'name' : '跌停','symbol' : 'dt', 'value' : fenbu['-11']+fenbu['-10']}]})
         return finalResult
 
     def parse_zszdp(self, name, symbol, text):
         finalResult = []
-        zdpRawData = text.split(';')
-        # 接口返回的最后一项是个 '\n'
-        zdpRawData.pop(-1)
-        # 结果集
         results = []
-        # 正则匹配集
-        rawlist = []
-        # 正则匹配
-        pattern = re.compile('var hq_str_(.*?)_zdp="(.*?)"')
-        for item in zdpRawData:
-            # print(item)
-            result = re.findall(pattern, item)
-            if len(result) > 0:
-                rawlist.append(result[0])
-        # // e.g.
-        # // var hq_str_sh000002_zdp="865,535,97";    沪A
-        # // var hq_str_sz399107_zdp="1396,702,95";   深A
-        # // var hq_str_sh000003_zdp="26,14,9";       沪B
-        # // var hq_str_sz399108_zdp="13,26,7";       深B
-        # // var hq_str_sz399102_zdp="559,217,15";    创业
-        
-        #[('sh000002', '76,1416,5'), ('sz399107', '144,2044,8'), ('sh000003', '1,48,0'), ('sz399108', '3,41,2'), ('sz399102', '48,745,1'), ('sh000016', '2,48,0'), ('sh000300', '17,283,0'), ('sz399905', '20,480,0'), ('sh000852', '54,941,5'), ('sh000842', '37,763,0')]
-        allMarkets = ['sh000002','sh000003','sz399107','sz399108']
-        indexMapping = {'sz399102':'创业板综','sh000016':'上证50','sh000300':'沪深300','sz399905':'中证500','sh000852':'中证1000','sh000842':'等权800'}
-        allUp = 0
-        allEqual = 0
-        allDown = 0
-        for item in rawlist:
-            values = item[1].split(',')
-            if item[0] in allMarkets:
-                allUp = allUp + int(values[0])
-                allEqual = allEqual + int(values[2])
-                allDown = allDown + int(values[1])
-            else:
-                name = indexMapping[item[0]]
-                up = int(values[0])
-                equal = int(values[2])
-                down = int(values[1])
-                results.append({'name' : name, 'symbol' : item[0], 'z':up, 'p':equal, 'd':down})
-        results.insert(0, {'name' : '全市场', 'symbol' : 'all', 'z':allUp, 'p':allEqual, 'd':allDown})
-        # print(results)
-        finalResult.append({'name' : '指数涨跌平','symbol' : 'zdp', 'value' : results})
+        jsonResult = text.replace('callback(', '').replace(');', '')
+        jsonData = json.loads(jsonResult)
+        datalist = jsonData.get('data', {}).get('diff', [])
+        if len(datalist) == 9:
+            allMarkets = ['000002','000003','399107','399108']
+            indexMapping = {'399102':'创业板综','000016':'上证50','000300':'沪深300','399905':'中证500','000852':'中证1000'}
+            allUp = 0
+            allEqual = 0
+            allDown = 0
+            for item in datalist:
+                if item['f12'] in allMarkets:
+                    allUp = allUp + int(item['f104'])
+                    allEqual = allEqual + int(item['f106'])
+                    allDown = allDown + int(item['f105'])
+                else:
+                    name = indexMapping[item['f12']]
+                    up = int(item['f104'])
+                    equal = int(item['f106'])
+                    down = int(item['f105'])
+                    if up + equal + down > 0: # 中证1000有点问题，3个都是0，先忽略错误数据吧
+                        results.append({'name' : name, 'symbol' : item['f12'], 'z':up, 'p':equal, 'd':down})
+            results.insert(0, {'name' : '全市场', 'symbol' : 'all', 'z':allUp, 'p':allEqual, 'd':allDown})
+            # print(results)
+            finalResult.append({'name' : '指数涨跌平','symbol' : 'zdp', 'value' : results})
         return finalResult
     
     # ////////////////////////////////////////////////////////////////////////////////////////
@@ -434,16 +412,17 @@ class parseManager:
                 if type(data) == type(list()):
                     [parsedData.append(x) for x in data]
                 else:
+                    # 2022年2月10日10:00:58：去掉单独请求离岸人民币的接口后，这块应该永远不会走了，仅做backup
                     parsedData.append(data)
             else:
                 parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
 
         # 离岸人民币
-        USDCNH = parsedData.pop(0)
+        USDCNH = parsedData[3]
         # COMEX 黄金
-        COMEX_GC = parsedData[1]
+        COMEX_GC = parsedData[0]
         # COMEX 白银
-        COMEX_SI = parsedData[2]
+        COMEX_SI = parsedData[1]
         # COMEX 黄金白银的单位是金衡盎司，1金衡盎司 = 31.1034768克
         # 期货新增工行纸黄金
         cnGold = indexModel()
@@ -457,8 +436,8 @@ class parseManager:
         cnGold.dailyChangValue = round(float(cnGold.current - cnGold.lastClose), 4)
         cnGold.dealMoney = 0.0
         cnGold.sequence = 0
-        # 纸黄金挪到第四位
-        parsedData.insert(3,cnGold.__dict__)
+        # 纸黄金挪到第三位
+        parsedData.insert(2, cnGold.__dict__)
         # 期货新增工行纸白银
         cnSilver = indexModel()
         cnSilver.indexCode = 'SILVER'
@@ -471,15 +450,13 @@ class parseManager:
         cnSilver.dailyChangValue = round(float(cnSilver.current - cnSilver.lastClose), 4)
         cnSilver.dealMoney = 0.0
         cnSilver.sequence = 0
-        # 纸白银挪到第五位
-        parsedData.insert(4,cnSilver.__dict__)
-        # 离岸人民币挪到第五位
-        parsedData.insert(6,USDCNH)
+        # 纸白银挪到第四位
+        parsedData.insert(3, cnSilver.__dict__)
         # 分组（goods & exchanges）
-        goods = parsedData[0:6]
+        goods = parsedData[0:5]
         for i in range(0,len(goods)):
             goods[i]['sequence'] = i
-        exchanges = parsedData[6:len(parsedData)]
+        exchanges = parsedData[5:len(parsedData)]
         for i in range(0,len(exchanges)):
             exchanges[i]['sequence'] = i
 
@@ -488,88 +465,69 @@ class parseManager:
         data = self.packDataWithCommonInfo(duration = duration, data = {'goods': goods, 'exchanges':exchanges})
         return data
     
-    def parse_larmb(self, name, symbol, text):
-        result = text.replace('updateIndexInfos(', '').replace(');', '')
-        # 清洗&重组数据
-        
-        USDCNH = self.parseEastmoney87Data('外汇',['离岸汇率'], json.loads(result))[0]
-        return USDCNH
-
     def parse_goods_and_exchanges(self, name, symbol, text):
-        exchanges = text.split(';')
-        # 接口返回的最后一项是个 '\n'
-        exchanges.pop(-1)
-        # 期货
-        # goodKeys = ['hf_CHA50CFD', 'hf_GC', 'hf_SI', 'hf_CL']
-        # 外汇
-        exchangeKeys = ['USDCNY', 'CADCNY', 'GBPCNY', 'EURCNY', 'AUDCNY', 'HKDCNY', 'TWDCNY','fx_sjpycny', 'fx_skrwcny']
-        # 结果
-        results = []
-        # 正则匹配集
-        rawlist = []
-        # 正则匹配
-        pattern = re.compile('var hq_str_(.*?)="(.*?)"')
-        for item in exchanges:
-            # print(item)
-            result = re.findall(pattern, item)
-            if len(result) > 0:
-                rawlist.append(result[0])
-        # 清洗正则匹配集，产出最终数据
-        count = 0
-        for item in rawlist:
-            index = indexModel()
-            # 数据集合
-            values = item[1].split(',')
-            # 代码
-            indexCode = item[0].replace('hf_', '')
-            if indexCode in exchangeKeys:
-                # 外汇
-                # 日元人民币
-                if indexCode == 'fx_sjpycny':
-                    indexCode = 'JPYCNY'
-                    indexName = '日元人民币'
-                # 韩元人民币
-                elif indexCode == 'fx_skrwcny':
-                    indexCode = 'KRWCNY'
-                    indexName = '韩元人民币'
-                else:
-                    indexCode = item[0].replace('hf_', '')
-                    indexName = values[9]
-                index.indexCode = indexCode
-                if u'人民币' in indexName:
-                    indexName = indexName.replace(u'人民币',u'汇率')
-                index.indexName = indexName
-                index.indexArea = '外汇'
-
-                index.current = round(float(values[2]), 4)
-                index.lastClose = round(float(values[3]), 4)
-                index.dailyChangRate = '{0:.2f}%'.format(
-                    round(float((index.current / index.lastClose - 1) * 100), 2))
-                index.dailyChangValue = round(float(index.current - index.lastClose), 4)
-                index.dealMoney = 0.0
-                index.sequence = count
-                count = count + 1
-            else:
-                # 期货
-                index.indexCode = item[0].replace('hf_', '')
-                if 'hf_CHA50CFD' in item[0]:
-                    index.indexName = '富时A50'
-                    index.indexCode = 'A50CFD'
-                elif 'hf_CL' in item[0]:
-                    index.indexName = '纽约原油'
-                    index.indexCode = 'CL'
-                else:
-                    index.indexName = values[-2]
-                index.indexArea = '期货'
-                index.current = round(float(values[0]), 3)
-                index.lastClose = round(float(values[7]), 3)
-                index.dailyChangRate = '{0:.2f}%'.format(
-                    round(float((index.current / index.lastClose - 1) * 100), 2))
-                index.dailyChangValue = round(float(index.current - index.lastClose), 3)
-                index.dealMoney = 0.0
-                index.sequence = count
-                count = count + 1
-            results.append(index.__dict__)
+        jsonResult = text.replace('callback(', '').replace(');', '')
+        jsonData = json.loads(jsonResult)
+        datalist = jsonData.get('data', {}).get('diff', [])
+        if len(datalist) > 0:
+            count = 0
+            # 期货接口key&name
+            goodKeys = ['GC00Y', 'SI00Y', 'CL00Y']
+            goodNames = ['纽约黄金', '纽约白银', '纽约原油']
+            # 外汇接口key&name
+            exchangeKeys = ['USDCNH', 'USDCNYC', 'CADCNYC', 'GBPCNYC', 'EURCNYC', 'AUDCNYC', 'HKDCNYC', 'JPYCNYC', 'CNYKRWC']
+            exchangeNames = ['离岸汇率', '美元汇率', '加元汇率', '英镑汇率', '欧元汇率', '澳元汇率', '港元汇率', '日元汇率', '韩元汇率']
+            # 结果
+            results = []
+            # 解析期货
+            for i, key in enumerate(goodKeys):
+                for item in datalist:
+                    if item['f12'] == key:
+                        index = indexModel()
+                        index.indexCode = key
+                        index.indexName = goodNames[i]
+                        index.indexArea = '期货'
+                        index.current = round(float(item['f2']), 4)
+                        index.lastClose = round(float(item['f18']), 4)
+                        index.dailyChangRate = '{0}%'.format(round(float(item['f3']), 4))
+                        index.dailyChangValue = round(float(item['f4']), 4)    
+                        index.dealMoney = 0.0
+                        index.sequence = count
+                        count = count + 1
+                        results.append(index.__dict__)
+                        break
+            # 解析外汇
+            for i, key in enumerate(exchangeKeys):
+                for item in datalist:
+                    if item['f12'] == key:
+                        index = indexModel()
+                        if 'CNH' in key:
+                            # 离岸人民币代码是USDCNH，不带C
+                            index.indexCode = key
+                        else:
+                            index.indexCode = key[0:len(key)-1]
+                        index.indexName = exchangeNames[i]
+                        index.indexArea = '外汇'
+                        index.current = round(float(item['f2']), 4)
+                        index.lastClose = round(float(item['f18']), 4)
+                        index.dailyChangRate = '{0}%'.format(round(float(item['f3']), 4))
+                        index.dailyChangValue = round(float(item['f4']), 4)    
+                        index.dealMoney = 0.0
+                        index.sequence = count
+                        count = count + 1
+                        # 针对日元做修正
+                        if index.indexCode == 'JPYCNY':
+                            index.current = round(index.current / 100, 4)
+                            index.lastClose = round(index.lastClose / 100, 4)
+                            index.dailyChangValue = round(index.dailyChangValue / 100, 4)    
+                        # 针对韩元做修正
+                        if index.indexCode == 'CNYKRW':
+                            index.indexCode = 'KRWCNY'
+                            index.current = round(1 / index.current, 4)
+                            index.lastClose = round(1 / index.lastClose, 4)
+                            index.dailyChangValue = round(index.current - index.lastClose, 4)  
+                        results.append(index.__dict__)
+                        break
         return results
 
     # ////////////////////////////////////////////////////////////////////////////////////////

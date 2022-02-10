@@ -154,7 +154,7 @@ class requestsManager:
         urls = []
         responseTexts = []
         [urls.append(item['url']) for item in self.cm.goods_and_exchanges]
-        # 并发
+        # 并发(2022年2月10日09:59:24：改成东方财富接口后，实际上不需要并发了，但是没毛病也就不改了)
         request_list = [grequests.get(url,headers=self.headers) for url in urls]
         response_list = grequests.map(request_list)
         for response in response_list:
