@@ -579,17 +579,18 @@ class parseManager:
         bond5year = 0.0
         bond7year = 0.0
         bond10year = 0.0
-        values = jsonData['seriesData']
-        for valueArray in values:
-            if valueArray[0] == 5.0:
-                bond5year = '{0}%'.format(round(float(valueArray[1]),2))
-            elif valueArray[0] == 7.0:
-                bond7year = '{0}%'.format(round(float(valueArray[1]),2))
-            elif valueArray[0] == 10.0:
-                bond10year = '{0}%'.format(round(float(valueArray[1]),2))
-        result5year = { 'indexName' : u'5年国债', 'indexCode' : '5YEAR','indexArea' : '债券', 'sequence' : 0, 'current' : bond5year, 'lastClose' : bond5year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 5}
-        result7year = { 'indexName' : u'7年国债', 'indexCode' : '7YEAR','indexArea' : '债券', 'sequence' : 1, 'current' : bond7year, 'lastClose' : bond7year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 7}
-        result10year = { 'indexName' : u'10年国债', 'indexCode' : '10YEAR','indexArea' : '债券', 'sequence' : 2, 'current' : bond10year, 'lastClose' : bond10year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 10}
+        if len(jsonData) >= 1:
+            values = jsonData[0]['seriesData']
+            for valueArray in values:
+                if valueArray[0] == 5.0:
+                    bond5year = '{0}%'.format(round(float(valueArray[1]),2))
+                elif valueArray[0] == 7.0:
+                    bond7year = '{0}%'.format(round(float(valueArray[1]),2))
+                elif valueArray[0] == 10.0:
+                    bond10year = '{0}%'.format(round(float(valueArray[1]),2))
+            result5year = { 'indexName' : u'5年国债', 'indexCode' : '5YEAR','indexArea' : '债券', 'sequence' : 0, 'current' : bond5year, 'lastClose' : bond5year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 5}
+            result7year = { 'indexName' : u'7年国债', 'indexCode' : '7YEAR','indexArea' : '债券', 'sequence' : 1, 'current' : bond7year, 'lastClose' : bond7year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 7}
+            result10year = { 'indexName' : u'10年国债', 'indexCode' : '10YEAR','indexArea' : '债券', 'sequence' : 2, 'current' : bond10year, 'lastClose' : bond10year,'dailyChangValue' : 0.000, 'dealMoney' : 0.000, 'dailyChangRate' : '0.00%', 'year' : 10}
         finalResult.append({'name': name, 'symbol' : symbol, 'value' : [result5year, result7year, result10year]})
         return finalResult
 
