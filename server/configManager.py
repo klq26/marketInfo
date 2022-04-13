@@ -26,7 +26,7 @@ class configManager:
         ]
 
         self.goods_and_exchanges = [
-            {'name' : '期货和汇率', 'symbol' : 'goods_and_exchanges', 'url' : 'http://65.push2.eastmoney.com/api/qt/clist/get?cb=callback&pn=1&pz=20&po=0&np=1&fltt=2&invt=2&fid=f14&fs=i:101.GC00Y,i:101.SI00Y,i:102.CL00Y,i:133.USDCNH,i:120.USDCNYC,i:120.CADCNYC,i:120.GBPCNYC,i:120.EURCNYC,i:120.AUDCNYC,i:120.HKDCNYC,i:120.JPYCNYC,i:120.CNYKRWC&fields=f2,f3,f4,f12,f13,f14,f18'}
+            {'name' : '期货和汇率', 'symbol' : 'goods_and_exchanges', 'url' : 'http://65.push2.eastmoney.com/api/qt/clist/get?cb=callback&pn=1&pz=20&po=0&np=1&fltt=2&invt=2&fid=f14&fs=i:104.CN00Y,i:159.IHFI,i:159.IFFI,i:159.ICFI,i:134.HSI_M,i:134.HSIM2,i:134.HSIU2,i:134.HSIZ2,i:101.GC00Y,i:101.SI00Y,i:102.CL00Y,i:133.USDCNH,i:120.USDCNYC,i:120.CADCNYC,i:120.GBPCNYC,i:120.EURCNYC,i:120.AUDCNYC,i:120.HKDCNYC,i:120.JPYCNYC,i:120.CNYKRWC&fields=f2,f3,f4,f12,f13,f14,f18'}
         ]
 
         self.bondinfo = [

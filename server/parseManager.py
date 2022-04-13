@@ -418,11 +418,14 @@ class parseManager:
                 parsedData.append({'name' : name, 'symbol' : symbol, 'value' : []})
 
         # 离岸人民币
-        USDCNH = parsedData[3]
+        USDCNH = parsedData[11] # 2022年4月13日15:35:07：这样写很不好，以后指数期货增加了，还得改！但是比for循环效率高
+        # print(USDCNH)
         # COMEX 黄金
         COMEX_GC = parsedData[0]
+        # print(COMEX_GC)
         # COMEX 白银
         COMEX_SI = parsedData[1]
+        # print(COMEX_SI)
         # COMEX 黄金白银的单位是金衡盎司，1金衡盎司 = 31.1034768克
         # 期货新增工行纸黄金
         cnGold = indexModel()
@@ -453,10 +456,10 @@ class parseManager:
         # 纸白银挪到第四位
         parsedData.insert(3, cnSilver.__dict__)
         # 分组（goods & exchanges）
-        goods = parsedData[0:5]
+        goods = parsedData[0:13]
         for i in range(0,len(goods)):
             goods[i]['sequence'] = i
-        exchanges = parsedData[5:len(parsedData)]
+        exchanges = parsedData[13:len(parsedData)]
         for i in range(0,len(exchanges)):
             exchanges[i]['sequence'] = i
 
@@ -472,8 +475,8 @@ class parseManager:
         if len(datalist) > 0:
             count = 0
             # 期货接口key&name
-            goodKeys = ['GC00Y', 'SI00Y', 'CL00Y']
-            goodNames = ['纽约黄金', '纽约白银', '纽约原油']
+            goodKeys = ['GC00Y', 'SI00Y', 'CL00Y', 'CN00Y', 'IHFI', 'IFFI', 'ICFI', 'HSI_M', 'HSIM2', 'HSIU2', 'HSIZ2']
+            goodNames = ['纽约黄金', '纽约白银', '纽约原油', 'A50期货', 'IH50期货', 'IF300期货', 'IC500期货', '恒生期货', '恒06期货', '恒09期货', '恒12期货']
             # 外汇接口key&name
             exchangeKeys = ['USDCNH', 'USDCNYC', 'CADCNYC', 'GBPCNYC', 'EURCNYC', 'AUDCNYC', 'HKDCNYC', 'JPYCNYC', 'CNYKRWC']
             exchangeNames = ['离岸汇率', '美元汇率', '加元汇率', '英镑汇率', '欧元汇率', '澳元汇率', '港元汇率', '日元汇率', '韩元汇率']
